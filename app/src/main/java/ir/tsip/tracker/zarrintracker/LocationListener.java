@@ -52,6 +52,8 @@ public class LocationListener  extends Service implements android.location.Locat
     public static double CurrentLat;
     public static double CurrentLon;
     public static double CurrentSignal;
+public static Location CurrentLocation;
+
 
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 0 meters
@@ -270,7 +272,7 @@ public class LocationListener  extends Service implements android.location.Locat
         CurrentAccuracy = location.getAccuracy();
         CurrentLat=location.getLatitude();
         CurrentLon = location.getLongitude();
-
+        CurrentLocation=location;
         MessageManager.SetMessage(
                 " New Location is MoveBearing:" + CurrentBearing +
                         " Time:" + (new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(CurrentTime)) +

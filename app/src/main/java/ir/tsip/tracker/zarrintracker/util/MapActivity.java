@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import ir.tsip.tracker.zarrintracker.LocationListener;
 import ir.tsip.tracker.zarrintracker.R;
@@ -77,18 +79,24 @@ public class MapActivity extends ActionBarActivity {
     private GoogleMap googleMap;
 
     private void initilizeMap() {
-        if (googleMap == null) {
-            googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-                    R.id.map)).getMap();
 
+        if (googleMap == null) {
+            {
+                try{
+                googleMap = ((MapFragment) getFragmentManager().findFragmentById(
+                        R.id.map)).getMap();
+            }
+                catch(Exception er){
+                    String s=er.getMessage();
+                    int v=0;
+                }
+            }
             // check if map is created successfully or not
             if (googleMap == null) {
                 Toast.makeText(getApplicationContext(),
                         "Sorry! unable to create maps", Toast.LENGTH_SHORT)
                         .show();
-            }
-            else
-            {
+            } else {
                 setUpMap();
             }
         }
@@ -97,24 +105,13 @@ public class MapActivity extends ActionBarActivity {
 
     private void setUpMap() {
 
-//        if (Tools.currentLocation != null) {
-//            Location currentLocation=null;
-//            if (isGPSEnabled) {
-//                if (LocationListener.locationManager != null) {
-//                    GPS_location = locationManager
-//                            .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                }
-//            }
-//
-//            if (isNetworkEnabled) {
-//                if (locationManager != null) {
-//                    Network_location = locationManager
-//                            .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//                }
-//            LatLng ll = new LatLng(Tools.currentLocation.getLatitude(), Tools.currentLocation.getLongitude());
-//            mMap.addMarker(new MarkerOptions().position(ll).title("موقعیت من"));
-//
-//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 15.0f));
-//        }
+        Location currentLocation = LocationListener.CurrentLocation;
+
+        LatLng ll = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        googleMap.addMarker(new MarkerOptions().position(ll).title("موقعیت من"));
+
+        googleMap.animateCamera(com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom(ll, 15.0f));
+
     }
 }
+

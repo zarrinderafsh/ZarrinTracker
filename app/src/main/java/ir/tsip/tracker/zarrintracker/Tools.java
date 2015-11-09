@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Point;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -21,6 +22,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by Administrator on 11/1/2015.
@@ -117,19 +121,16 @@ public class Tools {
     }
 
 
-    public static GoogleMap initGoogleMap(Activity activity) {
+    public static GoogleMap initGoogleMap(MapFragment MF) {
         GoogleMap googleMap = null;
         if (googleMap == null) {
-            MapFragment MF = ((MapFragment) activity.getFragmentManager().findFragmentById(
-                    R.id.map));
+      //      MapFragment MF = ((MapFragment) activity.getFragmentManager().findFragmentById(
+        //            R.id.map));
             if(MF != null)
                 googleMap = MF.getMap();
 
             // check if map is created successfully or not
             if (googleMap == null) {
-                Toast.makeText(activity.getApplicationContext(),
-                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
-                        .show();
             }
             else
             {
@@ -139,6 +140,23 @@ public class Tools {
         return googleMap;
     }
 
+    private static Marker myMarker;
+    private static  LatLng myPosition;
+    public static void setUpMap(GoogleMap googleMap) {
+        if (googleMap == null ||  LocationListener.CurrentLocation== null)
+            return;
+        Location currentLocation = LocationListener.CurrentLocation;
+
+        myPosition= new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+
+        if(myMarker == null) {
+          myMarker = googleMap.addMarker(new MarkerOptions().position(myPosition).title("موقعیت من"));
+            googleMap.animateCamera(com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom(myPosition, 15.0f));
+        }
+        myMarker.setPosition(myPosition);
+
+
+    }
     public static float getBatteryLevel(Activity activate) {
         Intent batteryIntent = activate.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);

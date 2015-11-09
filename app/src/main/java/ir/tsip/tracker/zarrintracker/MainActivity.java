@@ -109,7 +109,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         ivNetLocation.setOnClickListener(GPSClick);
         ivBattery.setOnClickListener(GPSClick);
 
-        MapFragment mMapFragment = MapFragment.newInstance();
+         mMapFragment = MapFragment.newInstance();
         FragmentTransaction fragmentTransaction =
                 getFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.mapLayout, mMapFragment);
@@ -119,7 +119,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
 
     }
 
-
+    MapFragment mMapFragment;
     int StartTouchX = 0;
     int StartTouchY = 0;
 
@@ -243,6 +243,8 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                 try {
                     runOnUiThread(new Runnable() {
                         public void run() {
+                            if (mMapFragment != null)
+                                Tools.setUpMap(mMapFragment.getMap());
                             String Mes = MessageManager.GetMessage();
                             if (Mes.length() > 0) {
                                 Toast.makeText(getBaseContext(), Mes, Toast.LENGTH_LONG).show();
@@ -261,7 +263,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         if(googleMap == null)
-            googleMap =  Tools.initGoogleMap(Base);
+            googleMap =  Tools.initGoogleMap(mMapFragment);
         return true;
     }
 

@@ -204,7 +204,7 @@
                                 <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/imageView3"
+                                    android:id="@+id/imageView31"
                                     android:src="@drawable/nm_signal_100"
                                     android:layout_gravity="left" />
 
@@ -220,7 +220,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Signal"
-                                    android:id="@+id/textView6"
+                                    android:id="@+id/textView61"
                                     android:textSize="16dp"
                                     android:textStyle="bold" />
                                 <TextView
@@ -243,7 +243,7 @@
                                 <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/imageView3"
+                                    android:id="@+id/imageView32"
                                     android:src="@drawable/speed"
                                     android:layout_gravity="left" />
 
@@ -283,7 +283,7 @@
                                 <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/imageView3"
+                                    android:id="@+id/imageView33"
                                     android:src="@drawable/user"
                                     android:layout_gravity="left" />
 
@@ -299,7 +299,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="User activity"
-                                    android:id="@+id/textView6"
+                                    android:id="@+id/textView66"
                                     android:textSize="16dp"
                                     android:textStyle="bold" />
                                 <TextView
@@ -323,7 +323,7 @@
                                 <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/imageView3"
+                                    android:id="@+id/imageView34"
                                     android:src="@drawable/worldwide_location"
                                     android:layout_gravity="left" />
 
@@ -370,7 +370,7 @@
                                 <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/imageView3"
+                                    android:id="@+id/imageView35"
                                     android:src="@drawable/medium_battery"
                                     android:layout_gravity="left" />
 
