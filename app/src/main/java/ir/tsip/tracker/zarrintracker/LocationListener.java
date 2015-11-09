@@ -4,17 +4,21 @@ import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LocationListener  extends Service implements android.location.LocationListener {
+public class LocationListener  extends Service implements android.location.LocationListener,GpsStatus.Listener {
 
     private static Context mContext;
 
@@ -44,6 +48,10 @@ public class LocationListener  extends Service implements android.location.Locat
     public static int CurrentBearing;
     public static int CurrentSpeed;
     public static Date CurrentTime;
+    public static float CurrentAccuracy;
+    public static double CurrentLat;
+    public static double CurrentLon;
+    public static double CurrentSignal;
 
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 0 meters
@@ -66,6 +74,8 @@ public class LocationListener  extends Service implements android.location.Locat
             if(locationManager==null)
                 locationManager = (LocationManager) mContext
                         .getSystemService(LOCATION_SERVICE);
+
+            locationManager.addGpsStatusListener(this);
 
             // getting GPS status
             isGPSEnabled = locationManager
@@ -234,11 +244,32 @@ public class LocationListener  extends Service implements android.location.Locat
     }
 
     @Override
+    public void onGpsStatusChanged(int p) {
+        int count=0;
+        float Snr=0;
+        GpsStatus gpsStatus = locationManager.getGpsStatus(null);
+        if(gpsStatus != null) {
+            Iterable<GpsSatellite>satellites = gpsStatus.getSatellites();
+            Iterator<GpsSatellite> sat = satellites.iterator();
+            int i=0;
+            while (sat.hasNext()) {
+                GpsSatellite satellite = sat.next();
+                Snr += satellite.getSnr();
+                count++;
+            }
+        }
+        CurrentSignal = Snr / count;
+    }
+
+    @Override
     public void onLocationChanged(Location location) {
 
         CurrentBearing = (int)location.getBearing();
         CurrentSpeed = (int)(location.getSpeed() * 3.6) ; // KM
         CurrentTime = (new Date(location.getTime()));
+        CurrentAccuracy = location.getAccuracy();
+        CurrentLat=location.getLatitude();
+        CurrentLon = location.getLongitude();
 
         MessageManager.SetMessage(
                 " New Location is MoveBearing:" + CurrentBearing +

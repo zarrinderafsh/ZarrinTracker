@@ -195,10 +195,18 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
 
                 Base.runOnUiThread(new Runnable() {
                     public void run() {
-//                        if (Tools.isOnline(getApplicationContext()))
-//                            ivwIfI.setVisibility(View.VISIBLE);
-//                        else
-//                            ivwIfI.setVisibility(View.INVISIBLE);
+
+                        if (Tools.isOnline(getApplicationContext()))
+                            ((TextView)findViewById(R.id.tvWiFi)).setText("Connected");
+                        else
+                            ((TextView)findViewById(R.id.tvWiFi)).setText("Not Connected");
+
+                        ((TextView)findViewById(R.id.tvBattery)).setText(String.valueOf(Tools.getBatteryLevel(Base)));
+                        ((TextView)findViewById(R.id.tvAcc)).setText(String.valueOf(LocationListener.CurrentAccuracy));
+                        ((TextView)findViewById(R.id.tvSpeed)).setText(String.valueOf(LocationListener.CurrentSpeed));
+                        ((TextView)findViewById(R.id.tvLat)).setText(String.valueOf(LocationListener.CurrentLat));
+                        ((TextView)findViewById(R.id.tvLon)).setText(String.valueOf(LocationListener.CurrentLon));
+                        ((TextView)findViewById(R.id.tvSignal)).setText(String.valueOf(LocationListener.CurrentSignal));
 
                         if (LocationListener.isGPSEnabled) {
                             //ivGPS.setVisibility(View.VISIBLE);
