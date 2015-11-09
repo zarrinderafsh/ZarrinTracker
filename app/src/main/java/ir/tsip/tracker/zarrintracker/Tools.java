@@ -3,9 +3,11 @@ package ir.tsip.tracker.zarrintracker;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ResolveInfo;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,6 +23,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 11/1/2015.
@@ -151,5 +156,6 @@ public class Tools {
 
         return ((float)level / (float)scale) * 100.0f;
     }
+
 }
 

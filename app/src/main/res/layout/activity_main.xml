@@ -21,7 +21,8 @@
             android:layout_height="50dp"
             android:id="@+id/llDownMap"
             android:background="#ffd8d8d8"
-            android:gravity="center_horizontal|right">
+            android:gravity="center_horizontal|right"
+            android:layout_gravity="top">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -175,10 +176,27 @@
             android:weightSum="1">
 
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_height="100dp"
+                android:orientation="horizontal"
+                android:layout_height="80dp"
                 android:layout_width="fill_parent"
-                android:background="@color/material_grey_300">
+                android:background="@color/material_grey_300"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ivPersonImage"
+                    android:src="@drawable/vintage_girl"
+                    android:layout_marginLeft="20dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MORTEZA"
+                    android:id="@+id/tvPersonName"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -387,7 +405,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Battery"
                                     android:id="@+id/textView6"
-                                    android:textSize="16dp"
+                                    android:textSize="16sp"
                                     android:textStyle="bold" />
                                 <TextView
                                     android:layout_width="wrap_content"

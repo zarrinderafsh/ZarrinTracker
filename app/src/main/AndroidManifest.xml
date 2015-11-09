@@ -80,6 +80,10 @@
             android:name=".Invite"
             android:label="@string/title_activity_invate" >
         </activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/title_activity_profile" >
+        </activity>
     </application>
 
 </manifest>
