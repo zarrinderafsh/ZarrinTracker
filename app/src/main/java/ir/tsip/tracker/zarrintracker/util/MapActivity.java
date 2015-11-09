@@ -1,5 +1,7 @@
 package ir.tsip.tracker.zarrintracker.util;
 
+import android.location.Location;
+import android.location.LocationManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
+import ir.tsip.tracker.zarrintracker.LocationListener;
 import ir.tsip.tracker.zarrintracker.R;
 
 public class MapActivity extends ActionBarActivity {
@@ -86,8 +89,32 @@ public class MapActivity extends ActionBarActivity {
             }
             else
             {
-
+                setUpMap();
             }
         }
+    }
+
+
+    private void setUpMap() {
+
+//        if (Tools.currentLocation != null) {
+//            Location currentLocation=null;
+//            if (isGPSEnabled) {
+//                if (LocationListener.locationManager != null) {
+//                    GPS_location = locationManager
+//                            .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//                }
+//            }
+//
+//            if (isNetworkEnabled) {
+//                if (locationManager != null) {
+//                    Network_location = locationManager
+//                            .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//                }
+//            LatLng ll = new LatLng(Tools.currentLocation.getLatitude(), Tools.currentLocation.getLongitude());
+//            mMap.addMarker(new MarkerOptions().position(ll).title("موقعیت من"));
+//
+//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 15.0f));
+//        }
     }
 }
