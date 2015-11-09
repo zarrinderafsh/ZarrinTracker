@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     LinearLayout llMain;
     LinearLayout llmapLayout;
     TextView tvzTracker;
-    //ImageView ivwIfI;
+    ImageView ivPersonImage;
     ImageView ivGPS;
     ImageView ivNetLocation;
     ImageView ivBattery;
@@ -96,6 +96,14 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         inInvite.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 Intent myIntent = new Intent(Base , Invite.class);
+                Base.startActivity(myIntent);
+            }
+        });
+
+        ivPersonImage = (ImageView) findViewById(R.id.ivPersonImage);
+        ivPersonImage.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                Intent myIntent = new Intent(Base , ProfileActivity.class);
                 Base.startActivity(myIntent);
             }
         });
