@@ -1,0 +1,533 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_Zero_margin"
+    android:paddingRight="@dimen/activity_Zero_margin"
+    android:paddingTop="@dimen/activity_Zero_margin"
+    android:background="@drawable/main_header_selector"
+    android:paddingBottom="@dimen/activity_Zero_margin" tools:context=".MainActivity"
+    android:id="@+id/desktop">
+
+    <LinearLayout
+        android:id="@+id/mapLayout"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ffffff"
+        android:gravity="bottom">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/llDownMap"
+            android:background="#ffd8d8d8"
+            android:gravity="center_horizontal|right">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ivCloseMap"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:layout_marginRight="20dp"
+                android:contentDescription="@string/ivCloseMapString"
+                android:clickable="true" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llMain"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ff0a86cd">
+
+
+            <LinearLayout
+            android:id="@+id/llTop"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="205dp"
+            android:background="#ff0a86cd"
+            android:weightSum="1"
+            android:layout_marginTop="0dp">
+
+            <TextView
+                android:id="@+id/tvzTRACKER"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tvzTrackerText"
+                android:textSize="24sp"
+                android:textColor="#FFFFFF"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="10dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ivArrowDown"
+                    android:src="@android:drawable/ic_menu_more"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentStart="false"
+                    android:contentDescription="@string/ivArrowDown" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ivGPS"
+                    android:src="@drawable/satellite_48_hot"
+                    android:layout_gravity="right"
+                    android:contentDescription="@string/ivGPS"
+                    android:layout_alignTop="@+id/ivNetLocation"
+                    android:layout_alignLeft="@+id/textView"
+                    android:layout_alignStart="@+id/textView"
+                    android:layout_marginLeft="8dp"
+                    android:clickable="true" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ivNetLocation"
+                    android:contentDescription="@string/ivNetLocation"
+                    android:src="@drawable/rss"
+                    android:layout_alignTop="@+id/ivBattery"
+                    android:layout_toRightOf="@+id/ivGPS"
+                    android:layout_toEndOf="@+id/ivGPS"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location services"
+                    android:textSize="18sp"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="20dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ivBattery"
+                    android:contentDescription="@string/ivNetLocation"
+                    android:src="@drawable/battery_caution"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/ivNetLocation"
+                    android:layout_toEndOf="@+id/ivNetLocation"
+                    android:clickable="true" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ivInvite"
+                    android:contentDescription="@string/ivWiFiDesc"
+                    android:src="@drawable/person_white_add"
+                    android:layout_marginLeft="33dp"
+                    android:layout_marginStart="33dp"
+                    android:layout_alignTop="@+id/ivBattery"
+                    android:layout_toRightOf="@+id/ivArrowDown"
+                    android:layout_toEndOf="@+id/ivArrowDown"
+                    android:clickable="true" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ivGroup"
+                    android:contentDescription="@string/ivWiFiDesc"
+                    android:src="@drawable/user_group"
+                    android:layout_alignTop="@+id/ivInvite"
+                    android:layout_alignRight="@+id/textView5"
+                    android:layout_alignEnd="@+id/textView5"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Invite    |    Join"
+                    android:textSize="18sp"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center_horizontal"
+                    android:layout_alignTop="@+id/textView"
+                    android:layout_alignLeft="@+id/ivInvite"
+                    android:layout_alignStart="@+id/ivInvite" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llDown"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="360dp"
+            android:background="#ffffff"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_height="100dp"
+                android:layout_width="fill_parent"
+                android:background="@color/material_grey_300">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent">
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="70">
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView3"
+                                    android:src="@drawable/nm_signal_100"
+                                    android:layout_gravity="left" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="30">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Signal"
+                                    android:id="@+id/textView6"
+                                    android:textSize="16dp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0%"
+                                    android:id="@+id/tvSignal" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="70">
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView3"
+                                    android:src="@drawable/speed"
+                                    android:layout_gravity="left" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="30">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Speed"
+                                    android:id="@+id/textView6"
+                                    android:textSize="16dp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:id="@+id/tvSpeed" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="70">
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView3"
+                                    android:src="@drawable/user"
+                                    android:layout_gravity="left" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="30">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="User activity"
+                                    android:id="@+id/textView6"
+                                    android:textSize="16dp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="-"
+                                    android:id="@+id/tvActivity" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="70">
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView3"
+                                    android:src="@drawable/worldwide_location"
+                                    android:layout_gravity="left" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="30">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Latitude"
+                                    android:id="@+id/textView6"
+                                    android:textSize="16dp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:id="@+id/tvLat" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:orientation="vertical" >
+
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="70">
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView3"
+                                    android:src="@drawable/medium_battery"
+                                    android:layout_gravity="left" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="30">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Battery"
+                                    android:id="@+id/textView6"
+                                    android:textSize="16dp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:id="@+id/tvBattery" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="70">
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView3"
+                                    android:src="@drawable/access_point_checkmark"
+                                    android:layout_gravity="left" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="30">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Accuray"
+                                    android:id="@+id/textView6"
+                                    android:textSize="16dp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="-"
+                                    android:id="@+id/tvAcc" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="70">
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView3"
+                                    android:src="@drawable/wifi_logo"
+                                    android:layout_gravity="left" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="30">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="WiFi"
+                                    android:id="@+id/textView6"
+                                    android:textSize="16dp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:id="@+id/tvWiFi" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="70">
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/imageView3"
+                                    android:src="@drawable/worldwide_location"
+                                    android:layout_gravity="left" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="30">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Longitude"
+                                    android:id="@+id/textView6"
+                                    android:textSize="16dp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:id="@+id/tvLon" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="355dp"
+                android:layout_height="343dp"
+                android:id="@+id/imageView2" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ZarrinTracker</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_splash_activity">splash_activity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_map">MapActivity</string>
+    <string name="ivGPS">Location</string>
+    <string name="tvGPS">GPS</string>
+    <string name="ivWiFi">WiFi</string>
+    <string name="ivArrowDown">Arrow Down</string>
+    <string name="tvNetwork">Network</string>
+    <string name="tvWifi">Wi-Fi</string>
+    <string name="ivNetLocation">Network Location</string>
+    <string name="ivWiFiDesc">Network Location</string>
+    <string name="title_activity_invate">Invate</string>
+    <string name="InvetionDescription">\@stringChose the best way to send the invitation to you Family Member:/hello_world</string>
+    <string name="tvzTrackerText">zTRACKER</string>
+    <string name="ivCloseMapString">CloseMap</string>
+
+</resources>
