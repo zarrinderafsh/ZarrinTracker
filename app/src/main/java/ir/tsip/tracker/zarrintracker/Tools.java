@@ -22,14 +22,25 @@ import android.view.Display;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.drive.internal.QueryRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 11/1/2015.
@@ -147,21 +158,52 @@ public class Tools {
 
     private static Marker myMarker;
     private static  LatLng myPosition;
-    public static void setUpMap(GoogleMap googleMap) {
-        if (googleMap == null ||  LocationListener.CurrentLocation== null)
+    public static void setUpMap(GoogleMap googleMap,Context context) {
+        if (googleMap == null || LocationListener.CurrentLocation == null)
             return;
         Location currentLocation = LocationListener.CurrentLocation;
 
-        myPosition= new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        myPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-        if(myMarker == null) {
-          myMarker = googleMap.addMarker(new MarkerOptions().position(myPosition).title("موقعیت من"));
+        if (myMarker == null) {
+            myMarker = googleMap.addMarker(new MarkerOptions().position(myPosition).title("موقعیت من"));
             googleMap.animateCamera(com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom(myPosition, 15.0f));
         }
         myMarker.setPosition(myPosition);
 
 
+        getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom),context);
+
     }
+    private static RequestQueue queue;
+
+    public static void getDevicesLocation(String bounds,String zoom,Context context){
+
+        Map<String, String> params = new HashMap<>();
+        params.put("bounds", bounds);
+        params.put("zoom", zoom);
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, "http://tstracker.ir/services/webbasedefineservice.asmx/GetMarkers",
+                new JSONObject(params), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    String data = response.getString("d");
+                    if (data.contains("1")) {
+                   }
+                } catch (Exception er) {
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        if (queue == null)
+            queue = Volley.newRequestQueue(context);
+        queue.add(jsObjRequest);
+
+    }
+
     public static float getBatteryLevel(Activity activate) {
         Intent batteryIntent = activate.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);

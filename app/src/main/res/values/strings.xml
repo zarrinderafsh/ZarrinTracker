@@ -22,5 +22,7 @@
     <string name="tvzTrackerText">zTRACKER</string>
     <string name="ivCloseMapString">CloseMap</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_join_group">JoinGroupActivity</string>
+    <string name="title_activity_chat">ChatActivity</string>
 
 </resources>
