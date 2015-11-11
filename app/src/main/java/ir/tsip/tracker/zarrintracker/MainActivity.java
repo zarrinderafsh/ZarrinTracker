@@ -46,6 +46,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     ImageView inInvite;
     GoogleMap googleMap;
     ImageView ivCloseMap;
+    TextView tvPersonName;
 
     Activity Base;
 
@@ -100,13 +101,16 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
             }
         });
 
-        ivPersonImage = (ImageView) findViewById(R.id.ivPersonImage);
-        ivPersonImage.setOnClickListener(new View.OnClickListener(){
+        View.OnClickListener ShowProfile = new View.OnClickListener(){
             public void onClick(View v) {
                 Intent myIntent = new Intent(Base , ProfileActivity.class);
                 Base.startActivity(myIntent);
             }
-        });
+        };
+        ivPersonImage = (ImageView) findViewById(R.id.ivPersonImage);
+        ivPersonImage.setOnClickListener(ShowProfile);
+        tvPersonName = (TextView) findViewById(R.id.tvPersonName);
+        tvPersonName.setOnClickListener(ShowProfile);
 
         View.OnClickListener GPSClick = new View.OnClickListener(){
             public void onClick(View v) {

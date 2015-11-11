@@ -48,7 +48,7 @@
             android:id="@+id/llTop"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="205dp"
+            android:layout_height="170dp"
             android:background="#ff0a86cd"
             android:weightSum="1"
             android:layout_marginTop="0dp">
@@ -114,7 +114,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_marginTop="20dp" />
+                    android:layout_marginTop="10dp" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -171,7 +171,7 @@
             android:id="@+id/llDown"
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="360dp"
+            android:layout_height="400dp"
             android:background="#ffffff"
             android:weightSum="1">
 
@@ -192,10 +192,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="MORTEZA"
+                    android:text="@string/PersonImage"
                     android:id="@+id/tvPersonName"
                     android:layout_marginLeft="20dp"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -357,7 +357,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Latitude"
-                                    android:id="@+id/textView6"
+                                    android:id="@+id/textView615"
                                     android:textSize="16dp"
                                     android:textStyle="bold" />
                                 <TextView
@@ -404,7 +404,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Battery"
-                                    android:id="@+id/textView6"
+                                    android:id="@+id/textView62"
                                     android:textSize="16sp"
                                     android:textStyle="bold" />
                                 <TextView
@@ -443,7 +443,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Accuray"
-                                    android:id="@+id/textView6"
+                                    android:id="@+id/textView63"
                                     android:textSize="16dp"
                                     android:textStyle="bold" />
                                 <TextView
@@ -467,7 +467,7 @@
                                 <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/imageView3"
+                                    android:id="@+id/imageView345"
                                     android:src="@drawable/wifi_logo"
                                     android:layout_gravity="left" />
 
@@ -483,7 +483,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="WiFi"
-                                    android:id="@+id/textView6"
+                                    android:id="@+id/textView64"
                                     android:textSize="16dp"
                                     android:textStyle="bold" />
                                 <TextView
@@ -507,7 +507,7 @@
                                 <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/imageView3"
+                                    android:id="@+id/imageView354"
                                     android:src="@drawable/worldwide_location"
                                     android:layout_gravity="left" />
 
@@ -523,7 +523,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Longitude"
-                                    android:id="@+id/textView6"
+                                    android:id="@+id/textView67"
                                     android:textSize="16dp"
                                     android:textStyle="bold" />
                                 <TextView

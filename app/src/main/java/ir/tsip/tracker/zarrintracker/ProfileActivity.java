@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,6 +29,10 @@ public class ProfileActivity extends ActionBarActivity {
 
 
     ImageView ivGetPersonImage;
+    LinearLayout llEditProfile;
+    TextView tvName;
+    TextView tvPhone;
+
     private static Activity Base;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,20 @@ public class ProfileActivity extends ActionBarActivity {
             }
         });
 
+        llEditProfile = (LinearLayout) findViewById(R.id.llEditProfileShow);
+        tvName = (TextView) findViewById(R.id.tvName);
+        tvPhone = (TextView) findViewById(R.id.tvPhneNumber);
+
+        View.OnClickListener EditProfile = new View.OnClickListener(){
+            public void onClick(View v)
+            {
+                ShowEditProfile();
+            }
+        };
+
+        llEditProfile.setOnClickListener(EditProfile);
+        tvName.setOnClickListener(EditProfile);
+        tvPhone.setOnClickListener(EditProfile);
     }
 
 
@@ -154,5 +174,11 @@ public class ProfileActivity extends ActionBarActivity {
                 ivGetPersonImage.setImageBitmap(bm);
             }
         }
+    }
+
+    private void ShowEditProfile()
+    {
+        Intent myIntent = new Intent(Base , EditProfileActivity.class);
+        Base.startActivity(myIntent);
     }
 }

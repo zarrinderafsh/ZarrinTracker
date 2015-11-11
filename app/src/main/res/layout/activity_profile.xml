@@ -45,32 +45,37 @@
                 android:layout_width="fill_parent"
                 android:background="@color/material_grey_300"
                 android:gravity="center_vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:clickable="true"
+                android:id="@+id/llEditProfileShow">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MORTEZA"
-                android:id="@+id/textView7"
+                android:text="Your Name"
+                android:id="@+id/tvName"
                 android:layout_marginLeft="20dp"
                 android:textSize="20dp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:clickable="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="09155073669"
-                    android:id="@+id/textView24"
+                    android:text="0000-000-000"
+                    android:id="@+id/tvPhneNumber"
                     android:layout_marginLeft="20dp"
                     android:textSize="16dp"
-                    android:layout_marginTop="20dp" />
+                    android:layout_marginTop="20dp"
+                    android:clickable="true" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_height="fill_parent"
-            android:layout_width="fill_parent" >
+            android:layout_width="fill_parent"
+            android:paddingTop="10dp">
 
             <LinearLayout
                 android:layout_weight="1"
