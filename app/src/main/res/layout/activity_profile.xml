@@ -120,7 +120,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0%"
-                            android:id="@+id/textView9" />
+                            android:id="@+id/tvSignal" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -161,7 +161,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:id="@+id/textView11" />
+                            android:id="@+id/tvSpeed" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -243,7 +243,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:id="@+id/textView15" />
+                            android:id="@+id/tvLat" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -291,7 +291,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:id="@+id/textView17" />
+                            android:id="@+id/tvBattery" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -332,7 +332,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="-"
-                            android:id="@+id/textView19" />
+                            android:id="@+id/tvAcc" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -373,7 +373,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:id="@+id/textView21" />
+                            android:id="@+id/tvWiFi" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -414,7 +414,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:id="@+id/textView23" />
+                            android:id="@+id/tvLon" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

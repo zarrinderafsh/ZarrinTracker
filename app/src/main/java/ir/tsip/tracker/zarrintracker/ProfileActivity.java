@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -17,21 +18,25 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class ProfileActivity extends ActionBarActivity {
 
 
-    ImageView ivGetPersonImage;
-    LinearLayout llEditProfile;
-    TextView tvName;
-    TextView tvPhone;
+    private  ImageView ivGetPersonImage;
+    private  LinearLayout llEditProfile;
+    private  TextView tvName;
+    private  TextView tvPhone;
+    private  Timer _Timer;
 
     private static Activity Base;
     @Override
@@ -62,6 +67,8 @@ public class ProfileActivity extends ActionBarActivity {
         llEditProfile.setOnClickListener(EditProfile);
         tvName.setOnClickListener(EditProfile);
         tvPhone.setOnClickListener(EditProfile);
+
+        //StartServices();
     }
 
 
@@ -181,4 +188,71 @@ public class ProfileActivity extends ActionBarActivity {
         Intent myIntent = new Intent(Base , EditProfileActivity.class);
         Base.startActivity(myIntent);
     }
+
+    private void StartServices() {
+        if(_Timer != null)
+        {
+            _Timer.cancel();
+            _Timer = null;
+        }
+        _Timer = new Timer(true);
+        _Timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Base.runOnUiThread(new Runnable() {
+                    public void run() {
+
+                        if (Tools.isOnline(getApplicationContext()))
+                            ((TextView)findViewById(R.id.tvWiFi)).setText("Connected");
+                        else
+                            ((TextView)findViewById(R.id.tvWiFi)).setText("Not Connected");
+
+                        ((TextView)findViewById(R.id.tvBattery)).setText(String.valueOf(Tools.getBatteryLevel(Base)));
+                        ((TextView)findViewById(R.id.tvAcc)).setText(String.valueOf(LocationListener.CurrentAccuracy));
+                        ((TextView)findViewById(R.id.tvSpeed)).setText(String.valueOf(LocationListener.CurrentSpeed));
+                        ((TextView)findViewById(R.id.tvLat)).setText(String.valueOf(LocationListener.CurrentLat));
+                        ((TextView)findViewById(R.id.tvLon)).setText(String.valueOf(LocationListener.CurrentLon));
+                        ((TextView)findViewById(R.id.tvSignal)).setText(String.valueOf(LocationListener.CurrentSignal));
+
+                    }
+                });
+            }
+
+        }, 0, 1000);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        return;
+    }
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        StartServices();
+    }
+    @Override
+    public void onRestart()
+    {
+        super.onRestart();
+    }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+    }
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        _Timer.cancel();
+    }
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        _Timer.cancel();
+    }
+
 }

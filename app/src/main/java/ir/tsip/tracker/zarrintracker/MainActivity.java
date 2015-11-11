@@ -315,18 +315,6 @@ ListView lsvtest;
                 Base.runOnUiThread(new Runnable() {
                     public void run() {
 
-                        if (Tools.isOnline(getApplicationContext()))
-                            ((TextView)findViewById(R.id.tvWiFi)).setText("Connected");
-                        else
-                            ((TextView)findViewById(R.id.tvWiFi)).setText("Not Connected");
-
-                        ((TextView)findViewById(R.id.tvBattery)).setText(String.valueOf(Tools.getBatteryLevel(Base)));
-                        ((TextView)findViewById(R.id.tvAcc)).setText(String.valueOf(LocationListener.CurrentAccuracy));
-                        ((TextView)findViewById(R.id.tvSpeed)).setText(String.valueOf(LocationListener.CurrentSpeed));
-                        ((TextView)findViewById(R.id.tvLat)).setText(String.valueOf(LocationListener.CurrentLat));
-                        ((TextView)findViewById(R.id.tvLon)).setText(String.valueOf(LocationListener.CurrentLon));
-                        ((TextView)findViewById(R.id.tvSignal)).setText(String.valueOf(LocationListener.CurrentSignal));
-
                         if (LocationListener.isGPSEnabled) {
                             //ivGPS.setVisibility(View.VISIBLE);
                             ivBattery.setImageResource(R.drawable.battery_caution);
@@ -405,5 +393,26 @@ ListView lsvtest;
         // Handle your other action bar items...
 
         return super.onOptionsItemSelected(item);
+    }
+
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 }
