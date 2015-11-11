@@ -54,5 +54,19 @@ public class DatabaseContracts {
         public static final String SQL_DELETE_Table =
                 "DROP TABLE IF EXISTS " + AVLData.TABLE_NAME;
     }
+
+    public static abstract class ChatLog implements BaseColumns {
+        public static final String TABLE_NAME = "Chat";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_Data = "content";
+        private static final String COMMA_SEP = ",";
+        public static final String SQL_CREATE_Table =
+                "CREATE TABLE " + AVLData.TABLE_NAME + " (" +
+                        AVLData.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                        AVLData.COLUMN_NAME_Data + " nvarchar(250) )";
+
+        public static final String SQL_DELETE_Table =
+                "DROP TABLE IF EXISTS " + AVLData.TABLE_NAME;
+    }
 }
 

@@ -1,4 +1,11 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/drawer_layout">
+
+    <RelativeLayout
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_Zero_margin"
     android:paddingRight="@dimen/activity_Zero_margin"
@@ -7,7 +14,8 @@
     android:paddingBottom="@dimen/activity_Zero_margin" tools:context=".MainActivity"
     android:id="@+id/desktop">
 
-    <LinearLayout
+
+        <LinearLayout
         android:id="@+id/mapLayout"
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -133,7 +141,7 @@
                     android:id="@+id/ivInvite"
                     android:contentDescription="@string/ivWiFiDesc"
                     android:src="@drawable/person_white_add"
-                    android:layout_marginLeft="33dp"
+                    android:layout_marginLeft="55dp"
                     android:layout_marginStart="33dp"
                     android:layout_alignTop="@+id/ivBattery"
                     android:layout_toRightOf="@+id/ivArrowDown"
@@ -151,17 +159,28 @@
                     android:layout_alignEnd="@+id/textView5"
                     android:clickable="true" />
 
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ibtnChat"
+                    android:src="@drawable/chat"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/ivArrowDown"
+                    android:layout_toEndOf="@+id/ivArrowDown"
+                    android:background="@android:color/transparent" />
+
                 <TextView
                     android:id="@+id/textView5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Invite    |    Join"
+                    android:text="chat  |  Invite | Join"
                     android:textSize="18sp"
                     android:textColor="#FFFFFF"
                     android:gravity="center_horizontal"
                     android:layout_alignTop="@+id/textView"
-                    android:layout_alignLeft="@+id/ivInvite"
-                    android:layout_alignStart="@+id/ivInvite" />
+                    android:layout_alignLeft="@+id/ibtnChat"
+                    android:layout_alignStart="@+id/ibtnChat"
+                    android:layout_marginLeft="5dp" />
 
             </RelativeLayout>
 
@@ -549,3 +568,10 @@
     </LinearLayout>
 
 </RelativeLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:id="@+id/lsvtest" />
+    </android.support.v4.widget.DrawerLayout>
