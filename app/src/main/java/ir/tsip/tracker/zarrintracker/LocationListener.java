@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -199,9 +200,10 @@ public static Location CurrentLocation;
         return this.canGetLocation;
     }
 
-    public static boolean isNewLocation() {
+    public static boolean isNewLocation(Boolean pChangeState) {
         if(isNewLocation) {
-            isNewLocation = false;
+            if(pChangeState)
+                isNewLocation = false;
             return true;
         }
         else {
@@ -286,6 +288,8 @@ public static Location CurrentLocation;
         if(     (MoveDistance > 5 && Math.abs(MoveBearing-LastMoveBearing) >10 && location.getSpeed() > 0.0)
                 ||
                 (MoveDistance > 40)
+                ||
+                LastLocation.getTime() == location.getTime()
                 ) {
             isNewLocation = true;
             LastLocation = location;
@@ -296,21 +300,49 @@ public static Location CurrentLocation;
             Altitude = (int)location.getAltitude();
             Speed = (int)(location.getSpeed()*3.6);
             gpsTime = location.getTime();
+            Process();
             MessageManager.SetMessage("New Location Get :)");
         }
     }
 
+    public void Process() {
+        ContentValues Data = null;
+        DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        try {
+            LastLocation = LocationListener.getLastLocation();
+            Data = LocationListener.getData();
+            SendDataService.CountPoint++;
+            db.insert(DatabaseContracts.AVLData.TABLE_NAME, DatabaseContracts.AVLData.COLUMN_NAME_ID, Data);
+            MessageManager.SetMessage(
+                    "Your Location is - \nLat: " +
+                            LocationListener.getLatitude() +
+                            "\nLong: " +
+                            LocationListener.getLongitude());
+        } catch (Exception ex) {
+
+        }
+        db.close();
+        dbh.close();
+    }
+
+    public static Location getLastLocation()
+    {
+        return  LastLocation;
+    }
     public static ContentValues getData()
     {
         Date date = new Date(gpsTime);
         String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
-        String data =  latitude + "," +
+        String data =
+                latitude + "," +
                 longitude + "," +
                 Altitude + "," +
                 Speed + "," +
                 MoveBearing + "," +
                 SDate + "," +
-                0;
+                (int)Tools.getBatteryLevel(mContext) + "," +
+                " ";
         ContentValues Val = new ContentValues();
         Val.put(DatabaseContracts.AVLData.COLUMN_NAME_Data , data);
         return Val;

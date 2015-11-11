@@ -207,12 +207,13 @@ public class ProfileActivity extends ActionBarActivity {
                         else
                             ((TextView)findViewById(R.id.tvWiFi)).setText("Not Connected");
 
-                        ((TextView)findViewById(R.id.tvBattery)).setText(String.valueOf(Tools.getBatteryLevel(Base)));
+                        ((TextView)findViewById(R.id.tvBattery)).setText(String.valueOf((int)Tools.getBatteryLevel(Base)));
                         ((TextView)findViewById(R.id.tvAcc)).setText(String.valueOf(LocationListener.CurrentAccuracy));
                         ((TextView)findViewById(R.id.tvSpeed)).setText(String.valueOf(LocationListener.CurrentSpeed));
                         ((TextView)findViewById(R.id.tvLat)).setText(String.valueOf(LocationListener.CurrentLat));
                         ((TextView)findViewById(R.id.tvLon)).setText(String.valueOf(LocationListener.CurrentLon));
-                        ((TextView)findViewById(R.id.tvSignal)).setText(String.valueOf(LocationListener.CurrentSignal));
+                        ((TextView)findViewById(R.id.tvSignal)).setText(String.valueOf((int)LocationListener.CurrentSignal));
+                        ((TextView)findViewById(R.id.tvUserActivity)).setText(String.valueOf(SendDataService.CountPoint));
 
                     }
                 });

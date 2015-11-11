@@ -10,7 +10,6 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        ServiceManager.StartService(context,LocationService.class);
         ServiceManager.StartService(context,SendDataService.class);
         ServiceManager.StartService(context,LocationListener.class);
     }

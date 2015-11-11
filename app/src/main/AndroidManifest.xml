@@ -42,12 +42,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".LocationService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
-
         <receiver
             android:name=".BootCompletedReceiver"
             android:enabled="true"

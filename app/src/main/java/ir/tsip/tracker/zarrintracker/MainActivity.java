@@ -308,7 +308,6 @@ ListView lsvtest;
             @Override
             public void run() {
                 // Start Location Service
-                ServiceManager.StartService(getBaseContext(), LocationService.class);
                 ServiceManager.StartService(getBaseContext(), SendDataService.class);
                 ServiceManager.StartService(getBaseContext(), LocationListener.class);
 
