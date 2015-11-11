@@ -5,11 +5,13 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,9 +19,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +51,10 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     ImageView inInvite;
     GoogleMap googleMap;
     ImageView ivCloseMap;
+    ImageView imgGroupJoin;
+    ImageButton ibtnChat;
+    TextView tvPersonName;
+
 
     Activity Base;
 
@@ -75,38 +84,44 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         ivBattery = (ImageView) findViewById(R.id.ivBattery);
 
         ivCloseMap = (ImageView) findViewById(R.id.ivCloseMap);
-        ivCloseMap.setOnClickListener(new  View.OnClickListener(){
-            public void onClick(View v) {
-                LinearLayout.LayoutParams lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
-                LinearLayout.LayoutParams lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
+        ivCloseMap.setOnClickListener(new View.OnClickListener() {
+                                          public void onClick(View v) {
+                                              LinearLayout.LayoutParams lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
+                                              LinearLayout.LayoutParams lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
 
-                lpTop.topMargin = 0;
-                lpDown.topMargin = 0;
-                llMain.setAlpha(1);
-                llTop.setLayoutParams(lpTop);
-                llDown.setLayoutParams(lpDown);
-                llMain.setVisibility(View.VISIBLE);
-            };}
+                                              lpTop.topMargin = 0;
+                                              lpDown.topMargin = 0;
+                                              llMain.setAlpha(1);
+                                              llTop.setLayoutParams(lpTop);
+                                              llDown.setLayoutParams(lpDown);
+                                              llMain.setVisibility(View.VISIBLE);
+                                          }
+
+                                          ;
+                                      }
         );
 
         llTop.setOnTouchListener(this);
         llMain.setOnTouchListener(this);
 
         inInvite = (ImageView) findViewById(R.id.ivInvite);
-        inInvite.setOnClickListener(new View.OnClickListener(){
+        inInvite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent myIntent = new Intent(Base , Invite.class);
+                Intent myIntent = new Intent(Base, Invite.class);
                 Base.startActivity(myIntent);
             }
         });
 
-        ivPersonImage = (ImageView) findViewById(R.id.ivPersonImage);
-        ivPersonImage.setOnClickListener(new View.OnClickListener(){
+        View.OnClickListener ShowProfile = new View.OnClickListener(){
             public void onClick(View v) {
                 Intent myIntent = new Intent(Base , ProfileActivity.class);
                 Base.startActivity(myIntent);
             }
-        });
+        };
+        ivPersonImage = (ImageView) findViewById(R.id.ivPersonImage);
+        ivPersonImage.setOnClickListener(ShowProfile);
+        tvPersonName = (TextView) findViewById(R.id.tvPersonName);
+        tvPersonName.setOnClickListener(ShowProfile);
 
         View.OnClickListener GPSClick = new View.OnClickListener(){
             public void onClick(View v) {
@@ -124,12 +139,108 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         fragmentTransaction.commit();
         llmapLayout.setGravity(android.view.Gravity.BOTTOM);
 
+        ibtnChat=(ImageButton)findViewById(R.id.ibtnChat);
+        ibtnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(Base, ChatActivity.class);
+                Base.startActivity(myIntent);
+            }
+        });
+
+        imgGroupJoin=(ImageView)findViewById(R.id.ivGroup);
+        imgGroupJoin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(Base, JoinGroupActivity.class);
+                Base.startActivity(myIntent);
+            }
+        });
+        /**********************************************************Set DrawLayout*/
+        lsvtest=(ListView)findViewById(R.id.lsvtest);
+
+        lsvtest.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawerlistlayout, new String[]{"hi","secoond"}));
+
+        mTitle = mDrawerTitle = getTitle();
+        mDrawerLayout= (android.support.v4.widget.DrawerLayout) findViewById(R.id.drawer_layout);
+        // enabling action bar app icon and behaving it as toggle button
+        if (getSupportActionBar() != null)
+        {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
+         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.string.app_name, // nav drawer open - description for accessibility
+                R.string.app_name // nav drawer close - description for accessibility
+        ){
+
+             public void onDrawerClosed(View view) {
+                 getSupportActionBar().setTitle(mTitle);
+                // calling onPrepareOptionsMenu() to show action bar icons
+                invalidateOptionsMenu();
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle(mDrawerTitle);
+                // calling onPrepareOptionsMenu() to hide action bar icons
+                invalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
     }
-
+     // nav drawer title
+    private CharSequence mDrawerTitle;
+ListView lsvtest;
+    // used to store app title
+    private CharSequence mTitle;
+    android.support.v4.widget.DrawerLayout mDrawerLayout;
+    ActionBarDrawerToggle mDrawerToggle;
     MapFragment mMapFragment;
     int StartTouchX = 0;
     int StartTouchY = 0;
+
+    /********************************************************************DrawerLayout Methods*/
+    /***
+     * Called when invalidateOptionsMenu() is triggered
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // if nav drawer is opened, hide the action items
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(lsvtest);
+        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
+    }
+
+    /**
+     * When using the ActionBarDrawerToggle, you must call it during
+     * onPostCreate() and onConfigurationChanged()...
+     */
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    /*******************************************************************/
+
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -252,7 +363,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (mMapFragment != null)
-                                Tools.setUpMap(mMapFragment.getMap());
+                                Tools.setUpMap(mMapFragment.getMap(),getApplicationContext());
                             String Mes = MessageManager.GetMessage();
                             if (Mes.length() > 0) {
                                 Toast.makeText(getBaseContext(), Mes, Toast.LENGTH_LONG).show();
@@ -286,6 +397,12 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         if (id == R.id.action_settings) {
             return true;
         }
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
 
         return super.onOptionsItemSelected(item);
     }

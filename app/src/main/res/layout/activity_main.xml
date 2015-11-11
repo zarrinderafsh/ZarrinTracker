@@ -206,12 +206,13 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/ivPersonImage"
                     android:src="@drawable/vintage_girl"
-                    android:layout_marginLeft="20dp" />
+                    android:layout_marginLeft="20dp"
+                    android:contentDescription="@string/PersonImage" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/PersonImage"
+                    android:text="@string/personname"
                     android:id="@+id/tvPersonName"
                     android:layout_marginLeft="20dp"
                     android:textSize="20sp"
