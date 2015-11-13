@@ -2,16 +2,21 @@ package ir.tsip.tracker.zarrintracker;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.method.DateTimeKeyListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,10 +26,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,7 +63,7 @@ public class ProfileActivity extends ActionBarActivity {
 
         llEditProfile = (LinearLayout) findViewById(R.id.llEditProfileShow);
         tvName = (TextView) findViewById(R.id.tvName);
-        tvPhone = (TextView) findViewById(R.id.tvPhneNumber);
+        tvPhone = (TextView) findViewById(R.id.tvPhonNumber);
 
         View.OnClickListener EditProfile = new View.OnClickListener(){
             public void onClick(View v)
@@ -128,6 +136,7 @@ public class ProfileActivity extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Bitmap bm = null;
         if (resultCode == RESULT_OK) {
             if (requestCode == 0) {
                 File f = new File(Environment.getExternalStorageDirectory()
@@ -139,47 +148,101 @@ public class ProfileActivity extends ActionBarActivity {
                     }
                 }
                 try {
-                    Bitmap bm;
                     BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
 
                     bm = BitmapFactory.decodeFile(f.getAbsolutePath(),
                             btmapOptions);
 
-                    // bm = Bitmap.createScaledBitmap(bm, 70, 70, true);
-                    ivGetPersonImage.setImageBitmap(bm);
-
-                    String path = android.os.Environment
-                            .getExternalStorageDirectory()
-                            + File.separator
-                            + "Phoenix" + File.separator + "default";
                     f.delete();
-                    OutputStream fOut = null;
-                    File file = new File(path, String.valueOf(System
-                            .currentTimeMillis()) + ".jpg");
-                    try {
-                        fOut = new FileOutputStream(file);
-                        bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-                        fOut.flush();
-                        fOut.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else if (requestCode == 1) {
                 Uri selectedImageUri = data.getData();
-
-                String tempPath = selectedImageUri.getPath();//selectedImageUri, ProfileActivity.this);
-                Bitmap bm;
-                BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-                bm = BitmapFactory.decodeFile(tempPath, btmapOptions);
-                ivGetPersonImage.setImageBitmap(bm);
+                try {
+                    bm = getBitmapFromUri(selectedImageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+        }
+        if(bm != null)
+        {
+            ShareSettings.SetValue(Base, "ProfileImage","");
+            if(SaveBitmap(bm))
+            {
+            }
+        }
+    }
+
+    private Boolean SaveBitmap(Bitmap bm)
+    {
+        boolean ret = false;
+        String path = ShareSettings.getValue(Base, "ProfileImage");
+        if(path.length() == 0) {
+            path = android.os.Environment
+                    .getExternalStorageDirectory()
+                    + File.separator
+                    + "Pictures" + File.separator + "Ztracker"
+                    + File.separator
+                    +(new java.text.SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-", Locale.US).format(new Date())
+                    +"profilePic.jpg"
+            );
+        }
+        File file = new File(path);
+        boolean success = true;
+        if (!file.getParentFile().exists()) {
+            success = file.getParentFile().mkdir();
+        }
+        if(!success)
+            return false;
+
+        OutputStream fOut = null;
+        if(file.exists())
+            file.delete();
+        try {
+            fOut = new FileOutputStream(file);
+
+            //Bitmap resized = Bitmap.createScaledBitmap(bm, 512, 512, true);
+            ret = bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+            ShareSettings.SetValue(Base, "ProfileImage", file.getPath());
+            fOut.flush();
+            fOut.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
+    }
+
+    public static void setProfileImage(ImageView ivPersonImage, int Radious, Context mBase)
+    {
+        String path = ShareSettings.getValue(mBase, "ProfileImage");
+        if(path.length() > 0) {
+            File file = new File(path);
+            if(!file.exists()) {
+                ShareSettings.SetValue(mBase, "ProfileImage", "");
+                return;
+            }
+            BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+
+            ivPersonImage.setImageBitmap(
+                    CircleImage.getRoundedRectBitmap(
+                            Bitmap.createScaledBitmap(
+                                    BitmapFactory.decodeFile(file.getAbsolutePath(),btmapOptions), Radious, Radious, true), Radious
+                    )
+            );
         }
     }
 
@@ -232,6 +295,11 @@ public class ProfileActivity extends ActionBarActivity {
     {
         super.onStart();
         StartServices();
+
+        ((TextView)findViewById(R.id.tvName)).setText(EditProfileActivity.getName(this.getBaseContext()));
+        ((TextView)findViewById(R.id.tvPhonNumber)).setText(EditProfileActivity.getPhone(this.getBaseContext()));
+
+        setProfileImage(ivGetPersonImage,256,Base);
     }
     @Override
     public void onRestart()

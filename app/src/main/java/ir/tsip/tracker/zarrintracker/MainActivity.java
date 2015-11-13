@@ -414,4 +414,13 @@ ListView lsvtest;
             }
         }, 2000);
     }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        ((TextView)findViewById(R.id.tvPersonName)).setText(EditProfileActivity.getName(this.getBaseContext()));
+
+        ProfileActivity.setProfileImage(ivPersonImage,96,Base);
+    }
 }
