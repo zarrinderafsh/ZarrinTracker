@@ -26,6 +26,7 @@ public class SendDataService extends Service {
     private Boolean _SendData;
     private static com.android.volley.RequestQueue queue;
     private static String IDSend = "";
+    public static int CountPoint;
 
 
     public SendDataService() {
@@ -69,36 +70,39 @@ public class SendDataService extends Service {
         while (_SeriveStart) {
             try {
                 Thread.sleep(1000);
-                if(IDSend.length() == 0 && LocationListener.GetInternetConnect()) {
-                    Data = "";
-                    IDSend = "";
-                    try {
-                        c = db.query(DatabaseContracts.AVLData.TABLE_NAME, columns, "", null, "", "", "");
-                        c.moveToFirst();
+                if(LocationListener.GetInternetConnect()) {
+                    if (IDSend.length() == 0 && LocationListener.GetInternetConnect()) {
+                        Data = "";
+                        IDSend = "";
                         try {
-                            Counter = 0;
-                            if (c.getCount() > 0)
-                                while (true || Counter < 20) {
-                                    Counter++;
-                                    Data += c.getString(c.getColumnIndexOrThrow(DatabaseContracts.AVLData.COLUMN_NAME_Data)) + "#";
-                                    if (IDSend.length() > 0)
-                                        IDSend += ',';
-                                    IDSend += c.getString(c.getColumnIndexOrThrow(DatabaseContracts.AVLData.COLUMN_NAME_ID));
-                                    if (c.isLast())
-                                        break;
-                                    c.moveToNext();
-                                }
+                            c = db.query(DatabaseContracts.AVLData.TABLE_NAME, columns, "", null, "", "", "");
+                            c.moveToFirst();
+                            try {
+                                Counter = 0;
+                                CountPoint = c.getCount();
+                                if (c.getCount() > 0)
+                                    while (true || Counter < 20) {
+                                        Counter++;
+                                        Data += c.getString(c.getColumnIndexOrThrow(DatabaseContracts.AVLData.COLUMN_NAME_Data)) + "#";
+                                        if (IDSend.length() > 0)
+                                            IDSend += ',';
+                                        IDSend += c.getString(c.getColumnIndexOrThrow(DatabaseContracts.AVLData.COLUMN_NAME_ID));
+                                        if (c.isLast())
+                                            break;
+                                        c.moveToNext();
+                                    }
+                            } catch (Exception er) {
+                            }
+                            c.close();
+                            c = null;
                         } catch (Exception er) {
                         }
-                        c.close();
-                        c = null;
-                    } catch (Exception er) {
-                    }
-                    if (Data.length() > 1) {
-                        Data = Tools.GetImei(getApplicationContext()) + "|" + Data;
-                        SendData(Data);
+                        if (Data.length() > 1) {
+                            Data = Tools.GetImei(getApplicationContext()) + "|" + Data;
+                            SendData(Data);
 
-                        db.delete(DatabaseContracts.AVLData.TABLE_NAME, "", null);
+                            db.delete(DatabaseContracts.AVLData.TABLE_NAME, "", null);
+                        }
                     }
                 }
             } catch (Exception ex) {

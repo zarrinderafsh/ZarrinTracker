@@ -382,7 +382,6 @@ ListView lsvtest;
             @Override
             public void run() {
                 // Start Location Service
-                ServiceManager.StartService(getBaseContext(), LocationService.class);
                 ServiceManager.StartService(getBaseContext(), SendDataService.class);
                 ServiceManager.StartService(getBaseContext(), LocationListener.class);
 
@@ -489,5 +488,14 @@ ListView lsvtest;
                 doubleBackToExitPressedOnce=false;
             }
         }, 2000);
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        ((TextView)findViewById(R.id.tvPersonName)).setText(EditProfileActivity.getName(this.getBaseContext()));
+
+        ProfileActivity.setProfileImage(ivPersonImage,96,Base);
     }
 }

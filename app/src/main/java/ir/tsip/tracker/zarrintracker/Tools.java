@@ -170,8 +170,6 @@ public class Tools {
             googleMap.animateCamera(com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom(myPosition, 15.0f));
         }
         myMarker.setPosition(myPosition);
-
-
         getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom),context);
 
     }
@@ -205,7 +203,7 @@ public class Tools {
 
     }
 
-    public static float getBatteryLevel(Activity activate) {
+    public static float getBatteryLevel(Context activate) {
         Intent batteryIntent = activate.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);

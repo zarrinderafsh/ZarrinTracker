@@ -55,7 +55,7 @@
                 android:text="Your Name"
                 android:id="@+id/tvName"
                 android:layout_marginLeft="20dp"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:clickable="true" />
 
@@ -63,9 +63,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0000-000-000"
-                    android:id="@+id/tvPhneNumber"
+                    android:id="@+id/tvPhonNumber"
                     android:layout_marginLeft="20dp"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:layout_marginTop="20dp"
                     android:clickable="true" />
             </LinearLayout>
@@ -202,7 +202,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="-"
-                            android:id="@+id/textView13" />
+                            android:id="@+id/tvUserActivity" />
                     </LinearLayout>
                 </LinearLayout>
 
