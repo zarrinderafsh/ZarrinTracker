@@ -20,6 +20,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +45,13 @@ public class ChatActivity extends AppCompatActivity {
 
         btnSend=(Button)findViewById(R.id.btnSendMessage);
         btnSend.setOnClickListener(new View.OnClickListener() {
+            List<String> msg;
             final String url = "http://tstracker.ir/services/webbasedefineservice.asmx/SetMessage";
             @Override
             public void onClick(View v) {
                params = new HashMap<>();
+                msg=new ArrayList<String>() ;
+                msg.add( txtMessage.getText().toString());
                 params.put("message", txtMessage.getText().toString());
                 params.put("imei", Tools.GetImei(getApplicationContext()));
                 JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url,
@@ -58,6 +62,7 @@ public class ChatActivity extends AppCompatActivity {
                             String data = response.getString("d");
                             if (data.contains("1")) {
 
+                                InsertAndShowMessages(msg);
                             }
                         } catch (Exception er) {
                         }

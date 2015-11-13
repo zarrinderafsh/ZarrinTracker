@@ -18,7 +18,7 @@
     <string name="ivNetLocation">Network Location</string>
     <string name="ivWiFiDesc">Network Location</string>
     <string name="title_activity_invate">Invate</string>
-    <string name="InvetionDescription">\@stringChose the best way to send the invitation to you Family Member:/hello_world</string>
+    <string name="InvetionDescription">Share the generated code with others to join your group.</string>
     <string name="tvzTrackerText">zTRACKER</string>
     <string name="ivCloseMapString">CloseMap</string>
     <string name="title_activity_profile">ProfileActivity</string>

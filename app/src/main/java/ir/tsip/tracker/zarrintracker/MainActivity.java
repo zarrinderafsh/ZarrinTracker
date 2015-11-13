@@ -3,9 +3,11 @@ package ir.tsip.tracker.zarrintracker;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
@@ -28,9 +30,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -63,7 +74,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setContentView(R.layout.activity_main);
-
+        checkRegistration();
         Base = this;
         ShowMessage();
         StartServices();
@@ -160,7 +171,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         lsvtest=(ListView)findViewById(R.id.lsvtest);
 
         lsvtest.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawerlistlayout, new String[]{"hi","secoond"}));
+                R.layout.drawerlistlayout, new String[]{"Map","Invite","Groups", "Chat","About"}));
 
         mTitle = mDrawerTitle = getTitle();
         mDrawerLayout= (android.support.v4.widget.DrawerLayout) findViewById(R.id.drawer_layout);
@@ -200,6 +211,69 @@ ListView lsvtest;
     MapFragment mMapFragment;
     int StartTouchX = 0;
     int StartTouchY = 0;
+
+
+    private HashMap params;
+    private DatabaseHelper dh;
+    private SQLiteDatabase db;
+    private static RequestQueue queue;
+    private void checkRegistration(){
+
+        params = new HashMap<>();
+        // the POST parameters:
+        params.put("pData",Tools.GetImei(this)+"/");// "351520060796671");
+
+        JSONObject jo1=new JSONObject(params);
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, "http://tstracker.ir/services/webbasedefineservice.asmx/CheckRegistration",jo1   , new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+
+                    String data= response.getString("d");
+                    JSONObject jo=new JSONObject(data);
+                   String key = jo.getString("key");
+                    String logo = jo.getString("logo");
+                    String site =jo.getString("site");
+                    String tell = jo.getString("tell");
+
+                    dh = new DatabaseHelper(getApplicationContext());
+                    if(key!=null) {
+                        db = dh.getWritableDatabase();
+
+                        // Create a new map of values, where column names are the keys
+                        ContentValues values = new ContentValues();
+                        values.put(DatabaseContracts.Settings.COLUMN_NAME_ID, 1);
+                        values.put(DatabaseContracts.Settings.COLUMN_NAME_key, key);
+                        values.put(DatabaseContracts.Settings.COLUMN_NAME_days, "0,1,2,3,4,5,6");
+                        values.put(DatabaseContracts.Settings.COLUMN_NAME_endTime, "14");
+                        values.put(DatabaseContracts.Settings.COLUMN_NAME_fromTime, "07");
+                        values.put(DatabaseContracts.Settings.COLUMN_NAME_logo, logo);
+                        values.put(DatabaseContracts.Settings.COLUMN_NAME_site, site);
+                        values.put(DatabaseContracts.Settings.COLUMN_NAME_tell, tell);
+                        values.put(DatabaseContracts.Settings.COLUMN_NAME_Accurate, "h");
+                        values.put(DatabaseContracts.Settings.COLUMN_NAME_interval, 5000);
+                        // Insert the new row, returning the primary key value of the new row
+
+                        long newRowId = db.insert(DatabaseContracts.Settings.TABLE_NAME, "", values);
+                        if (newRowId > 0) {
+                        }
+                        db.close();
+                        dh.close();
+                    }
+                } catch (Exception er) {
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+        if(queue == null)
+            queue = Volley.newRequestQueue(getApplicationContext());
+        queue.add(jsObjRequest);
+    }
 
     /********************************************************************DrawerLayout Methods*/
     /***
@@ -390,6 +464,7 @@ ListView lsvtest;
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+
         // Handle your other action bar items...
 
         return super.onOptionsItemSelected(item);

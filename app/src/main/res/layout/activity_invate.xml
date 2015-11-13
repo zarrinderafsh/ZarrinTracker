@@ -13,7 +13,7 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="Your family code is @code"
+        android:text="Your generated key is valid for 15 minutes."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView2"

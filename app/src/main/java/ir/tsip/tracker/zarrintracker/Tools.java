@@ -177,7 +177,7 @@ public class Tools {
     }
     private static RequestQueue queue;
 
-    public static void getDevicesLocation(String bounds,String zoom,Context context){
+    public static void getDevicesLocation(String bounds,String zoom, final Context context){
 
         Map<String, String> params = new HashMap<>();
         params.put("bounds", bounds);
@@ -188,6 +188,7 @@ public class Tools {
             public void onResponse(JSONObject response) {
                 try {
                     String data = response.getString("d");
+                    Toast.makeText(context,data , Toast.LENGTH_SHORT).show();
                     if (data.contains("1")) {
                    }
                 } catch (Exception er) {

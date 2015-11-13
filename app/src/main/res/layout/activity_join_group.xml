@@ -33,7 +33,6 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignStart="@+id/txtJoinTitle"
         android:layout_below="@+id/ivJoinIcon">
 
         <EditText
@@ -42,14 +41,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/txtJoinCode"
-            android:gravity="center_horizontal"
-            android:layout_centerHorizontal="true" />
-        <EditText
-            android:text="ENTER A NAME!"
-            android:textAlignment="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtJoinDeviceName"
             android:gravity="center_horizontal"
             android:layout_centerHorizontal="true" />
 
@@ -61,7 +52,14 @@
             android:textAlignment="center"
             android:id="@+id/ibtnAddToGroup"
             android:layout_gravity="center_horizontal" />
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lsvGroups"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
     </LinearLayout>
+
 
 
 </RelativeLayout>

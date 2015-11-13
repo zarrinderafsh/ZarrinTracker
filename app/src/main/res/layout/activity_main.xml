@@ -135,40 +135,6 @@
                     android:layout_toEndOf="@+id/ivNetLocation"
                     android:clickable="true" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ivInvite"
-                    android:contentDescription="@string/ivWiFiDesc"
-                    android:src="@drawable/person_white_add"
-                    android:layout_marginLeft="55dp"
-                    android:layout_marginStart="33dp"
-                    android:layout_alignTop="@+id/ivBattery"
-                    android:layout_toRightOf="@+id/ivArrowDown"
-                    android:layout_toEndOf="@+id/ivArrowDown"
-                    android:clickable="true" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ivGroup"
-                    android:contentDescription="@string/ivWiFiDesc"
-                    android:src="@drawable/user_group"
-                    android:layout_alignTop="@+id/ivInvite"
-                    android:layout_alignRight="@+id/textView5"
-                    android:layout_alignEnd="@+id/textView5"
-                    android:clickable="true" />
-
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ibtnChat"
-                    android:src="@drawable/chat"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/ivArrowDown"
-                    android:layout_toEndOf="@+id/ivArrowDown"
-                    android:background="@android:color/transparent" />
-
                 <TextView
                     android:id="@+id/textView5"
                     android:layout_width="wrap_content"
@@ -177,10 +143,43 @@
                     android:textSize="18sp"
                     android:textColor="#FFFFFF"
                     android:gravity="center_horizontal"
-                    android:layout_alignTop="@+id/textView"
-                    android:layout_alignLeft="@+id/ibtnChat"
-                    android:layout_alignStart="@+id/ibtnChat"
-                    android:layout_marginLeft="5dp" />
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="10dp" />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ibtnChat"
+                    android:src="@drawable/chat"
+                    android:layout_centerVertical="true"
+                    android:background="@android:color/transparent"
+                    android:layout_below="@+id/textView5"
+                    android:layout_toLeftOf="@+id/ivInvite"
+                    android:layout_marginRight="10dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ivInvite"
+                    android:contentDescription="@string/ivWiFiDesc"
+                    android:src="@drawable/person_white_add"
+                    android:clickable="true"
+                    android:layout_toLeftOf="@+id/ivGroup"
+                    android:layout_below="@+id/textView5"
+                    android:layout_marginRight="10dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ivGroup"
+                    android:contentDescription="@string/ivWiFiDesc"
+                    android:src="@drawable/user_group"
+                    android:clickable="true"
+                    android:layout_below="@+id/textView5"
+                    android:layout_alignRight="@+id/textView5"
+                    android:layout_marginRight="-10dp" />
 
             </RelativeLayout>
 

@@ -50,20 +50,6 @@ public class JoinGroupActivity extends AppCompatActivity {
                     txtCode.setText("");
             }
         });
-        /*********************************************************txtDeviceName*/
-        txtDeviceName = (EditText) findViewById(R.id.txtJoinDeviceName);
-        //When control lose or reach focus.
-        txtDeviceName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                String ed_text = txtDeviceName.getText().toString().trim();
-
-                if((ed_text.isEmpty() || ed_text.length() == 0 || ed_text.equals("") || ed_text == null) && !hasFocus)
-                    txtDeviceName.setText("ENTER A NAME!");
-                else if (txtDeviceName.getText().toString().contains("ENTER A NAME!") && hasFocus)
-                    txtDeviceName.setText("");
-            }
-        });
         /*********************************************************ibtnAddToGroup*/
         ibtnAddToGroup = (ImageButton) findViewById(R.id.ibtnAddToGroup);
         //Raise when clicked
@@ -75,7 +61,6 @@ public class JoinGroupActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<>();
                 params.put("key", txtCode.getText().toString());
                 params.put("imei", Tools.GetImei(getApplicationContext()));
-                params.put("name", txtDeviceName.getText().toString());
                 JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url,
                         new JSONObject(params), new Response.Listener<JSONObject>() {
                     @Override
