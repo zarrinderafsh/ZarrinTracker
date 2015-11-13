@@ -12,14 +12,16 @@ public class Action {
     public static Object run(String ClassName,String methodName,Class<?>[] ParamsType,Object[] Params) throws ClassNotFoundException {
         try {
             Class<?> clazz = Class.forName(ClassName);
-            Constructor<?> ctor = clazz.getConstructor(String.class);
-            Object object = ctor.newInstance(new Object[]{});
-            Object ret = object.getClass().getMethod(methodName,ParamsType).invoke(Params);
+
+            Method method = clazz.getMethod(methodName, ParamsType);
+            Object ret = method.invoke(null,Params);
+
+//            Object ret = clazz.getMethod(methodName,ParamsType).invoke(Params[0],Params[1]);
             return  ret;
         }
         catch (Exception ex)
         {
-
+            ex.toString();
         }
         return null;
     }

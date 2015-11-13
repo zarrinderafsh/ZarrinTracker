@@ -100,38 +100,16 @@ public class EditProfileActivity extends ActionBarActivity {
         SendData(Data);
     }
 
-    private static String url = "http://tstracker.ir/services/webbasedefineservice.asmx/SaveProfile";
-
     private void SendData(String Data)
     {
-        Map<String, String> params = new HashMap<>();
-        params.put("Data", Data);
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url,
-                new JSONObject(params), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String data = response.getString("d");
-                    if (data.contains("1")) {
-                        Toast.makeText(mContext, "Save profile success.", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception er) {
-                }
-                queue.stop();
-                queue = null;
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(mContext, "Error save profile:"+error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        if (Data.length() > 1) {
-            if(queue == null)
-                queue = Volley.newRequestQueue(getApplicationContext());
-            queue.add(jsObjRequest);
-            Toast.makeText(mContext, "Send save profile ... .", Toast.LENGTH_SHORT).show();
-        }
+        WebServices W = new WebServices(getApplicationContext());
+        W.addQueue("ir.tsip.tracker.zarrintracker.EditProfileActivity",0,Data,"SaveProfile");
+        Toast.makeText(mContext, "Send save profile ... .", Toast.LENGTH_SHORT).show();
+    }
+
+    public static void backWebServices (int ObjectCode, String Data)
+    {
+        Toast.makeText(mContext, "Send save success.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
