@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -154,7 +155,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         ibtnChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(Base, ChatActivity.class);
+                Intent myIntent = new Intent(Base, GroupsActivity.class);
                 Base.startActivity(myIntent);
             }
         });
@@ -496,6 +497,6 @@ ListView lsvtest;
         super.onStart();
         ((TextView)findViewById(R.id.tvPersonName)).setText(EditProfileActivity.getName(this.getBaseContext()));
 
-        ProfileActivity.setProfileImage(ivPersonImage,96,Base);
+        ProfileActivity.setProfileImage(ivPersonImage, 96, Base);
     }
 }

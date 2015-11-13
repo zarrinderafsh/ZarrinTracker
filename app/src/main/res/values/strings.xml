@@ -26,5 +26,6 @@
     <string name="title_activity_chat">ChatActivity</string>
     <string name="personname">Your name</string>
     <string name="PersonImage">PersonImage</string>
+    <string name="title_activity_groups">GroupsActivity</string>
 
 </resources>
