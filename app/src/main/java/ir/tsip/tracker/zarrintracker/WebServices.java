@@ -38,28 +38,47 @@ public class WebServices {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getWritableDatabase();
         try {
-//            Val.put();
-//            db.insert(DatabaseContracts.AVLData.TABLE_NAME, DatabaseContracts.AVLData.COLUMN_NAME_ID, Data);
-//            MessageManager.SetMessage(
-//                    "Your Location is - \nLat: " +
-//                            LocationListener.getLatitude() +
-//                            "\nLong: " +
-//                            LocationListener.getLongitude());
-        } catch (Exception ex) {
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ClassName,ClassName);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ObjectCode,ObjectCode);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data,Data);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
 
+            db.insert(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.QueueTable.COLUMN_NAME_ID, Val);
+        } catch (Exception ex) {
         }
         db.close();
         dbh.close();
-
     }
 
     private void RunSend() {
-
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        SQLiteDatabase db = dbh.getWritableDatabase();
         Timer _Timer = new Timer(true);
         _Timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
+//                    c = db.query(DatabaseContracts.AVLData.TABLE_NAME, columns, "", null, "", "", "");
+//                    c.moveToFirst();
+//                    try {
+//                        Counter = 0;
+//                        CountPoint = c.getCount();
+//                        if (c.getCount() > 0)
+//                            while (true || Counter < 20) {
+//                                Counter++;
+//                                Data += c.getString(c.getColumnIndexOrThrow(DatabaseContracts.AVLData.COLUMN_NAME_Data)) + "#";
+//                                if (IDSend.length() > 0)
+//                                    IDSend += ',';
+//                                IDSend += c.getString(c.getColumnIndexOrThrow(DatabaseContracts.AVLData.COLUMN_NAME_ID));
+//                                if (c.isLast())
+//                                    break;
+//                                c.moveToNext();
+//                            }
+//                    } catch (Exception er) {
+//                    }
+//                    c.close();
+//                    c = null;
                 } catch (Exception ex) {
                     ex.toString();
                 }
