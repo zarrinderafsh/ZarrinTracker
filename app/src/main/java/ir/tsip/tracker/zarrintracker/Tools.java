@@ -23,6 +23,7 @@ import android.view.Display;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -36,10 +37,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,18 +171,20 @@ public class Tools {
 
         myPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-        if (myMarker == null) {
-            myMarker = googleMap.addMarker(new MarkerOptions().position(myPosition).title("موقعیت من"));
-            googleMap.animateCamera(com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom(myPosition, 15.0f));
-        }
-        myMarker.setPosition(myPosition);
-        getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom),context);
+//        if (myMarker == null) {
+//            myMarker = googleMap.addMarker(new MarkerOptions().position(myPosition).title("موقعیت من"));
+//            googleMap.animateCamera(com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom(myPosition, 15.0f));
+//        }
+//        myMarker.setPosition(myPosition);
+        getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom),context,googleMap);
 
     }
     private static RequestQueue queue;
-
-    public static void getDevicesLocation(String bounds,String zoom, final Context context){
-
+private static Map<Integer,Marker> markers;
+    public static void getDevicesLocation(String bounds,String zoom, final Context context, final GoogleMap gmap){
+       bounds=bounds.replace("LatLngBounds{southwest=lat/lng: ","(");
+        bounds=bounds.replace("northeast=lat/lng: ","");
+    bounds=bounds.replace("}",")");
         Map<String, String> params = new HashMap<>();
         params.put("bounds", bounds);
         params.put("zoom", zoom);
@@ -188,10 +194,24 @@ public class Tools {
             public void onResponse(JSONObject response) {
                 try {
                     String data = response.getString("d");
-                    Toast.makeText(context,data , Toast.LENGTH_SHORT).show();
-                    if (data.contains("1")) {
-                   }
+                    JSONObject jo=new JSONObject(data);
+
+                    if(markers==null)
+                        markers=new HashMap<Integer, Marker>() ;
+                  JSONArray ja= jo.getJSONArray("ChangingMarkers")     ;
+                    for(int i=0;i<ja.length();i++)
+                    {
+                        if(markers.get(Integer.valueOf(ja.getJSONObject(i).getString("ID")) )== null) {
+
+                            String lat = ja.getJSONObject(i).getJSONObject("Location").getString("X");
+                            String lng = ja.getJSONObject(i).getJSONObject("Location").getString("Y");
+                            markers.put(Integer.valueOf(ja.getJSONObject(i).getString("ID").toString()),
+                                    gmap.addMarker(new MarkerOptions().position(
+                                            new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title("s")));
+                        }
+                    }
                 } catch (Exception er) {
+                    String s=er.getMessage();
                 }
             }
         }, new Response.ErrorListener() {
@@ -199,10 +219,10 @@ public class Tools {
             public void onErrorResponse(VolleyError error) {
             }
         });
+
         if (queue == null)
             queue = Volley.newRequestQueue(context);
         queue.add(jsObjRequest);
-
     }
 
     public static float getBatteryLevel(Context activate) {
