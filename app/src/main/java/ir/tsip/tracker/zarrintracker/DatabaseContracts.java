@@ -87,7 +87,7 @@ public class DatabaseContracts {
                         QueueTable.COLUMN_NAME_ClassName + " nvarchar(250)," +
                         QueueTable.COLUMN_NAME_ObjectCode + " INTEGER," +
                         QueueTable.COLUMN_NAME_WebServiceName + " nvarchar(250)," +
-                        QueueTable.COLUMN_NAME_Data + " nvarchar(1024)," +
+                        QueueTable.COLUMN_NAME_Data + " BLOB," +
                         QueueTable.COLUMN_NAME_State + " INTEGER," +
                         QueueTable.COLUMN_NAME_Resault + " nvarchar(1024));";
 

@@ -372,6 +372,8 @@ public static Location CurrentLocation;
             this.mContext = getApplicationContext();
         PrepareLocation();
         StartServices();
+        WebServices W = new WebServices(mContext);
+        W.RunSend();
         return START_STICKY;
     }
 

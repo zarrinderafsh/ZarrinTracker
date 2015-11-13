@@ -171,6 +171,7 @@ public class ProfileActivity extends ActionBarActivity {
             ShareSettings.SetValue(Base, "ProfileImage","");
             if(SaveBitmap(bm))
             {
+                SendImageServer();
             }
         }
     }
@@ -203,8 +204,8 @@ public class ProfileActivity extends ActionBarActivity {
         try {
             fOut = new FileOutputStream(file);
 
-            //Bitmap resized = Bitmap.createScaledBitmap(bm, 512, 512, true);
-            ret = bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+            Bitmap resize = Bitmap.createScaledBitmap(bm, 512, 512, true);
+            ret = resize.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
             ShareSettings.SetValue(Base, "ProfileImage", file.getPath());
             fOut.flush();
             fOut.close();
@@ -244,6 +245,34 @@ public class ProfileActivity extends ActionBarActivity {
                     )
             );
         }
+    }
+
+    public void SendImageServer()
+    {
+        String path = ShareSettings.getValue(Base, "ProfileImage");
+        if(path.length() > 0) {
+            File file = new File(path);
+            if(!file.exists()) {
+                ShareSettings.SetValue(Base, "ProfileImage", "");
+                return;
+            }
+            BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+            Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath(),btmapOptions);
+            WebServices W = new WebServices(Base);
+            byte[] res = Tools.getBytesFromBitmap(bm);
+            byte[] imei = Tools.GetImei(Base).getBytes();
+
+            byte[] destination = new byte[imei.length + res.length + 1];
+            System.arraycopy(imei, 0, destination, 0, imei.length);
+            destination[imei.length] = (byte)255;
+            System.arraycopy(res, 0, destination, imei.length + 1, res.length);
+
+            W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",0,destination,"SaveImage");
+        }
+    }
+
+    public static void backWebServices (int ObjectCode, String Data)
+    {
     }
 
     private void ShowEditProfile()
