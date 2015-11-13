@@ -59,14 +59,40 @@ public class DatabaseContracts {
         public static final String TABLE_NAME = "Chat";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_Data = "content";
+        public static final String COLUMN_NAME_Group = "Group";
         private static final String COMMA_SEP = ",";
         public static final String SQL_CREATE_Table =
-                "CREATE TABLE " + AVLData.TABLE_NAME + " (" +
-                        AVLData.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
-                        AVLData.COLUMN_NAME_Data + " nvarchar(250) )";
+                "CREATE TABLE " + ChatLog.TABLE_NAME + " (" +
+                        ChatLog.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                        ChatLog.COLUMN_NAME_Group + " nvarchar(250)," +
+                        ChatLog.COLUMN_NAME_Data + " nvarchar(250) )";
 
         public static final String SQL_DELETE_Table =
-                "DROP TABLE IF EXISTS " + AVLData.TABLE_NAME;
+                "DROP TABLE IF EXISTS " + ChatLog.TABLE_NAME;
+    }
+
+    public static abstract class QueueTable implements BaseColumns {
+        public static final String TABLE_NAME = "QueueTable";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_ClassName = "ClassName";
+        public static final String COLUMN_NAME_ObjectCode = "ObjectCode";
+        public static final String COLUMN_NAME_WebServiceName = "WebServiceName";
+        public static final String COLUMN_NAME_Data = "Data";
+        public static final String COLUMN_NAME_State = "State";
+        public static final String COLUMN_NAME_Resault = "Resault";
+
+        public static final String SQL_CREATE_Table =
+                "CREATE TABLE " + QueueTable.TABLE_NAME + " (" +
+                        QueueTable.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                        QueueTable.COLUMN_NAME_ClassName + " nvarchar(250)," +
+                        QueueTable.COLUMN_NAME_ObjectCode + " INTEGER," +
+                        QueueTable.COLUMN_NAME_WebServiceName + " nvarchar(250)," +
+                        QueueTable.COLUMN_NAME_Data + " nvarchar(1024)," +
+                        QueueTable.COLUMN_NAME_State + " INTEGER," +
+                        QueueTable.COLUMN_NAME_Resault + " nvarchar(1024));";
+
+        public static final String SQL_DELETE_Table =
+                "DROP TABLE IF EXISTS " + QueueTable.TABLE_NAME;
     }
 }
 
