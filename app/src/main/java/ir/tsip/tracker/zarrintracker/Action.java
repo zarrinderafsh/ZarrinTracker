@@ -15,8 +15,6 @@ public class Action {
 
             Method method = clazz.getMethod(methodName, ParamsType);
             Object ret = method.invoke(null,Params);
-
-//            Object ret = clazz.getMethod(methodName,ParamsType).invoke(Params[0],Params[1]);
             return  ret;
         }
         catch (Exception ex)
