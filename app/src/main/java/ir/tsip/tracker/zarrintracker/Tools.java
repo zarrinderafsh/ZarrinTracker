@@ -223,5 +223,6 @@ public class Tools {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
         return stream.toByteArray();
     }
+
 }
 
