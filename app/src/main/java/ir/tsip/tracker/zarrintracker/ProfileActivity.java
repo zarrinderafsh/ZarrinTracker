@@ -268,11 +268,36 @@ public class ProfileActivity extends ActionBarActivity {
             System.arraycopy(res, 0, destination, imei.length + 1, res.length);
 
             W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",0,destination,"SaveImage");
+            W=null;
         }
     }
 
     public static void backWebServices (int ObjectCode, String Data)
     {
+        switch(ObjectCode)
+        {
+            case 0:// SaveImage
+                break;
+            case 1:// GetProfile
+                break;
+            case 2:// GetImage
+                break;
+        }
+
+    }
+
+    public void GetProfileFromServer()
+    {
+        WebServices W = new WebServices(Base);
+        W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",1,Tools.GetImei(Base),"GetProfile");
+        W=null;
+    }
+
+    public void GetImageFromServer()
+    {
+        WebServices W = new WebServices(Base);
+        W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",2,Tools.GetImei(Base),"GetImageProfile");
+        W=null;
     }
 
     private void ShowEditProfile()

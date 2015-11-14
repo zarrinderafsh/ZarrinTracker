@@ -55,7 +55,8 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     LinearLayout llDown;
     LinearLayout llMain;
     LinearLayout llmapLayout;
-    TextView tvzTracker;
+    ImageView ivPause;
+    ImageView ivHelp;
     ImageView ivPersonImage;
     ImageView ivGPS;
     ImageView ivNetLocation;
@@ -88,7 +89,20 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         llD.height = Tools.GetDesktopSize(Base).y - ((LinearLayout.LayoutParams)llTop.getLayoutParams()).height;
         llDown.setLayoutParams(llD);
 
-        tvzTracker = (TextView) findViewById(R.id.tvzTRACKER);
+        ivPause = (ImageView) findViewById(R.id.ivPause);
+        ivPause.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                LocationListener.StartPause(1);
+            }
+        });
+
+        ivHelp = (ImageView) findViewById(R.id.ivHelp);
+        ivHelp.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                EventManager E = new EventManager(getApplicationContext());
+                E.SendSOS();
+            }
+        });
 
         //ivwIfI = (ImageView) findViewById(R.id.ivWiFi);
         ivGPS = (ImageView) findViewById(R.id.ivGPS);

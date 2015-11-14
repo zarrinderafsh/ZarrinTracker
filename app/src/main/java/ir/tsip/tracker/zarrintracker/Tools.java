@@ -103,10 +103,12 @@ public class Tools {
                     );
         }
         mBuilder.setContentIntent(resultPendingIntent);
+        mBuilder.setOngoing(true);
         if(mNotificationManager == null) {
             mNotificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         }
+
         mNotificationManager.notify(0, mBuilder.build());
     }
 
