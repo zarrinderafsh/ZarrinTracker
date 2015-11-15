@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -45,6 +46,7 @@ public class LocationListener  extends Service implements android.location.Locat
     private static Location LastLocation;
     private static long gpsTime;
     private static boolean isNewLocation;
+    private static Date PauseDate;
 
     public static int CurrentBearing;
     public static int CurrentSpeed;
@@ -53,7 +55,7 @@ public class LocationListener  extends Service implements android.location.Locat
     public static double CurrentLat;
     public static double CurrentLon;
     public static double CurrentSignal;
-public static Location CurrentLocation;
+    public static Location CurrentLocation;
 
 
     // The minimum distance to change Updates in meters
@@ -219,36 +221,21 @@ public static Location CurrentLocation;
      * Function to show settings alert dialog
      * On pressing Settings button will lauch Settings Options
      * */
-    public void showSettingsAlert(){
-//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-//
-//        // Setting Dialog Title
-//        alertDialog.setTitle("GPS is settings");
-//
-//        // Setting Dialog Message
-//        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
-//
-//        // On pressing Settings button
-//        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog,int which) {
-//                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                mContext.startActivity(intent);
-//            }
-//        });
-//
-//        // on pressing cancel button
-//        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
-//
-//        // Showing Alert Message
-//        alertDialog.show();
-    }
 
-    @Override
+     @Override
     public void onGpsStatusChanged(int p) {
+         switch (p) {
+             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
+                 break;
+             case GpsStatus.GPS_EVENT_FIRST_FIX:
+                 break;
+             case GpsStatus.GPS_EVENT_STOPPED:
+                 String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
+                 (new EventManager(mContext)).AddEvevnt( "turned GPS OFF:"+ SDate );
+                 break;
+             case GpsStatus.GPS_EVENT_STARTED:
+                 break;
+     }
         int count=0;
         float Snr=0;
         GpsStatus gpsStatus = locationManager.getGpsStatus(null);
@@ -268,6 +255,8 @@ public static Location CurrentLocation;
     @Override
     public void onLocationChanged(Location location) {
 
+        if(PauseDate!=null && (new Date()).before(PauseDate))
+            return;
         CurrentBearing = (int)location.getBearing();
         CurrentSpeed = (int)(location.getSpeed() * 3.6) ; // KM
         CurrentTime = (new Date(location.getTime()));
@@ -324,6 +313,13 @@ public static Location CurrentLocation;
         }
         db.close();
         dbh.close();
+    }
+
+    public static void StartPause(int hour)
+    {
+        PauseDate = new Date();
+        PauseDate.setTime(PauseDate.getTime() + hour * 3600 * 1000);
+        (new EventManager(mContext)).AddEvevnt("Puase for "+hour+" hour.");
     }
 
     public static Location getLastLocation()
