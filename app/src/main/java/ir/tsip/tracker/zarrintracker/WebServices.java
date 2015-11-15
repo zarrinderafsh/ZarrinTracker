@@ -75,6 +75,7 @@ public class WebServices {
         RunSend(1000,0);
         RunSend(1000 * 60 * 10 ,2);
     }
+    Cursor c;
     public void RunSend(int DelaySecound, final int pState) {
         Timer _Timer = new Timer(true);
         _Timer.schedule(new TimerTask() {
@@ -85,7 +86,7 @@ public class WebServices {
                         return;
                     DatabaseHelper dbh = new DatabaseHelper(context);
                     SQLiteDatabase db = dbh.getReadableDatabase();
-                    Cursor c;
+
                     c = db.query(DatabaseContracts.QueueTable.TABLE_NAME, null, " State = "+pState, null, "", "", "");
                     try {
                         if (c.moveToFirst())
@@ -133,6 +134,7 @@ public class WebServices {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+
                 SetState(Id,2);
             }
         });

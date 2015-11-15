@@ -167,9 +167,9 @@ public class Tools {
     public static void setUpMap(GoogleMap googleMap,Context context) {
         if (googleMap == null || LocationListener.CurrentLocation == null)
             return;
-        Location currentLocation = LocationListener.CurrentLocation;
-
-        myPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+//        Location currentLocation = LocationListener.CurrentLocation;
+//
+//        myPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
 //        if (myMarker == null) {
 //            myMarker = googleMap.addMarker(new MarkerOptions().position(myPosition).title("موقعیت من"));

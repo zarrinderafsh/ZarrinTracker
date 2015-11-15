@@ -1,15 +1,18 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.content.ClipData;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ListView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -33,37 +36,38 @@ public class ChatActivity extends AppCompatActivity {
     EditText txtMessage;
     private static RequestQueue queue;
     Map<String, String> params;
-
+String gpID;
+    ListView lsvChat;
+ArrayAdapter<String> adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        gpID=getIntent().getStringExtra("gpID");
+
 
         txtMessage=(EditText)findViewById(R.id.txtSendMessage);
-
+lsvChat=(ListView)findViewById(R.id.lsvChats);
 
         btnSend=(Button)findViewById(R.id.btnSendMessage);
         btnSend.setOnClickListener(new View.OnClickListener() {
-            List<String> msg;
             final String url = "http://tstracker.ir/services/webbasedefineservice.asmx/SetMessage";
             @Override
             public void onClick(View v) {
                params = new HashMap<>();
-                msg=new ArrayList<String>() ;
-                msg.add( txtMessage.getText().toString());
                 params.put("message", txtMessage.getText().toString());
                 params.put("imei", Tools.GetImei(getApplicationContext()));
+                params.put("gpID", gpID);
+                //Make EditText value, empty.
+                txtMessage.setText("");
                 JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url,
                         new JSONObject(params), new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            String data = response.getString("d");
-                            if (data.contains("1")) {
+//                            String data = response.getString("d");
 
-                                InsertAndShowMessages(msg);
-                            }
                         } catch (Exception er) {
                         }
                     }
@@ -78,6 +82,10 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+
+        adapter= new ArrayAdapter<String>(this,R.layout.drawerlistlayout,msgs );
+        lsvChat.setAdapter(adapter);
+
         GetNewstMessages();
     }
 
@@ -85,7 +93,7 @@ public class ChatActivity extends AppCompatActivity {
     private static RequestQueue queue2;
     Map<String, String> params2;
 
-    private void GetNewstMessages(){
+    private void GetNewstMessages() {
 
         Timer _Timer = new Timer(true);
         _Timer.schedule(new TimerTask() {
@@ -94,17 +102,27 @@ public class ChatActivity extends AppCompatActivity {
                 try {
                     params2 = new HashMap<>();
                     params2.put("imei", Tools.GetImei(getApplicationContext()));
+                    params2.put("gpID", gpID);
                     JsonObjectRequest jsObjRequest2 = new JsonObjectRequest(Request.Method.POST, "http://tstracker.ir/services/webbasedefineservice.asmx/GetMessage",
                             new JSONObject(params2), new Response.Listener<JSONObject>() {
                         @Override
-                        public void onResponse(JSONObject response) {
+                        public void onResponse(final JSONObject response) {
                             try {
-                                String data = response.getString("d");
-                                runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        InsertAndShowMessages(null);
-                                    }
-                                });
+                                if (response.getString("d").length()>4) {
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            try {
+                                                InsertMessages(response.getString("d").split(","));
+                                                for (String s:response.getString("d").split(",")
+                                                     ) {
+                                                    msgs.add(s);
+                                                }
+                                            } catch (Exception er) {
+
+                                            }
+                                        }
+                                    });
+                                }
                             } catch (Exception er) {
                             }
                         }
@@ -116,7 +134,15 @@ public class ChatActivity extends AppCompatActivity {
                     if (queue2 == null)
                         queue2 = Volley.newRequestQueue(getApplicationContext());
                     queue2.add(jsObjRequest2);
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            try {
+                                ShowMessages();
+                            } catch (Exception er) {
 
+                            }
+                        }
+                    });
                 } catch (Exception ex) {
                     ex.toString();
                 }
@@ -128,7 +154,7 @@ public class ChatActivity extends AppCompatActivity {
     ContentValues Data ;
     DatabaseHelper dbh;
     SQLiteDatabase db;
-    private void InsertAndShowMessages(List<String> messages) {
+    private void InsertMessages(String[] messages) {
         if(messages==null)
             return;
         if (dbh == null)
@@ -138,8 +164,34 @@ public class ChatActivity extends AppCompatActivity {
         for (String msg:messages ) {
             Data = new ContentValues();
             Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Data, msg);
+            Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Group, gpID);
             db.insert(DatabaseContracts.ChatLog.TABLE_NAME, DatabaseContracts.ChatLog.COLUMN_NAME_ID, Data);
+            msgs.add(msg);
         }
+
+    }
+    ArrayList<String> msgs=new ArrayList<>();
+    SQLiteDatabase readabledb;
+    private void ShowMessages(){
+
+        if(msgs.isEmpty()) {
+            if (dbh == null)
+                dbh = new DatabaseHelper(getApplicationContext());
+            if(readabledb==null)
+           readabledb = dbh.getReadableDatabase();
+
+            String[] columns = {DatabaseContracts.ChatLog.COLUMN_NAME_ID, DatabaseContracts.ChatLog.COLUMN_NAME_Group, DatabaseContracts.ChatLog.COLUMN_NAME_Data};
+            Cursor c = readabledb.query(DatabaseContracts.ChatLog.TABLE_NAME, columns, DatabaseContracts.ChatLog.COLUMN_NAME_Group+"=?", new String[]{String.valueOf(gpID)}, "", "", "");
+            c.moveToFirst();
+            while (true) {
+                msgs.add(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_Data)) );
+                if (c.isLast())
+                    break;
+                c.moveToNext();
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     @Override
