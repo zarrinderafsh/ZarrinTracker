@@ -187,46 +187,79 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_height="60dp"
+                android:layout_height="80dp"
                 android:layout_width="fill_parent"
                 android:background="@color/material_grey_300"
                 android:gravity="center_vertical">
 
-                <ImageView
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ivPersonImage"
-                    android:src="@drawable/vintage_girl"
-                    android:layout_marginLeft="20dp"
-                    android:contentDescription="@string/PersonImage"
-                    android:clickable="true" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ivPersonImage"
+                        android:src="@drawable/vintage_girl"
+                        android:contentDescription="@string/PersonImage"
+                        android:clickable="true" />
 
-                <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/personname"
+                        android:id="@+id/tvPersonName"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:clickable="true" />
+                    </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/personname"
-                    android:id="@+id/tvPersonName"
-                    android:layout_marginLeft="20dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:clickable="true" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ivPause"
+                        android:src="@drawable/player_pause"
+                        android:contentDescription="@string/PersonImage"
+                        android:clickable="true" />
 
-                <ImageView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pause"
+                        android:id="@+id/tvPause"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:clickable="true" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ivPause"
-                    android:src="@drawable/player_pause"
-                    android:layout_marginLeft="20dp"
-                    android:contentDescription="@string/PersonImage"
-                    android:clickable="true" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ivHelp"
+                        android:src="@drawable/help"
+                        android:clickable="true" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/ivHelp"
-                    android:src="@drawable/help"
-                    android:layout_marginLeft="20dp"
-                    android:clickable="true" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Help!"
+                        android:id="@+id/tvHelp"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:clickable="true" />
+                </LinearLayout>
 
             </LinearLayout>
 

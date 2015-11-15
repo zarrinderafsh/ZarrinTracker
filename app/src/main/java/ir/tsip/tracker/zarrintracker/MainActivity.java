@@ -3,22 +3,27 @@ package ir.tsip.tracker.zarrintracker;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -48,6 +53,7 @@ import com.google.android.gms.maps.MapFragment;
 
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -74,6 +80,8 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     ImageButton ibtnChat;
     TextView tvPersonName;
     Timer _TimerMain;
+    TextView tvHelp;
+    TextView tvPause;
 
     Activity Base;
 
@@ -99,15 +107,27 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         ivPause.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 PauseDialog();
-                //LocationListener.StartPause(1);
+            }
+        });
+
+        tvPause = (TextView) findViewById(R.id.tvPause);
+        tvPause.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                PauseDialog();
             }
         });
 
         ivHelp = (ImageView) findViewById(R.id.ivHelp);
         ivHelp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                EventManager E = new EventManager(getApplicationContext());
-                E.SendSOS();
+                HelpDialog();
+            }
+        });
+
+        tvHelp = (TextView) findViewById(R.id.tvHelp);
+        tvHelp.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                HelpDialog();
             }
         });
 
@@ -455,6 +475,22 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                             if (Mes.length() > 0) {
                                 Toast.makeText(getBaseContext(), Mes, Toast.LENGTH_LONG).show();
                             }
+
+                            Date date= new Date();
+                            TextView TV = (TextView) findViewById(R.id.tvPause);
+                            if(LocationListener.PauseDate!=null && date.before(LocationListener.PauseDate))
+                            {
+                                long Second = (LocationListener.PauseDate.getTime() - date.getTime()) / 1000;
+                                String S = (Second / 3600)+":"+
+                                (Second % 3600) / 60 +":"+ (Second % 3600) % 60;
+                                TV.setText(S);
+                            }
+                            else
+                            {
+                                TV.setText("Pause");
+                            }
+                            date = null;
+
                         }
                     });
                 } catch (Exception ex) {
@@ -562,19 +598,79 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int id = RG.getCheckedRadioButtonId();
-                int hour = (int)((RadioButton)RG.findViewById(id)).getTag();
-                LocationListener.StartPause(hour);
+                try {
+                    int id = RG.getCheckedRadioButtonId();
+                    int hour = (int) ((RadioButton) RG.findViewById(id)).getTag();
+                    LocationListener.StartPause(hour);
+                }
+                catch (Exception ex)
+                {
+
+                }
 
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LocationListener.StartPause(0);
                 dialog.cancel();
             }
         });
 
         builder.show();
     }
+
+    int HelpCount = 0;
+    private void HelpDialog()
+    {
+        HelpCount = 0;
+        final Dialog builder = new Dialog(this);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.setCancelable(false);
+        builder.setContentView(R.layout.helpdialog);
+
+        final Timer _Timer = new Timer(true);
+
+        final TextView tvShowTime = (TextView)builder.findViewById(R.id.tvHelpCounter);
+        Button button = (Button)builder.findViewById(R.id.btCloseHelp);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _Timer.cancel();
+                builder.dismiss();
+            }
+        });
+
+        final Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        _Timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                HelpCount++;
+                try {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if(HelpCount < 6) {
+                                tvShowTime.setText(String.valueOf(HelpCount));
+                                v.vibrate(500);
+                            }
+                            if(HelpCount >=6)
+                            {
+                                EventManager E = new EventManager(getApplicationContext());
+                                E.SendSOS();
+                                _Timer.cancel();
+                                builder.dismiss();
+                            }
+                        }
+                    });
+                } catch (Exception ex) {
+                    ex.toString();
+                }
+            }
+
+        }, 0, 1000);
+
+        builder.show();
+    }
+
 }

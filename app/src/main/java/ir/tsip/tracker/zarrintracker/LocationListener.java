@@ -33,6 +33,8 @@ public class LocationListener  extends Service implements android.location.Locat
     // flag for GPS status
     public static boolean canGetLocation = false;
 
+    public static Date PauseDate;
+
     // flag for Internet status
     private static boolean InternetConnection = false;
 
@@ -46,7 +48,6 @@ public class LocationListener  extends Service implements android.location.Locat
     private static Location LastLocation;
     private static long gpsTime;
     private static boolean isNewLocation;
-    private static Date PauseDate;
 
     public static int CurrentBearing;
     public static int CurrentSpeed;
