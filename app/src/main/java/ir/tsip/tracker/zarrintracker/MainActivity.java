@@ -2,8 +2,10 @@ package ir.tsip.tracker.zarrintracker;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -16,6 +18,7 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -24,10 +27,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,7 +73,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     ImageView imgGroupJoin;
     ImageButton ibtnChat;
     TextView tvPersonName;
-
+    Timer _TimerMain;
 
     Activity Base;
 
@@ -85,14 +91,15 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         llDown = (LinearLayout) findViewById(R.id.llDown);
         llMain = (LinearLayout) findViewById(R.id.llMain);
         llmapLayout = (LinearLayout) findViewById(R.id.mapLayout);
-        LinearLayout.LayoutParams llD =  (LinearLayout.LayoutParams)llDown.getLayoutParams();
-        llD.height = Tools.GetDesktopSize(Base).y - ((LinearLayout.LayoutParams)llTop.getLayoutParams()).height;
+        LinearLayout.LayoutParams llD = (LinearLayout.LayoutParams) llDown.getLayoutParams();
+        llD.height = Tools.GetDesktopSize(Base).y - ((LinearLayout.LayoutParams) llTop.getLayoutParams()).height;
         llDown.setLayoutParams(llD);
 
         ivPause = (ImageView) findViewById(R.id.ivPause);
         ivPause.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                LocationListener.StartPause(1);
+                PauseDialog();
+                //LocationListener.StartPause(1);
             }
         });
 
@@ -138,9 +145,9 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
             }
         });
 
-        View.OnClickListener ShowProfile = new View.OnClickListener(){
+        View.OnClickListener ShowProfile = new View.OnClickListener() {
             public void onClick(View v) {
-                Intent myIntent = new Intent(Base , ProfileActivity.class);
+                Intent myIntent = new Intent(Base, ProfileActivity.class);
                 Base.startActivity(myIntent);
             }
         };
@@ -149,7 +156,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         tvPersonName = (TextView) findViewById(R.id.tvPersonName);
         tvPersonName.setOnClickListener(ShowProfile);
 
-        View.OnClickListener GPSClick = new View.OnClickListener(){
+        View.OnClickListener GPSClick = new View.OnClickListener() {
             public void onClick(View v) {
                 Tools.turnGPSOnOff(Base);
             }
@@ -158,14 +165,14 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         ivNetLocation.setOnClickListener(GPSClick);
         ivBattery.setOnClickListener(GPSClick);
 
-         mMapFragment = MapFragment.newInstance();
+        mMapFragment = MapFragment.newInstance();
         FragmentTransaction fragmentTransaction =
                 getFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.mapLayout, mMapFragment);
         fragmentTransaction.commit();
         llmapLayout.setGravity(android.view.Gravity.BOTTOM);
 
-        ibtnChat=(ImageButton)findViewById(R.id.ibtnChat);
+        ibtnChat = (ImageButton) findViewById(R.id.ibtnChat);
         ibtnChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,7 +181,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
             }
         });
 
-        imgGroupJoin=(ImageView)findViewById(R.id.ivGroup);
+        imgGroupJoin = (ImageView) findViewById(R.id.ivGroup);
         imgGroupJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,26 +190,25 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
             }
         });
         /**********************************************************Set DrawLayout*/
-        lsvtest=(ListView)findViewById(R.id.lsvtest);
+        lsvtest = (ListView) findViewById(R.id.lsvtest);
 
         lsvtest.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawerlistlayout, new String[]{"Map","Invite","Groups", "Chat","About"}));
+                R.layout.drawerlistlayout, new String[]{"Map", "Invite", "Groups", "Chat", "About"}));
 
         mTitle = mDrawerTitle = getTitle();
-        mDrawerLayout= (android.support.v4.widget.DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (android.support.v4.widget.DrawerLayout) findViewById(R.id.drawer_layout);
         // enabling action bar app icon and behaving it as toggle button
-        if (getSupportActionBar() != null)
-        {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
-         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.app_name, // nav drawer open - description for accessibility
                 R.string.app_name // nav drawer close - description for accessibility
-        ){
+        ) {
 
-             public void onDrawerClosed(View view) {
-                 getSupportActionBar().setTitle(mTitle);
+            public void onDrawerClosed(View view) {
+                getSupportActionBar().setTitle(mTitle);
                 // calling onPrepareOptionsMenu() to show action bar icons
                 invalidateOptionsMenu();
             }
@@ -216,9 +222,10 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
     }
-     // nav drawer title
+
+    // nav drawer title
     private CharSequence mDrawerTitle;
-ListView lsvtest;
+    ListView lsvtest;
     // used to store app title
     private CharSequence mTitle;
     android.support.v4.widget.DrawerLayout mDrawerLayout;
@@ -232,27 +239,28 @@ ListView lsvtest;
     private DatabaseHelper dh;
     private SQLiteDatabase db;
     private static RequestQueue queue;
-    private void checkRegistration(){
+
+    private void checkRegistration() {
 
         params = new HashMap<>();
         // the POST parameters:
-        params.put("pData",Tools.GetImei(this)+"/");// "351520060796671");
+        params.put("pData", Tools.GetImei(this) + "/");// "351520060796671");
 
-        JSONObject jo1=new JSONObject(params);
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, "http://tstracker.ir/services/webbasedefineservice.asmx/CheckRegistration",jo1   , new Response.Listener<JSONObject>() {
+        JSONObject jo1 = new JSONObject(params);
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, "http://tstracker.ir/services/webbasedefineservice.asmx/CheckRegistration", jo1, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
 
-                    String data= response.getString("d");
-                    JSONObject jo=new JSONObject(data);
-                   String key = jo.getString("key");
+                    String data = response.getString("d");
+                    JSONObject jo = new JSONObject(data);
+                    String key = jo.getString("key");
                     String logo = jo.getString("logo");
-                    String site =jo.getString("site");
+                    String site = jo.getString("site");
                     String tell = jo.getString("tell");
 
                     dh = new DatabaseHelper(getApplicationContext());
-                    if(key!=null) {
+                    if (key != null) {
                         db = dh.getWritableDatabase();
 
                         // Create a new map of values, where column names are the keys
@@ -285,13 +293,13 @@ ListView lsvtest;
 
             }
         });
-        if(queue == null)
+        if (queue == null)
             queue = Volley.newRequestQueue(getApplicationContext());
         queue.add(jsObjRequest);
     }
 
     /********************************************************************DrawerLayout Methods*/
-    /***
+    /**
      * Called when invalidateOptionsMenu() is triggered
      */
     @Override
@@ -328,7 +336,9 @@ ListView lsvtest;
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    /*******************************************************************/
+    /**
+     * ***************************************************************
+     */
 
 
     @Override
@@ -370,7 +380,7 @@ ListView lsvtest;
 
                 lpTop.topMargin = lpTop.topMargin + (distancY);
                 lpDown.topMargin = lpDown.topMargin - (distancY) * 2;
-                llMain.setAlpha(llMain.getAlpha() + (float)(((distancY * 100.0) / p.y) / 100.0)*2);
+                llMain.setAlpha(llMain.getAlpha() + (float) (((distancY * 100.0) / p.y) / 100.0) * 2);
 
 
                 if (lpTop.topMargin > 0) {
@@ -407,8 +417,7 @@ ListView lsvtest;
                             //ivGPS.setVisibility(View.VISIBLE);
                             ivBattery.setImageResource(R.drawable.battery_caution);
                             ivGPS.setImageResource(R.drawable.satellite_48_hot);
-                        }
-                        else {
+                        } else {
                             //ivGPS.setVisibility(View.INVISIBLE);
                             ivBattery.setImageResource(R.drawable.battery);
                             ivGPS.setImageResource(R.drawable.satellite_cancel);
@@ -417,8 +426,7 @@ ListView lsvtest;
                         if (LocationListener.isNetworkEnabled) {
                             //ivNetLocation.setVisibility(View.VISIBLE);
                             ivNetLocation.setImageResource(R.drawable.rss);
-                        }
-                        else {
+                        } else {
                             //ivNetLocation.setVisibility(View.INVISIBLE);
                             ivNetLocation.setImageResource(R.drawable.antenna_delete);
                         }
@@ -430,16 +438,19 @@ ListView lsvtest;
     }
 
     private void ShowMessage() {
-
-        Timer _Timer = new Timer(true);
-        _Timer.schedule(new TimerTask() {
+        if(_TimerMain == null)
+            _TimerMain = new Timer(true);
+        else
+            return;
+        _TimerMain.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (mMapFragment != null)
-                                Tools.setUpMap(mMapFragment.getMap(),getApplicationContext());
+                                Tools.setUpMap(mMapFragment.getMap(), getApplicationContext());
+
                             String Mes = MessageManager.GetMessage();
                             if (Mes.length() > 0) {
                                 Toast.makeText(getBaseContext(), Mes, Toast.LENGTH_LONG).show();
@@ -457,8 +468,8 @@ ListView lsvtest;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        if(googleMap == null)
-            googleMap =  Tools.initGoogleMap(mMapFragment);
+        if (googleMap == null)
+            googleMap = Tools.initGoogleMap(mMapFragment);
         return true;
     }
 
@@ -500,17 +511,70 @@ ListView lsvtest;
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                doubleBackToExitPressedOnce = false;
             }
         }, 2000);
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
-        ((TextView)findViewById(R.id.tvPersonName)).setText(EditProfileActivity.getName(this.getBaseContext()));
-
+        ((TextView) findViewById(R.id.tvPersonName)).setText(EditProfileActivity.getName(this.getBaseContext()));
         ProfileActivity.setProfileImage(ivPersonImage, 96, Base);
+        ShowMessage();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStart();
+        _TimerMain.cancel();
+        _TimerMain=null;
+    }
+
+    private void PauseDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Pause GPS");
+
+        final RadioGroup RG = new RadioGroup(this);
+
+        final RadioButton R1 = new RadioButton(this);
+        final RadioButton R3 = new RadioButton(this);
+        final RadioButton R6 = new RadioButton(this);
+        final RadioButton R12 = new RadioButton(this);
+
+        R1.setText("1 houre");
+        R1.setTag(1);
+        R3.setText("3 houre");
+        R3.setTag(3);
+        R6.setText("6 houre");
+        R6.setTag(6);
+        R12.setText("12 houre");
+        R12.setTag(12);
+
+        RG.addView(R1);
+        RG.addView(R3);
+        RG.addView(R6);
+        RG.addView(R12);
+
+        builder.setView(RG);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int id = RG.getCheckedRadioButtonId();
+                int hour = (int)((RadioButton)RG.findViewById(id)).getTag();
+                LocationListener.StartPause(hour);
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 }

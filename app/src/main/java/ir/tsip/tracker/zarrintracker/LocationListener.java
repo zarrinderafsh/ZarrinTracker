@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.Iterator;
