@@ -42,7 +42,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/txtJoinCode"
             android:gravity="center_horizontal"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:autoText="false"
+            android:numeric="integer" />
 
         <ImageButton
             android:layout_width="112dp"

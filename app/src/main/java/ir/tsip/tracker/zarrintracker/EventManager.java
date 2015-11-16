@@ -29,6 +29,7 @@ public class EventManager {
     public void SendSOS()
     {
         AddEvevnt("Please contact me ASAP.I my need your help");
+        MessageEvent.AddMessage(Base , "Please contact me ASAP.I my need your help");
     }
 
 }

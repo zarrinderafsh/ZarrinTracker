@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:layout_height="150dp"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
     android:orientation="vertical">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/background_message"
+    android:padding="5dp"
+        android:layout_margin="10dp">
 
     <LinearLayout
         android:orientation="vertical"
@@ -13,16 +20,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"
-            android:id="@+id/tvDateMessage"
+            android:id="@+id/tvDateEvent"
             android:gravity="right"
             android:textColor="#ff28ab8b"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginRight="10dp" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="110dp">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:orientation="vertical"
@@ -34,7 +42,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/imageView3" />
+                android:id="@+id/ivImageEvent" />
         </LinearLayout>
 
         <LinearLayout
@@ -47,8 +55,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Text"
-                android:id="@+id/textView11" />
+                android:id="@+id/tvMessageEvent" />
         </LinearLayout>
     </LinearLayout>
 
@@ -62,16 +69,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Location"
-            android:id="@+id/textView9"
+            android:id="@+id/tvLocationEvent"
             android:textSize="18dp"
-            android:layout_marginRight="20dp" />
+            android:layout_marginRight="20dp"
+            android:textColor="#ff0364d2" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
+            android:layout_height="wrap_content"
             android:text="Delete"
-            android:id="@+id/textView7"
+            android:id="@+id/tvDeleteEvent"
             android:textSize="18dp"
-            android:layout_marginRight="20dp" />
+            android:layout_marginRight="20dp"
+            android:textColor="#ff0364d2" />
     </LinearLayout>
+</LinearLayout>
 </LinearLayout>

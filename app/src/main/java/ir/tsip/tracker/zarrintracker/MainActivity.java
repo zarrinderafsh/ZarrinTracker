@@ -39,6 +39,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +83,8 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     Timer _TimerMain;
     TextView tvHelp;
     TextView tvPause;
+    MessageEvent MEvent;
+    int LastShowEvent;
 
     Activity Base;
 
@@ -426,6 +429,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         _Timer.schedule(new TimerTask() {
             @Override
             public void run() {
+
                 // Start Location Service
                 ServiceManager.StartService(getBaseContext(), SendDataService.class);
                 ServiceManager.StartService(getBaseContext(), LocationListener.class);
@@ -433,23 +437,6 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                 Base.runOnUiThread(new Runnable() {
                     public void run() {
 
-                        if (LocationListener.isGPSEnabled) {
-                            //ivGPS.setVisibility(View.VISIBLE);
-                            ivBattery.setImageResource(R.drawable.battery_caution);
-                            ivGPS.setImageResource(R.drawable.satellite_48_hot);
-                        } else {
-                            //ivGPS.setVisibility(View.INVISIBLE);
-                            ivBattery.setImageResource(R.drawable.battery);
-                            ivGPS.setImageResource(R.drawable.satellite_cancel);
-                        }
-
-                        if (LocationListener.isNetworkEnabled) {
-                            //ivNetLocation.setVisibility(View.VISIBLE);
-                            ivNetLocation.setImageResource(R.drawable.rss);
-                        } else {
-                            //ivNetLocation.setVisibility(View.INVISIBLE);
-                            ivNetLocation.setImageResource(R.drawable.antenna_delete);
-                        }
                     }
                 });
             }
@@ -458,10 +445,15 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     }
 
     private void ShowMessage() {
-        if(_TimerMain == null)
+        if(_TimerMain == null) {
             _TimerMain = new Timer(true);
+        }
         else
             return;
+        if(MEvent == null) {
+            MEvent = new MessageEvent(Base);
+            LastShowEvent = 0;
+        }
         _TimerMain.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -491,6 +483,26 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                             }
                             date = null;
 
+                            if (LocationListener.isGPSEnabled) {
+                                //ivGPS.setVisibility(View.VISIBLE);
+                                ivBattery.setImageResource(R.drawable.battery_caution);
+                                ivGPS.setImageResource(R.drawable.satellite_48_hot);
+                            } else {
+                                //ivGPS.setVisibility(View.INVISIBLE);
+                                ivBattery.setImageResource(R.drawable.battery);
+                                ivGPS.setImageResource(R.drawable.satellite_cancel);
+                            }
+
+                            if (LocationListener.isNetworkEnabled) {
+                                //ivNetLocation.setVisibility(View.VISIBLE);
+                                ivNetLocation.setImageResource(R.drawable.rss);
+                            } else {
+                                //ivNetLocation.setVisibility(View.INVISIBLE);
+                                ivNetLocation.setImageResource(R.drawable.antenna_delete);
+                            }
+
+                            LinearLayout SV = (LinearLayout) findViewById(R.id.llinSroll);
+                            LastShowEvent = MEvent.ShowMessage(SV,LastShowEvent);
                         }
                     });
                 } catch (Exception ex) {
@@ -602,6 +614,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                     int id = RG.getCheckedRadioButtonId();
                     int hour = (int) ((RadioButton) RG.findViewById(id)).getTag();
                     LocationListener.StartPause(hour);
+                    MessageEvent.AddMessage(Base , "Puase from "+hour+" hour.");
                 }
                 catch (Exception ex)
                 {
