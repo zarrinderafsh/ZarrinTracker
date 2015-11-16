@@ -247,6 +247,25 @@ public class ProfileActivity extends ActionBarActivity {
         }
     }
 
+    public static Bitmap getProfileImage(int Radious, Context mBase) {
+        String path = ShareSettings.getValue(mBase, "ProfileImage");
+        if (path.length() > 0) {
+            File file = new File(path);
+            if (!file.exists()) {
+                ShareSettings.SetValue(mBase, "ProfileImage", "");
+                return null;
+            }
+            BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+
+            return CircleImage.getRoundedRectBitmap(
+                    Bitmap.createScaledBitmap(
+                            BitmapFactory.decodeFile(file.getAbsolutePath(), btmapOptions), Radious, Radious, true), Radious
+            );
+        }
+
+        return null;
+    }
+
     public void SendImageServer()
     {
         String path = ShareSettings.getValue(Base, "ProfileImage");

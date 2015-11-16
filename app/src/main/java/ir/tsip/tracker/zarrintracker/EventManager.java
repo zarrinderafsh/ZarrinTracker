@@ -24,12 +24,12 @@ public class EventManager {
         if(WS == null)
             WS = new WebServices(Base);
         WS.addQueue("ir.tsip.tracker.zarrintracker.EventManager",0,Tools.GetImei(Base)+"|"+S,"SendEvent");
+        MessageEvent.InsertMessage(Base , S );
     }
 
     public void SendSOS()
     {
         AddEvevnt("Please contact me ASAP.I my need your help");
-        MessageEvent.AddMessage(Base , "Please contact me ASAP.I my need your help");
     }
 
 }

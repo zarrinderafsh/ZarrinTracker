@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Location;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -20,6 +23,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
 import android.view.Display;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -70,7 +74,7 @@ public class Tools {
     public static Intent resultIntent;
     public static NotificationCompat.Builder mBuilder;
     public static TaskStackBuilder stackBuilder;
-    public  static PendingIntent resultPendingIntent;
+    public static PendingIntent resultPendingIntent;
     public static NotificationManager mNotificationManager;
 
     public static void Notificationm(Context context, String Title, String Details, String packge) {
@@ -80,22 +84,20 @@ public class Tools {
                             .setSmallIcon(R.drawable.notification_icon_anim)
                             .setContentTitle(Title)
                             .setContentText(Details);
-        }
-        else
-        {
+        } else {
             mBuilder.setContentTitle(Title);
             mBuilder.setContentText(Details);
         }
         if (resultIntent == null)
             resultIntent = new Intent(context, MainActivity.class);
 
-        if(stackBuilder == null) {
+        if (stackBuilder == null) {
             stackBuilder = TaskStackBuilder.create(context);
             stackBuilder.addParentStack(MainActivity.class);
             stackBuilder.addNextIntent(resultIntent);
         }
 
-        if(resultPendingIntent == null) {
+        if (resultPendingIntent == null) {
             resultPendingIntent =
                     stackBuilder.getPendingIntent(
                             0,
@@ -103,31 +105,27 @@ public class Tools {
                     );
         }
         mBuilder.setContentIntent(resultPendingIntent);
-        if(mNotificationManager == null) {
+        if (mNotificationManager == null) {
             mNotificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         }
         mNotificationManager.notify(0, mBuilder.build());
     }
 
-    public static void HideNotificationm()
-    {
-        if(mNotificationManager != null)
-        {
+    public static void HideNotificationm() {
+        if (mNotificationManager != null) {
             mNotificationManager.cancelAll();
         }
     }
 
-    public static Point GetDesktopSize(Activity activity)
-    {
+    public static Point GetDesktopSize(Activity activity) {
         Display display = activity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         return size;
     }
 
-    public  static void ShareText(String pShareBody,Activity pActivity)
-    {
+    public static void ShareText(String pShareBody, Activity pActivity) {
         String shareBody = pShareBody;
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
@@ -146,16 +144,14 @@ public class Tools {
     public static GoogleMap initGoogleMap(MapFragment MF) {
         GoogleMap googleMap = null;
         if (googleMap == null) {
-      //      MapFragment MF = ((MapFragment) activity.getFragmentManager().findFragmentById(
-        //            R.id.map));
-            if(MF != null)
+            //      MapFragment MF = ((MapFragment) activity.getFragmentManager().findFragmentById(
+            //            R.id.map));
+            if (MF != null)
                 googleMap = MF.getMap();
 
             // check if map is created successfully or not
             if (googleMap == null) {
-            }
-            else
-            {
+            } else {
 
             }
         }
@@ -163,8 +159,9 @@ public class Tools {
     }
 
     private static Marker myMarker;
-    private static  LatLng myPosition;
-    public static void setUpMap(GoogleMap googleMap,Context context) {
+    private static LatLng myPosition;
+
+    public static void setUpMap(GoogleMap googleMap, Context context) {
         if (googleMap == null || LocationListener.CurrentLocation == null)
             return;
         Location currentLocation = LocationListener.CurrentLocation;
@@ -176,15 +173,17 @@ public class Tools {
 //            googleMap.animateCamera(com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom(myPosition, 15.0f));
 //        }
 //        myMarker.setPosition(myPosition);
-        getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom),context,googleMap);
+        getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom), context, googleMap);
 
     }
+
     private static RequestQueue queue;
-private static Map<Integer,Marker> markers;
-    public static void getDevicesLocation(String bounds,String zoom, final Context context, final GoogleMap gmap){
-       bounds=bounds.replace("LatLngBounds{southwest=lat/lng: ","(");
-        bounds=bounds.replace("northeast=lat/lng: ","");
-    bounds=bounds.replace("}",")");
+    private static Map<Integer, Marker> markers;
+
+    public static void getDevicesLocation(String bounds, String zoom, final Context context, final GoogleMap gmap) {
+        bounds = bounds.replace("LatLngBounds{southwest=lat/lng: ", "(");
+        bounds = bounds.replace("northeast=lat/lng: ", "");
+        bounds = bounds.replace("}", ")");
         Map<String, String> params = new HashMap<>();
         params.put("bounds", bounds);
         params.put("zoom", zoom);
@@ -194,14 +193,13 @@ private static Map<Integer,Marker> markers;
             public void onResponse(JSONObject response) {
                 try {
                     String data = response.getString("d");
-                    JSONObject jo=new JSONObject(data);
+                    JSONObject jo = new JSONObject(data);
 
-                    if(markers==null)
-                        markers=new HashMap<Integer, Marker>() ;
-                  JSONArray ja= jo.getJSONArray("ChangingMarkers")     ;
-                    for(int i=0;i<ja.length();i++)
-                    {
-                        if(markers.get(Integer.valueOf(ja.getJSONObject(i).getString("ID")) )== null) {
+                    if (markers == null)
+                        markers = new HashMap<Integer, Marker>();
+                    JSONArray ja = jo.getJSONArray("ChangingMarkers");
+                    for (int i = 0; i < ja.length(); i++) {
+                        if (markers.get(Integer.valueOf(ja.getJSONObject(i).getString("ID"))) == null) {
 
                             String lat = ja.getJSONObject(i).getJSONObject("Location").getString("X");
                             String lng = ja.getJSONObject(i).getJSONObject("Location").getString("Y");
@@ -211,7 +209,7 @@ private static Map<Integer,Marker> markers;
                         }
                     }
                 } catch (Exception er) {
-                    String s=er.getMessage();
+                    String s = er.getMessage();
                 }
             }
         }, new Response.ErrorListener() {
@@ -231,11 +229,11 @@ private static Map<Integer,Marker> markers;
         int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
         // Error checking that probably isn't needed but I added just in case.
-        if(level == -1 || scale == -1) {
+        if (level == -1 || scale == -1) {
             return 50.0f;
         }
 
-        return ((float)level / (float)scale) * 100.0f;
+        return ((float) level / (float) scale) * 100.0f;
     }
 
     public static byte[] getBytesFromBitmap(Bitmap bitmap) {
@@ -244,5 +242,29 @@ private static Map<Integer,Marker> markers;
         return stream.toByteArray();
     }
 
+    public  static void PlayAlert(Context c)
+    {
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(c.getApplicationContext(), notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void LoadImage(ImageView iv,byte[] imageAsBytes , int Radious)
+    {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inDither = false;
+        options.inPurgeable = true;
+        options.inInputShareable = true;
+        options.inTempStorage = new byte[1024 *32];
+
+        Bitmap bm = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length, options);
+        if(Radious>0)
+            bm = CircleImage.getRoundedRectBitmap(bm,Radious);
+        iv.setImageBitmap(bm);
+    }
 }
 

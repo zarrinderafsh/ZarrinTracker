@@ -84,7 +84,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     TextView tvHelp;
     TextView tvPause;
     MessageEvent MEvent;
-    int LastShowEvent;
+    Date LastShowEvent;
 
     Activity Base;
 
@@ -452,7 +452,6 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
             return;
         if(MEvent == null) {
             MEvent = new MessageEvent(Base);
-            LastShowEvent = 0;
         }
         _TimerMain.schedule(new TimerTask() {
             @Override
@@ -614,7 +613,6 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                     int id = RG.getCheckedRadioButtonId();
                     int hour = (int) ((RadioButton) RG.findViewById(id)).getTag();
                     LocationListener.StartPause(hour);
-                    MessageEvent.AddMessage(Base , "Puase from "+hour+" hour.");
                 }
                 catch (Exception ex)
                 {
