@@ -155,7 +155,7 @@ public class MessageEvent {
                 L.Lat = Lat;
                 L.Lon = Lon;
                 ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
-                ((TextView) view.findViewById(R.id.tvLocationEvent)).setOnClickListener(ClickDelete);
+                ((TextView) view.findViewById(R.id.tvLocationEvent)).setOnClickListener(ClickLocation);
 
                 if(Image != null && Image.length > 10)
                 {
