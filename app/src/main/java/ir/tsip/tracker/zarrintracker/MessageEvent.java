@@ -17,6 +17,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.sql.Blob;
+import java.sql.Struct;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +28,12 @@ import java.util.Locale;
  * Created by Administrator on 11/16/2015.
  */
 public class MessageEvent {
+    class Loc
+    {
+        public float Lat;
+        public float Lon;
+    };
+
     static Context _Context;
     public  MessageEvent(Context pContext)
     {
@@ -39,6 +46,8 @@ public class MessageEvent {
         ContentValues V = new ContentValues();
         V.put(DatabaseContracts.Events.COLUMN_NAME_Data,Message);
         V.put(DatabaseContracts.Events.COLUMN_NAME_Date,new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date()));
+        V.put(DatabaseContracts.Events.COLUMN_NAME_Lat,LocationListener.CurrentLat);
+        V.put(DatabaseContracts.Events.COLUMN_NAME_Lon,LocationListener.CurrentLon);
 
         Bitmap B = ProfileActivity.getProfileImage(96, _Context);
         if(B!=null) {
@@ -59,18 +68,26 @@ public class MessageEvent {
         dbh.close();
     }
 
-    public Date ShowMessage(final LinearLayout scroll , Date LastGetId)
+    public Date FirstDate,Lastdate;
+    public void ShowMessage(final LinearLayout scroll , Date pFirstDate, Date pLastDate)
     {
         Date date;
-        if(LastGetId == null)
+        if(pFirstDate == null)
         {
-            LastGetId = new Date();
+            pFirstDate = new Date();
+        }
+        if(pLastDate == null)
+        {
+            pLastDate = new Date();
         }
         DatabaseHelper dbh = new DatabaseHelper(_Context);
         SQLiteDatabase db = dbh.getReadableDatabase();
         Cursor c;
-        c = db.query(DatabaseContracts.Events.TABLE_NAME, null, DatabaseContracts.Events.COLUMN_NAME_Date + " < '"+
-                new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(LastGetId)+"'", null, "", "", " 1 ");
+        c = db.query(DatabaseContracts.Events.TABLE_NAME, null,
+                DatabaseContracts.Events.COLUMN_NAME_Date + " > '"+ new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(pFirstDate)+"' OR "+
+                DatabaseContracts.Events.COLUMN_NAME_Date + " < '"+ new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(pLastDate)+"'"
+                ,
+                null, "","", DatabaseContracts.Events.COLUMN_NAME_Date+" DESC" , "");
         if(c.moveToFirst())
         {
             Tools.PlayAlert(_Context);
@@ -87,15 +104,24 @@ public class MessageEvent {
                     e.toString();
                     date=null;
                 }
-
                 byte[] Image = c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Image));
 
                 id = c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_ID));
 
+                float Lat = c.getFloat(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Lat));
+                float Lon = c.getFloat(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Lon));
+
                 LayoutInflater inflater = (LayoutInflater) _Context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View view = inflater.inflate(R.layout.event_message, null);
                 view.setId(100000 + id);
-                scroll.addView(view, 0);
+                if(date.compareTo(pFirstDate) > 0) {
+                    pFirstDate = date;
+                    scroll.addView(view,0);
+                }
+                if(date.compareTo(pLastDate) < 0 ) {
+                    pLastDate = date;
+                    scroll.addView(view);
+                }
 
                 if(date!=null) {
                     String d = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
@@ -103,7 +129,7 @@ public class MessageEvent {
                 }
                 ((TextView) view.findViewById(R.id.tvMessageEvent)).setText(Data);
 
-                View.OnClickListener ClickView = new View.OnClickListener() {
+                View.OnClickListener ClickDelete = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         MessageEvent.DeleteMessage(_Context,(int)v.getTag());
@@ -111,8 +137,25 @@ public class MessageEvent {
                     }
                 };
 
+                View.OnClickListener ClickLocation = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Loc L = (Loc)v.getTag();
+                        if(L.Lon > 0 && L.Lat >0)
+                        {
+
+                        }
+                    }
+                };
+
                 ((TextView) view.findViewById(R.id.tvDeleteEvent)).setTag(id);
-                ((TextView) view.findViewById(R.id.tvDeleteEvent)).setOnClickListener(ClickView);
+                ((TextView) view.findViewById(R.id.tvDeleteEvent)).setOnClickListener(ClickDelete);
+
+                Loc L = new Loc();
+                L.Lat = Lat;
+                L.Lon = Lon;
+                ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
+                ((TextView) view.findViewById(R.id.tvLocationEvent)).setOnClickListener(ClickLocation);
 
                 if(Image != null && Image.length > 10)
                 {
@@ -120,16 +163,12 @@ public class MessageEvent {
                 }
             }
             while(c.moveToNext());
-            c.close();
-            db.close();
-            dbh.close();
-
-            return date;
         }
         c.close();
         db.close();
         dbh.close();
-        return LastGetId;
+        FirstDate = pFirstDate;
+        Lastdate = pLastDate;
     }
 
     public void DeleteLayout(LinearLayout scroll, int id)

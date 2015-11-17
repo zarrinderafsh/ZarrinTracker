@@ -85,7 +85,6 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     TextView tvHelp;
     TextView tvPause;
     MessageEvent MEvent;
-    Date LastShowEvent;
 
     Activity Base;
 
@@ -522,7 +521,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                             }
 
                             LinearLayout SV = (LinearLayout) findViewById(R.id.llinSroll);
-                            LastShowEvent = MEvent.ShowMessage(SV,LastShowEvent);
+                            MEvent.ShowMessage(SV,MEvent.FirstDate,MEvent.Lastdate);
                         }
                     });
                 } catch (Exception ex) {

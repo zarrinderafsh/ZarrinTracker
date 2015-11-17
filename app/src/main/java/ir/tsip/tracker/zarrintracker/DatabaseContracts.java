@@ -101,16 +101,38 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_Date = "Date";
         public static final String COLUMN_NAME_Data = "content";
         public static final String COLUMN_NAME_Image = "Image";
-        private static final String COMMA_SEP = ",";
+        public static final String COLUMN_NAME_Lat = "Lat";
+        public static final String COLUMN_NAME_Lon = "Lon";
         public static final String SQL_CREATE_Table =
                 "CREATE TABLE " + Events.TABLE_NAME + " (" +
                         Events.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
                         Events.COLUMN_NAME_Date + " Date," +
                         Events.COLUMN_NAME_Data + " nvarchar(250),"+
+                        Events.COLUMN_NAME_Lat + " float,"+
+                        Events.COLUMN_NAME_Lon + " float,"+
                         Events.COLUMN_NAME_Image + " BLOB )";
 
         public static final String SQL_DELETE_Table =
                 "DROP TABLE IF EXISTS " + Events.TABLE_NAME;
+    }
+
+    public static abstract class Groups implements BaseColumns {
+        public static final String TABLE_NAME = "Groups";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_Name = "Name";
+        public static final String COLUMN_NAME_Image = "Image";
+        public static final String COLUMN_NAME_LastMessage = "LastMessage";
+        public static final String COLUMN_NAME_LastTime = "LastTime";
+        public static final String SQL_CREATE_Table =
+                "CREATE TABLE " + Groups.TABLE_NAME + " (" +
+                        Groups.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                        Groups.COLUMN_NAME_Name + " nvarchar(250)," +
+                        Groups.COLUMN_NAME_Image + " BLOB,"+
+                        Groups.COLUMN_NAME_LastMessage + "  nvarchar(250),"+
+                        Groups.COLUMN_NAME_LastTime + " Date )";
+
+        public static final String SQL_DELETE_Table =
+                "DROP TABLE IF EXISTS " + Groups.TABLE_NAME;
     }
 
 }
