@@ -116,5 +116,24 @@ public class DatabaseContracts {
                 "DROP TABLE IF EXISTS " + Events.TABLE_NAME;
     }
 
+    public static abstract class Groups implements BaseColumns {
+        public static final String TABLE_NAME = "Groups";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_Name = "Name";
+        public static final String COLUMN_NAME_Image = "Image";
+        public static final String COLUMN_NAME_LastMessage = "LastMessage";
+        public static final String COLUMN_NAME_LastTime = "LastTime";
+        public static final String SQL_CREATE_Table =
+                "CREATE TABLE " + Groups.TABLE_NAME + " (" +
+                        Groups.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                        Groups.COLUMN_NAME_Name + " nvarchar(250)," +
+                        Groups.COLUMN_NAME_Image + " BLOB,"+
+                        Groups.COLUMN_NAME_LastMessage + "  nvarchar(250),"+
+                        Groups.COLUMN_NAME_LastTime + " Date )";
+
+        public static final String SQL_DELETE_Table =
+                "DROP TABLE IF EXISTS " + Groups.TABLE_NAME;
+    }
+
 }
 

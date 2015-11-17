@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Location;
+import android.media.Image;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
@@ -237,6 +238,8 @@ public class Tools {
     }
 
     public static byte[] getBytesFromBitmap(Bitmap bitmap) {
+        if (bitmap == null)
+            return null;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
         return stream.toByteArray();
@@ -266,5 +269,22 @@ public class Tools {
             bm = CircleImage.getRoundedRectBitmap(bm,Radious);
         iv.setImageBitmap(bm);
     }
+
+    public static Bitmap LoadImage(byte[] imageAsBytes , int Radious)
+    {
+        if(imageAsBytes == null)
+            return null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inDither = false;
+        options.inPurgeable = true;
+        options.inInputShareable = true;
+        options.inTempStorage = new byte[1024 *32];
+
+        Bitmap bm = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length, options);
+        if(Radious>0)
+            bm = CircleImage.getRoundedRectBitmap(bm,Radious);
+        return bm;
+    }
+
 }
 
