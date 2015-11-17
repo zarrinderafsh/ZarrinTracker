@@ -52,6 +52,25 @@ public class WebServices {
         dbh.close();
     }
 
+    public void addQueue(String ClassName, int ObjectCode , HashMap<String,String> Data, String WebServiceName)
+    {
+        ContentValues Val = new ContentValues();
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        try {
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ClassName,ClassName);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ObjectCode,ObjectCode);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data,Data.toString());
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
+
+            db.insert(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.QueueTable.COLUMN_NAME_ID, Val);
+        } catch (Exception ex) {
+        }
+        db.close();
+        dbh.close();
+    }
+
     public void addQueue(String ClassName, int ObjectCode , byte[] Data, String WebServiceName)
     {
         ContentValues Val = new ContentValues();
