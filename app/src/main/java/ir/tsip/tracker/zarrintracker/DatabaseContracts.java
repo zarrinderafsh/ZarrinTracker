@@ -101,12 +101,15 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_Date = "Date";
         public static final String COLUMN_NAME_Data = "content";
         public static final String COLUMN_NAME_Image = "Image";
-        private static final String COMMA_SEP = ",";
+        public static final String COLUMN_NAME_Lat = "Lat";
+        public static final String COLUMN_NAME_Lon = "Lon";
         public static final String SQL_CREATE_Table =
                 "CREATE TABLE " + Events.TABLE_NAME + " (" +
                         Events.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
                         Events.COLUMN_NAME_Date + " Date," +
                         Events.COLUMN_NAME_Data + " nvarchar(250),"+
+                        Events.COLUMN_NAME_Lat + " float,"+
+                        Events.COLUMN_NAME_Lon + " float,"+
                         Events.COLUMN_NAME_Image + " BLOB )";
 
         public static final String SQL_DELETE_Table =

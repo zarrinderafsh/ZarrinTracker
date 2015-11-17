@@ -17,6 +17,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.sql.Blob;
+import java.sql.Struct;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +28,12 @@ import java.util.Locale;
  * Created by Administrator on 11/16/2015.
  */
 public class MessageEvent {
+    class Loc
+    {
+        public float Lat;
+        public float Lon;
+    };
+
     static Context _Context;
     public  MessageEvent(Context pContext)
     {
@@ -39,6 +46,8 @@ public class MessageEvent {
         ContentValues V = new ContentValues();
         V.put(DatabaseContracts.Events.COLUMN_NAME_Data,Message);
         V.put(DatabaseContracts.Events.COLUMN_NAME_Date,new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date()));
+        V.put(DatabaseContracts.Events.COLUMN_NAME_Lat,LocationListener.CurrentLat);
+        V.put(DatabaseContracts.Events.COLUMN_NAME_Lon,LocationListener.CurrentLon);
 
         Bitmap B = ProfileActivity.getProfileImage(96, _Context);
         if(B!=null) {
@@ -99,6 +108,9 @@ public class MessageEvent {
 
                 id = c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_ID));
 
+                float Lat = c.getFloat(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Lat));
+                float Lon = c.getFloat(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Lon));
+
                 LayoutInflater inflater = (LayoutInflater) _Context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View view = inflater.inflate(R.layout.event_message, null);
                 view.setId(100000 + id);
@@ -117,7 +129,7 @@ public class MessageEvent {
                 }
                 ((TextView) view.findViewById(R.id.tvMessageEvent)).setText(Data);
 
-                View.OnClickListener ClickView = new View.OnClickListener() {
+                View.OnClickListener ClickDelete = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         MessageEvent.DeleteMessage(_Context,(int)v.getTag());
@@ -125,8 +137,25 @@ public class MessageEvent {
                     }
                 };
 
+                View.OnClickListener ClickLocation = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Loc L = (Loc)v.getTag();
+                        if(L.Lon > 0 && L.Lat >0)
+                        {
+
+                        }
+                    }
+                };
+
                 ((TextView) view.findViewById(R.id.tvDeleteEvent)).setTag(id);
-                ((TextView) view.findViewById(R.id.tvDeleteEvent)).setOnClickListener(ClickView);
+                ((TextView) view.findViewById(R.id.tvDeleteEvent)).setOnClickListener(ClickDelete);
+
+                Loc L = new Loc();
+                L.Lat = Lat;
+                L.Lon = Lon;
+                ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
+                ((TextView) view.findViewById(R.id.tvLocationEvent)).setOnClickListener(ClickDelete);
 
                 if(Image != null && Image.length > 10)
                 {
