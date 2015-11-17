@@ -30,6 +30,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -217,6 +218,26 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
 
         lsvtest.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawerlistlayout, new String[]{"Map", "Invite", "Groups", "Chat", "About"}));
+
+        lsvtest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(MainActivity.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                switch(position){
+                    case 0:
+                        //onTouch(lsvtest,new MotionEvent() );
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                }
+            }
+        });
 
         mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (android.support.v4.widget.DrawerLayout) findViewById(R.id.drawer_layout);
