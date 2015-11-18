@@ -18,11 +18,13 @@ import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -218,25 +220,6 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         lsvtest.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawerlistlayout, new String[]{"Map", "Invite", "Groups", "Chat", "About"}));
 
-        lsvtest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
-                switch(position){
-                    case 0:
-                        //onTouch(lsvtest,new MotionEvent() );
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        break;
-                }
-            }
-        });
 
         mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (android.support.v4.widget.DrawerLayout) findViewById(R.id.drawer_layout);
@@ -264,6 +247,38 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        lsvtest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(MainActivity.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
+              mDrawerLayout.closeDrawer(Gravity.START);
+                Intent myIntent;
+                switch (position) {
+                    case 0:
+                        onTouch(lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 360, 520, 1));
+                        onTouch(lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, 548, 906, 1));
+                        onTouch(lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 548, 906, 1));
+                        break;
+                    case 1:
+                        myIntent = new Intent(Base, Invite.class);
+                        Base.startActivity(myIntent);
+                        break;
+                    case 2:
+                        myIntent = new Intent(Base, JoinGroupActivity.class);
+                        Base.startActivity(myIntent);
+                        break;
+                    case 3:
+                        myIntent = new Intent(Base, GroupsActivity.class);
+                        Base.startActivity(myIntent);
+                        break;
+                    case 4:
+                        myIntent = new Intent(Base, about.class);
+                        Base.startActivity(myIntent);
+                        break;
+                }
+
+            }
+        });
     }
 
     // nav drawer title
