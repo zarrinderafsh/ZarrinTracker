@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -82,6 +83,8 @@ public class ChatActivity extends AppCompatActivity {
 
         GetNewstMessages();
         ShowMessages();
+        ScrollView svChatView = (ScrollView)_this.findViewById(R.id.svChatView);
+        svChatView.scrollTo(0, lsvChat.getBottom());
     }
 
     public static void backWebServices(int ObjectCode, String Data) {
@@ -129,7 +132,7 @@ public class ChatActivity extends AppCompatActivity {
             Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Data, msg);
             Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Group, gpID);
             db.insert(DatabaseContracts.ChatLog.TABLE_NAME, DatabaseContracts.ChatLog.COLUMN_NAME_ID, Data);
-            CreateGroupLayer(new Date(),msg,null,0);
+            CreateGroupLayer(new Date(), msg, null, 0);
             Data=null;
         }
 
@@ -147,7 +150,7 @@ public class ChatActivity extends AppCompatActivity {
                 readabledb = dbh.getReadableDatabase();
 
             String[] columns = {DatabaseContracts.ChatLog.COLUMN_NAME_ID, DatabaseContracts.ChatLog.COLUMN_NAME_Group, DatabaseContracts.ChatLog.COLUMN_NAME_Data};
-            Cursor c = readabledb.query(DatabaseContracts.ChatLog.TABLE_NAME, columns, DatabaseContracts.ChatLog.COLUMN_NAME_Group + "=?", new String[]{String.valueOf(gpID)}, "", "", "");
+            Cursor c = readabledb.query(DatabaseContracts.ChatLog.TABLE_NAME, columns, DatabaseContracts.ChatLog.COLUMN_NAME_Group + "=?", new String[]{String.valueOf(gpID)}, "", "",DatabaseContracts.ChatLog.COLUMN_NAME_ID );
             c.moveToFirst();
             while (true) {
                 CreateGroupLayer(new Date(),c.getString(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_Data)),null,0);
@@ -191,6 +194,9 @@ public class ChatActivity extends AppCompatActivity {
         llGroupList2.setOnClickListener(ClickOpenGroup);
         llGroupList3.setOnClickListener(ClickOpenGroup);
         llGroupList4.setOnClickListener(ClickOpenGroup);
+
+        ScrollView svChatView = (ScrollView)_this.findViewById(R.id.svChatView);
+        svChatView.scrollTo(0, lsvChat.getBottom());
     }
 
     @Override
