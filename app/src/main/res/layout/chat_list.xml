@@ -11,13 +11,13 @@
         android:background="@drawable/background_message"
         android:padding="5dp"
         android:layout_margin="10dp"
-        android:id="@+id/llGroupList1">
+        android:id="@+id/llChatList1">
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/llGroupList2">
+            android:id="@+id/llChatList2">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -25,12 +25,12 @@
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical|center_horizontal"
                 android:weightSum="1"
-                android:id="@+id/llGroupList3">
+                android:id="@+id/llChatList3">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/ivGroupPic" />
+                    android:id="@+id/ivChatPic" />
             </LinearLayout>
 
             <LinearLayout
@@ -39,13 +39,13 @@
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical"
                 android:weightSum="2"
-                android:id="@+id/llGroupList4"
+                android:id="@+id/llChatList4"
                 android:layout_marginLeft="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvGroupName"
+                    android:id="@+id/tvChatDate"
                     android:text="-"
                     android:textSize="20dp"
                     android:textStyle="bold" />
@@ -53,25 +53,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:id="@+id/tvLastGroupMessage"
+                    android:id="@+id/tvLastChatMessage"
                     android:text="-" />
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical"
-                android:id="@+id/llGroupList5">
-
-                <TextView
-                    android:layout_width="30dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvLastGroupUpdate" />
-
-                <TextView
-                    android:layout_width="30dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvNumberGroupNewMessage" />
             </LinearLayout>
         </LinearLayout>
 

@@ -20,6 +20,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.provider.Settings;
+import android.renderscript.Sampler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -286,5 +288,32 @@ public class Tools {
         return bm;
     }
 
+    public static String HashMapToString(HashMap<String,String> Data)
+    {
+        String Ret = "";
+        Iterator myVeryOwnIterator = Data.keySet().iterator();
+        while(myVeryOwnIterator.hasNext()) {
+            String key=(String)myVeryOwnIterator.next();
+            String value=(String)Data.get(key);
+            Ret+=key+String.valueOf((char)26)+value+String.valueOf((char)25);
+        }
+        return  Ret;
+    }
+
+    public static HashMap<String,String> StringToHashMap(String Data)
+    {
+        HashMap<String,String> Ret = new HashMap<>();
+        String[] Splt = Data.split(String.valueOf((char)25));
+        for(String S : Splt)
+        {
+            if(S.length() > 0)
+            {
+                String[] b = S.split(String.valueOf((char)26));
+                if(b.length == 2)
+                    Ret.put(b[0],b[1]);
+            }
+        }
+        return  Ret;
+    }
 }
 
