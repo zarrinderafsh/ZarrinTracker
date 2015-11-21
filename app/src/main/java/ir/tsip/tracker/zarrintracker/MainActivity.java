@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,11 +32,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -52,13 +56,25 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -251,7 +267,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Toast.makeText(MainActivity.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
-              mDrawerLayout.closeDrawer(Gravity.START);
+                mDrawerLayout.closeDrawer(Gravity.START);
                 Intent myIntent;
                 switch (position) {
                     case 0:
@@ -279,6 +295,11 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
 
             }
         });
+
+
+
+        IntentFilter filter = new IntentFilter("");
+        registerReceiver(new ProximityIntentReceiver(),filter);
     }
 
     // nav drawer title
@@ -502,17 +523,14 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                                 Toast.makeText(getBaseContext(), Mes, Toast.LENGTH_LONG).show();
                             }
 
-                            Date date= new Date();
+                            Date date = new Date();
                             TextView TV = (TextView) findViewById(R.id.tvPause);
-                            if(LocationListener.PauseDate!=null && date.before(LocationListener.PauseDate))
-                            {
+                            if (LocationListener.PauseDate != null && date.before(LocationListener.PauseDate)) {
                                 long Second = (LocationListener.PauseDate.getTime() - date.getTime()) / 1000;
-                                String S = (Second / 3600)+":"+
-                                (Second % 3600) / 60 +":"+ (Second % 3600) % 60;
+                                String S = (Second / 3600) + ":" +
+                                        (Second % 3600) / 60 + ":" + (Second % 3600) % 60;
                                 TV.setText(S);
-                            }
-                            else
-                            {
+                            } else {
                                 TV.setText("Pause");
                             }
                             date = null;
@@ -536,7 +554,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                             }
 
                             LinearLayout SV = (LinearLayout) findViewById(R.id.llinSroll);
-                            MEvent.ShowMessage(SV,MEvent.FirstDate,MEvent.Lastdate);
+                            MEvent.ShowMessage(SV, MEvent.FirstDate, MEvent.Lastdate);
                         }
                     });
                 } catch (Exception ex) {
@@ -550,10 +568,99 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        if (googleMap == null)
+        if (googleMap == null) {
             googleMap = Tools.initGoogleMap(mMapFragment);
+            mapGeofenceSetup();
+
+        }
         return true;
     }
+    private Collection<CheckBox> checkboxes;
+    private  HashMap<Integer,Circle> circles;
+    LinearLayout ll;
+    TextView lblMeters;
+     EditText txtMeters;
+    AlertDialog.Builder builder;
+    private void mapGeofenceSetup() {
+
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(final LatLng latLng) {
+
+
+if(builder==null)
+                 builder= new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Geofence");
+
+                if (ll == null)
+                    ll = new LinearLayout(MainActivity.this);
+                ll.setOrientation(LinearLayout.VERTICAL);
+                if (lblMeters == null)
+                    lblMeters = new TextView(MainActivity.this);
+                lblMeters.setText("Specify a radius.");
+                if (txtMeters == null)
+                    txtMeters = new EditText(MainActivity.this);
+                txtMeters.setText("100");
+
+                //If layout has no child, add views to it
+                if (ll.getChildCount() == 0) {
+                    ll.addView(lblMeters);
+                    ll.addView(txtMeters);
+                    if (checkboxes == null)
+                        checkboxes = new ArrayList<CheckBox>();
+                    if (checkboxes.size() == 0) {
+                        if (Tools.markers == null)
+                            Tools.markers = new HashMap<Integer, Marker>();
+                        for (Integer m : Tools.markers.keySet()) {
+                            CheckBox c = new CheckBox(MainActivity.this);
+                            c.setText(Tools.markers.get(m).getTitle().toString());
+                            c.setTag(m);
+                            checkboxes.add(c);
+                        }
+                    }
+                    for (CheckBox c : checkboxes) {
+                        try {
+                            ll.addView(c);
+                        } catch (Exception e) {
+
+                        }
+                    }
+               builder.setView(ll);
+                }
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            if (circles == null)
+                                circles = new HashMap<Integer, Circle>();
+                            for (CheckBox c : checkboxes) {
+                                if (c.isChecked()) {
+                                    Circle circle = googleMap.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(txtMeters.getText().toString())));
+                                    LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1, PendingIntent.getBroadcast(MainActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.ProximityAlert"), 0));
+                                    circles.put(Integer.valueOf(c.getTag().toString()), circle);
+                                }
+                            }
+                        } catch (Exception ex) {
+
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+                    }
+                });
+if(ll.getParent()!=null)
+    ((ViewGroup)ll.getParent()).removeView(ll);
+                builder.show();
+            }
+        });
+
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

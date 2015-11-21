@@ -66,7 +66,7 @@ public class LocationListener  extends Service implements android.location.Locat
     private static final long MIN_TIME_BW_UPDATES = 0; // 0 Second
 
     // Declaring a Location Manager
-    protected static LocationManager locationManager;
+    public static LocationManager locationManager;
 
     public LocationListener() {
     }

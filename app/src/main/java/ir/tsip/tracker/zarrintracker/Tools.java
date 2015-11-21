@@ -1,15 +1,18 @@
 package ir.tsip.tracker.zarrintracker;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
 import android.media.Image;
@@ -26,6 +29,8 @@ import android.telephony.TelephonyManager;
 import android.view.Display;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -36,8 +41,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.drive.internal.QueryRequest;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -143,43 +150,43 @@ public class Tools {
 
 
     public static GoogleMap initGoogleMap(MapFragment MF) {
-        GoogleMap googleMap = null;
+        if (MF == null)
+            return null;
+        GoogleMap googleMap = MF.getMap();
+
+
+        // check if map is created successfully or not
         if (googleMap == null) {
-            //      MapFragment MF = ((MapFragment) activity.getFragmentManager().findFragmentById(
-            //            R.id.map));
-            if (MF != null)
-                googleMap = MF.getMap();
+        } else {
 
-            // check if map is created successfully or not
-            if (googleMap == null) {
-            } else {
-
-            }
         }
         return googleMap;
     }
 
-    private static Marker myMarker;
-    private static LatLng myPosition;
 
+
+
+static Boolean isFirst=true;
     public static void setUpMap(GoogleMap googleMap, Context context) {
         if (googleMap == null || LocationListener.CurrentLocation == null)
             return;
-        Location currentLocation = LocationListener.CurrentLocation;
 
-        myPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-
-//        if (myMarker == null) {
-//            myMarker = googleMap.addMarker(new MarkerOptions().position(myPosition).title("موقعیت من"));
-//            googleMap.animateCamera(com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom(myPosition, 15.0f));
-//        }
-//        myMarker.setPosition(myPosition);
-        getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom), context, googleMap);
-
+        if (markers == null)
+            markers = new HashMap<Integer, Marker>();
+        if (Tools.isOnline(context))
+            getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom), context, googleMap);
+        else {
+            if(!markers.containsKey(0))
+                markers.put(0, googleMap.addMarker(new MarkerOptions().position(new LatLng(LocationListener.getLatitude(), LocationListener.getLongitude())).title("I'm right here!")));
+        }
+        if(isFirst) {
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
+        isFirst=false;
+        }
     }
 
     private static RequestQueue queue;
-    private static Map<Integer, Marker> markers;
+    public static Map<Integer, Marker> markers;
 
     public static void getDevicesLocation(String bounds, String zoom, final Context context, final GoogleMap gmap) {
         bounds = bounds.replace("LatLngBounds{southwest=lat/lng: ", "(");
@@ -196,8 +203,6 @@ public class Tools {
                     String data = response.getString("d");
                     JSONObject jo = new JSONObject(data);
 
-                    if (markers == null)
-                        markers = new HashMap<Integer, Marker>();
                     JSONArray ja = jo.getJSONArray("ChangingMarkers");
                     for (int i = 0; i < ja.length(); i++) {
                         if (markers.get(Integer.valueOf(ja.getJSONObject(i).getString("ID"))) == null) {
@@ -206,11 +211,11 @@ public class Tools {
                             String lng = ja.getJSONObject(i).getJSONObject("Location").getString("Y");
                             markers.put(Integer.valueOf(ja.getJSONObject(i).getString("ID").toString()),
                                     gmap.addMarker(new MarkerOptions().position(
-                                            new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title("s")));
+                                            new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title"))));
                         }
                     }
                 } catch (Exception er) {
-                    String s = er.getMessage();
+
                 }
             }
         }, new Response.ErrorListener() {
