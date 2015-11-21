@@ -1,22 +1,49 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent"
     tools:context="ir.tsip.tracker.zarrintracker.ChatActivity">
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="70dp"
+        android:background="@color/BackColor"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView4"
+            android:contentDescription="@string/ivWiFiDesc"
+            android:src="@drawable/person_white_add"
+            android:clickable="true"
+            android:layout_toLeftOf="@+id/ivGroup"
+            android:layout_below="@+id/textView5"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="right" />
+    </LinearLayout>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true">
-        <ListView
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:id="@+id/lsvChats"
-            android:layout_weight=".7" />
+            android:layout_weight=".7"
+            android:id="@+id/svChatView">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/lsvChats"></LinearLayout>
+        </ScrollView>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -28,7 +55,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtSendMessage"
-                android:layout_weight="0.70"/>
+                android:layout_weight="0.70"
+                android:focusableInTouchMode="true" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,5 +65,7 @@
 
 
         </LinearLayout>
+
+    </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

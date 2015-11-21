@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.text.DateFormat;
@@ -33,7 +35,7 @@ public class GroupsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if(GroupList == null)
             GroupList = new ArrayList<Integer>();
         context = this;
@@ -67,7 +69,9 @@ public class GroupsActivity extends AppCompatActivity {
                 String Name = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Name));
                 if(GroupList.indexOf(id)<0)
                     GroupList.add(id);
-                CreateGroupLayer(id,Name,"",Message,Tools.LoadImage(Image,96));
+                Bitmap B = ProfileActivity.getProfileImage(96,context.getApplicationContext());
+                CreateGroupLayer(id,Name,"","",B);
+                //CreateGroupLayer(id,Name,"",Message,Tools.LoadImage(Image,96));
             }
             while (c.moveToNext());
         }
@@ -105,10 +109,12 @@ public class GroupsActivity extends AppCompatActivity {
         lsvGroups.addView(view);
         TextView tvGroupName = (TextView) view.findViewById(R.id.tvGroupName);
         tvGroupName.setText(Name);
-
         TextView tvLastGroupMessage = (TextView) view.findViewById(R.id.tvLastGroupMessage);
+        if(img!=null) {
+            ImageView ivImageGroup = (ImageView) view.findViewById(R.id.ivGroupPic);
+            ivImageGroup.setImageBitmap(img);
+        }
         tvLastGroupMessage.setText("");
-
         View.OnClickListener ClickOpenGroup = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -60,7 +60,7 @@ public class WebServices {
         try {
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ClassName,ClassName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ObjectCode,ObjectCode);
-            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data,Data.toString());
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data,Tools.HashMapToString(Data));
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
 
@@ -138,7 +138,9 @@ public class WebServices {
     private void SendData(final int Id,final String ClassName, final int ObjectCode , String Data, String FuncName)
     {
         Map<String, String> params = new HashMap<>();
-        params.put("Data", Data);
+        params = Tools.StringToHashMap(Data);
+        if(params.size() == 0)
+            params.put("Data", Data);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url+FuncName,
                 new JSONObject(params), new Response.Listener<JSONObject>() {
             @Override
