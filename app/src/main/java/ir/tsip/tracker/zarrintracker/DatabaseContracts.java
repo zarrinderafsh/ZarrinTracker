@@ -135,5 +135,20 @@ public class DatabaseContracts {
                 "DROP TABLE IF EXISTS " + Groups.TABLE_NAME;
     }
 
+    public static abstract class Temp implements BaseColumns {
+        public static final String TABLE_NAME = "Temps";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_Image = "Image";
+        public static final String COLUMN_NAME_name = "name";
+        public static final String SQL_CREATE_Table =
+                "CREATE TABLE " + Groups.TABLE_NAME + " (" +
+                        Temp.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                        Temp.COLUMN_NAME_name + " nvarchar(250)," +
+                        Temp.COLUMN_NAME_Image + " BLOB )";
+
+        public static final String SQL_DELETE_Table =
+                "DROP TABLE IF EXISTS " + Groups.TABLE_NAME;
+    }
+
 }
 

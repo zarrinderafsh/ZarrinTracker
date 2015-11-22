@@ -25,6 +25,7 @@ import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -81,7 +82,7 @@ import java.util.TimerTask;
 import ir.tsip.tracker.zarrintracker.util.MapActivity;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     LinearLayout llTop;
     LinearLayout llDown;
@@ -93,10 +94,8 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     ImageView ivGPS;
     ImageView ivNetLocation;
     ImageView ivBattery;
-    ImageView inInvite;
     GoogleMap googleMap;
     ImageView ivCloseMap;
-    ImageView imgGroupJoin;
     ImageButton ibtnChat;
     TextView tvPersonName;
     Timer _TimerMain;
@@ -104,7 +103,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     TextView tvPause;
     MessageEvent MEvent;
 
-    Activity Base;
+   public static Activity Base;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,13 +177,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         llTop.setOnTouchListener(this);
         llMain.setOnTouchListener(this);
 
-        inInvite = (ImageView) findViewById(R.id.ivInvite);
-        inInvite.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent myIntent = new Intent(Base, Invite.class);
-                Base.startActivity(myIntent);
-            }
-        });
+
 
         View.OnClickListener ShowProfile = new View.OnClickListener() {
             public void onClick(View v) {
@@ -222,14 +215,6 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
             }
         });
 
-        imgGroupJoin = (ImageView) findViewById(R.id.ivGroup);
-        imgGroupJoin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(Base, JoinGroupActivity.class);
-                Base.startActivity(myIntent);
-            }
-        });
         /**********************************************************Set DrawLayout*/
         lsvtest = (ListView) findViewById(R.id.lsvtest);
 
@@ -297,9 +282,8 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         });
 
 
-
         IntentFilter filter = new IntentFilter("");
-        registerReceiver(new ProximityIntentReceiver(),filter);
+        registerReceiver(new ProximityIntentReceiver(), filter);
     }
 
     // nav drawer title
@@ -419,14 +403,15 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
      * ***************************************************************
      */
 
-
+  public static  LinearLayout.LayoutParams lpTop;
+    public static  LinearLayout.LayoutParams lpDown;
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int x = (int) event.getRawX();
         int y = (int) event.getRawY();
 
-        LinearLayout.LayoutParams lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
-        LinearLayout.LayoutParams lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
+        lpTop  = (LinearLayout.LayoutParams) llTop.getLayoutParams();
+        lpDown  = (LinearLayout.LayoutParams) llDown.getLayoutParams();
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -480,6 +465,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         // if you want to consume the behavior then return true else retur false
     }
 
+
     private void StartServices() {
         Timer _Timer = new Timer(true);
         _Timer.schedule(new TimerTask() {
@@ -501,12 +487,11 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     }
 
     private void ShowMessage() {
-        if(_TimerMain == null) {
+        if (_TimerMain == null) {
             _TimerMain = new Timer(true);
-        }
-        else
+        } else
             return;
-        if(MEvent == null) {
+        if (MEvent == null) {
             MEvent = new MessageEvent(Base);
         }
         _TimerMain.schedule(new TimerTask() {
@@ -575,21 +560,22 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         }
         return true;
     }
-    private Collection<CheckBox> checkboxes;
-    private  HashMap<Integer,Circle> circles;
+
+    private ArrayList<Circle> circles;
     LinearLayout ll;
     TextView lblMeters;
-     EditText txtMeters;
+    EditText txtMeters;
     AlertDialog.Builder builder;
-    private void mapGeofenceSetup() {
 
+    private void mapGeofenceSetup() {
+        if (googleMap == null)
+            return;
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(final LatLng latLng) {
 
-
-if(builder==null)
-                 builder= new AlertDialog.Builder(MainActivity.this);
+                if (builder == null)
+                    builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Geofence");
 
                 if (ll == null)
@@ -597,7 +583,7 @@ if(builder==null)
                 ll.setOrientation(LinearLayout.VERTICAL);
                 if (lblMeters == null)
                     lblMeters = new TextView(MainActivity.this);
-                lblMeters.setText("Specify a radius.");
+                lblMeters.setText("Specify a radius (meters).");
                 if (txtMeters == null)
                     txtMeters = new EditText(MainActivity.this);
                 txtMeters.setText("100");
@@ -606,26 +592,8 @@ if(builder==null)
                 if (ll.getChildCount() == 0) {
                     ll.addView(lblMeters);
                     ll.addView(txtMeters);
-                    if (checkboxes == null)
-                        checkboxes = new ArrayList<CheckBox>();
-                    if (checkboxes.size() == 0) {
-                        if (Tools.markers == null)
-                            Tools.markers = new HashMap<Integer, Marker>();
-                        for (Integer m : Tools.markers.keySet()) {
-                            CheckBox c = new CheckBox(MainActivity.this);
-                            c.setText(Tools.markers.get(m).getTitle().toString());
-                            c.setTag(m);
-                            checkboxes.add(c);
-                        }
-                    }
-                    for (CheckBox c : checkboxes) {
-                        try {
-                            ll.addView(c);
-                        } catch (Exception e) {
 
-                        }
-                    }
-               builder.setView(ll);
+                    builder.setView(ll);
                 }
 
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -633,14 +601,11 @@ if(builder==null)
                     public void onClick(DialogInterface dialog, int which) {
                         try {
                             if (circles == null)
-                                circles = new HashMap<Integer, Circle>();
-                            for (CheckBox c : checkboxes) {
-                                if (c.isChecked()) {
-                                    Circle circle = googleMap.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(txtMeters.getText().toString())));
-                                    LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1, PendingIntent.getBroadcast(MainActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.ProximityAlert"), 0));
-                                    circles.put(Integer.valueOf(c.getTag().toString()), circle);
-                                }
-                            }
+                                circles = new ArrayList<Circle>();
+                            Circle circle = googleMap.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(txtMeters.getText().toString())));
+                            LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1, PendingIntent.getBroadcast(MainActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.ProximityAlert"), 0));
+                            circles.add(circle);
+
                         } catch (Exception ex) {
 
                         }
@@ -653,8 +618,8 @@ if(builder==null)
                         dialog.cancel();
                     }
                 });
-if(ll.getParent()!=null)
-    ((ViewGroup)ll.getParent()).removeView(ll);
+                if (ll.getParent() != null)
+                    ((ViewGroup) ll.getParent()).removeView(ll);
                 builder.show();
             }
         });
@@ -715,13 +680,12 @@ if(ll.getParent()!=null)
 
     @Override
     public void onStop() {
-        super.onStart();
+        super.onStop();
         _TimerMain.cancel();
-        _TimerMain=null;
+        _TimerMain = null;
     }
 
-    private void PauseDialog()
-    {
+    private void PauseDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Pause GPS");
 
@@ -732,13 +696,13 @@ if(ll.getParent()!=null)
         final RadioButton R6 = new RadioButton(this);
         final RadioButton R12 = new RadioButton(this);
 
-        R1.setText("1 houre");
+        R1.setText("1 hour");
         R1.setTag(1);
-        R3.setText("3 houre");
+        R3.setText("3 hour");
         R3.setTag(3);
-        R6.setText("6 houre");
+        R6.setText("6 hour");
         R6.setTag(6);
-        R12.setText("12 houre");
+        R12.setText("12 hour");
         R12.setTag(12);
 
         RG.addView(R1);
@@ -755,9 +719,7 @@ if(ll.getParent()!=null)
                     int id = RG.getCheckedRadioButtonId();
                     int hour = (int) ((RadioButton) RG.findViewById(id)).getTag();
                     LocationListener.StartPause(hour);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
 
                 }
 
@@ -775,8 +737,8 @@ if(ll.getParent()!=null)
     }
 
     int HelpCount = 0;
-    private void HelpDialog()
-    {
+
+    private void HelpDialog() {
         HelpCount = 0;
         final Dialog builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -785,8 +747,8 @@ if(ll.getParent()!=null)
 
         final Timer _Timer = new Timer(true);
 
-        final TextView tvShowTime = (TextView)builder.findViewById(R.id.tvHelpCounter);
-        Button button = (Button)builder.findViewById(R.id.btCloseHelp);
+        final TextView tvShowTime = (TextView) builder.findViewById(R.id.tvHelpCounter);
+        Button button = (Button) builder.findViewById(R.id.btCloseHelp);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -803,12 +765,11 @@ if(ll.getParent()!=null)
                 try {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            if(HelpCount < 6) {
+                            if (HelpCount < 6) {
                                 tvShowTime.setText(String.valueOf(HelpCount));
                                 v.vibrate(500);
                             }
-                            if(HelpCount >=6)
-                            {
+                            if (HelpCount >= 6) {
                                 EventManager E = new EventManager(getApplicationContext());
                                 E.SendSOS();
                                 _Timer.cancel();

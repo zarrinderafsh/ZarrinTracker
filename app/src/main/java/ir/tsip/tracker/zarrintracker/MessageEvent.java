@@ -7,14 +7,19 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.sql.Blob;
 import java.sql.Struct;
@@ -141,8 +146,10 @@ public class MessageEvent {
                     @Override
                     public void onClick(View v) {
                         Loc L = (Loc)v.getTag();
-                        if(L.Lon > 0 && L.Lat >0)
-                        {
+                        if(L.Lon > 0 && L.Lat >0) {
+                            Tools.GoogleMapObj.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(L.Lat, L.Lon), 16.0f));
+                            MainActivity.lpTop.topMargin = - MainActivity.lpTop.height;
+                            MainActivity.lpDown.topMargin = Tools.GetDesktopSize(MainActivity.Base).y +MainActivity.lpTop.height / 2;
 
                         }
                     }

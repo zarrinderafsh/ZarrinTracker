@@ -18,7 +18,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/imageView3"
+                android:id="@+id/ivGroup"
                 android:contentDescription="@string/ivWiFiDesc"
                 android:src="@drawable/user_group"
                 android:clickable="true"
@@ -27,6 +27,7 @@
                 android:layout_marginRight="10dp" />
 
         </LinearLayout>
+
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"

@@ -27,6 +27,7 @@ import java.util.Random;
 
 public class GroupsActivity extends AppCompatActivity {
 
+    ImageView imgGroupJoin;
     static LinearLayout lsvGroups;
     static Activity context;
     static List<Integer> GroupList;
@@ -36,6 +37,17 @@ public class GroupsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+
+        imgGroupJoin = (ImageView) findViewById(R.id.ivGroup);
+        imgGroupJoin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(GroupsActivity.this, JoinGroupActivity.class);
+                GroupsActivity.this.startActivity(myIntent);
+            }
+        });
+
         if(GroupList == null)
             GroupList = new ArrayList<Integer>();
         context = this;
@@ -121,6 +133,7 @@ public class GroupsActivity extends AppCompatActivity {
 
                 Intent myIntent = new Intent(context, ChatActivity.class);
                 myIntent.putExtra("gpID", String.valueOf((int) v.getTag()));
+                myIntent.putExtra("myGroup", "true");
                 context.startActivity(myIntent);
             }
         };

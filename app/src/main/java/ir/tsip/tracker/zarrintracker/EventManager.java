@@ -5,6 +5,7 @@ import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.LocationManager;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -14,22 +15,27 @@ public class EventManager {
 
     private Context Base;
     private static WebServices WS;
+    HashMap<String, String> params;
     public EventManager(Context context)
     {
         Base = context;
     }
 
-    public void AddEvevnt(String S)
+    public void AddEvevnt(String S,String gpID)
     {
+        params = new HashMap<>();
+        params.put("message", S);
+        params.put("imei",Tools.GetImei(Base));
+        params.put("gpID", gpID);
         if(WS == null)
             WS = new WebServices(Base);
-        WS.addQueue("ir.tsip.tracker.zarrintracker.EventManager",0,Tools.GetImei(Base)+"|"+S,"SendEvent");
-        MessageEvent.InsertMessage(Base , S );
+        WS.addQueue("ir.tsip.tracker.zarrintracker.EventManager",0,params,"SendEvent");
+        MessageEvent.InsertMessage(Base, S);
     }
 
     public void SendSOS()
     {
-        AddEvevnt("Please contact me ASAP.I my need your help");
+        AddEvevnt("Please contact me ASAP.I may need your help","-2");
     }
 
 }

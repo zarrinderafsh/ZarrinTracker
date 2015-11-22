@@ -15,6 +15,7 @@ import android.os.SystemClock;
 import android.widget.Toast;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Timer;
@@ -77,7 +78,7 @@ public class LocationListener  extends Service implements android.location.Locat
 
     public void PrepareLocation() {
         try {
-            if(locationManager==null)
+            if (locationManager == null)
                 locationManager = (LocationManager) mContext
                         .getSystemService(LOCATION_SERVICE);
 
@@ -164,18 +165,18 @@ public class LocationListener  extends Service implements android.location.Locat
     /**
      * Stop using GPS listener
      * Calling this function will stop using GPS in your app
-     * */
-    public void stopUsingGPS(){
-        if(locationManager != null){
+     */
+    public void stopUsingGPS() {
+        if (locationManager != null) {
             locationManager.removeUpdates(LocationListener.this);
         }
     }
 
     /**
      * Function to get latitude
-     * */
-    public static double getLatitude(){
-        if(LastLocation != null){
+     */
+    public static double getLatitude() {
+        if (LastLocation != null) {
             latitude = LastLocation.getLatitude();
         }
 
@@ -185,9 +186,9 @@ public class LocationListener  extends Service implements android.location.Locat
 
     /**
      * Function to get longitude
-     * */
-    public static double getLongitude(){
-        if(LastLocation != null){
+     */
+    public static double getLongitude() {
+        if (LastLocation != null) {
             longitude = LastLocation.getLongitude();
         }
 
@@ -197,19 +198,19 @@ public class LocationListener  extends Service implements android.location.Locat
 
     /**
      * Function to check GPS/wifi enabled
+     *
      * @return boolean
-     * */
+     */
     public boolean canGetLocation() {
         return this.canGetLocation;
     }
 
     public static boolean isNewLocation(Boolean pChangeState) {
-        if(isNewLocation) {
-            if(pChangeState)
+        if (isNewLocation) {
+            if (pChangeState)
                 isNewLocation = false;
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -221,29 +222,29 @@ public class LocationListener  extends Service implements android.location.Locat
     /**
      * Function to show settings alert dialog
      * On pressing Settings button will lauch Settings Options
-     * */
+     */
 
-     @Override
+    @Override
     public void onGpsStatusChanged(int p) {
-         switch (p) {
-             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-                 break;
-             case GpsStatus.GPS_EVENT_FIRST_FIX:
-                 break;
-             case GpsStatus.GPS_EVENT_STOPPED:
-                 String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
-                 (new EventManager(mContext)).AddEvevnt( "turned GPS OFF:"+ SDate );
-                 break;
-             case GpsStatus.GPS_EVENT_STARTED:
-                 break;
-     }
-        int count=0;
-        float Snr=0;
+        switch (p) {
+            case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
+                break;
+            case GpsStatus.GPS_EVENT_FIRST_FIX:
+                break;
+            case GpsStatus.GPS_EVENT_STOPPED:
+                String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
+                (new EventManager(mContext)).AddEvevnt("turned GPS OFF:" + SDate, "-3");
+                break;
+            case GpsStatus.GPS_EVENT_STARTED:
+                break;
+        }
+        int count = 0;
+        float Snr = 0;
         GpsStatus gpsStatus = locationManager.getGpsStatus(null);
-        if(gpsStatus != null) {
-            Iterable<GpsSatellite>satellites = gpsStatus.getSatellites();
+        if (gpsStatus != null) {
+            Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
             Iterator<GpsSatellite> sat = satellites.iterator();
-            int i=0;
+            int i = 0;
             while (sat.hasNext()) {
                 GpsSatellite satellite = sat.next();
                 Snr += satellite.getSnr();
@@ -256,26 +257,26 @@ public class LocationListener  extends Service implements android.location.Locat
     @Override
     public void onLocationChanged(Location location) {
 
-        if(PauseDate!=null && (new Date()).before(PauseDate))
+        if (PauseDate != null && (new Date()).before(PauseDate))
             return;
-        CurrentBearing = (int)location.getBearing();
-        CurrentSpeed = (int)(location.getSpeed() * 3.6) ; // KM
+        CurrentBearing = (int) location.getBearing();
+        CurrentSpeed = (int) (location.getSpeed() * 3.6); // KM
         CurrentTime = (new Date(location.getTime()));
         CurrentAccuracy = location.getAccuracy();
-        CurrentLat=location.getLatitude();
+        CurrentLat = location.getLatitude();
         CurrentLon = location.getLongitude();
-        CurrentLocation=location;
+        CurrentLocation = location;
         MessageManager.SetMessage(
                 " New Location is MoveBearing:" + CurrentBearing +
                         " Time:" + (new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(CurrentTime)) +
                         " Speed:" + CurrentSpeed);
 
-        if(LastLocation == null)
+        if (LastLocation == null)
             LastLocation = location;
-        MoveBearing =  (int)location.bearingTo(LastLocation);
-        MoveDistance = (int)location.distanceTo(LastLocation);
+        MoveBearing = (int) location.bearingTo(LastLocation);
+        MoveDistance = (int) location.distanceTo(LastLocation);
 
-        if(     (MoveDistance > 5 && Math.abs(MoveBearing-LastMoveBearing) >10 && location.getSpeed() > 0.0)
+        if ((MoveDistance > 5 && Math.abs(MoveBearing - LastMoveBearing) > 10 && location.getSpeed() > 0.0)
                 ||
                 (MoveDistance > 40)
                 ||
@@ -283,12 +284,12 @@ public class LocationListener  extends Service implements android.location.Locat
                 ) {
             isNewLocation = true;
             LastLocation = location;
-            LastMoveBearing =  MoveBearing;
+            LastMoveBearing = MoveBearing;
 
             latitude = location.getLatitude();
-            longitude=location.getLongitude();
-            Altitude = (int)location.getAltitude();
-            Speed = (int)(location.getSpeed()*3.6);
+            longitude = location.getLongitude();
+            Altitude = (int) location.getAltitude();
+            Speed = (int) (location.getSpeed() * 3.6);
             gpsTime = location.getTime();
             Process();
             MessageManager.SetMessage("New Location Get :)");
@@ -316,32 +317,30 @@ public class LocationListener  extends Service implements android.location.Locat
         dbh.close();
     }
 
-    public static void StartPause(int hour)
-    {
+    public static void StartPause(int hour) {
         PauseDate = new Date();
         PauseDate.setTime(PauseDate.getTime() + hour * 3600 * 1000);
-        (new EventManager(mContext)).AddEvevnt("Puase for "+hour+" hour.");
+        (new EventManager(mContext)).AddEvevnt("Puase for " + hour + " hour.", "-3");
     }
 
-    public static Location getLastLocation()
-    {
-        return  LastLocation;
+    public static Location getLastLocation() {
+        return LastLocation;
     }
-    public static ContentValues getData()
-    {
+
+    public static ContentValues getData() {
         Date date = new Date(gpsTime);
         String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
         String data =
                 latitude + "," +
-                longitude + "," +
-                Altitude + "," +
-                Speed + "," +
-                MoveBearing + "," +
-                SDate + "," +
-                (int)Tools.getBatteryLevel(mContext) + "," +
-                " ";
+                        longitude + "," +
+                        Altitude + "," +
+                        Speed + "," +
+                        MoveBearing + "," +
+                        SDate + "," +
+                        (int) Tools.getBatteryLevel(mContext) + "," +
+                        " ";
         ContentValues Val = new ContentValues();
-        Val.put(DatabaseContracts.AVLData.COLUMN_NAME_Data , data);
+        Val.put(DatabaseContracts.AVLData.COLUMN_NAME_Data, data);
         return Val;
 
     }
@@ -364,8 +363,8 @@ public class LocationListener  extends Service implements android.location.Locat
     }
 
     @Override
-    public int onStartCommand(Intent intent,int flags, int startId) {
-        if(mContext == null)
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (mContext == null)
             this.mContext = getApplicationContext();
         PrepareLocation();
         StartServices();
@@ -374,21 +373,40 @@ public class LocationListener  extends Service implements android.location.Locat
         return START_STICKY;
     }
 
-    private void StartServices()
-    {
+    private void StartServices() {
+
+
+        Timer msgTimer = new Timer(true);
+        msgTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+
+                try {
+                    HashMap<String, String> params2;
+                    params2 = new HashMap<>();
+                    params2.put("imei", Tools.GetImei(getApplicationContext()));
+                    params2.put("gpID", "0");
+                    WebServices W = new WebServices(getApplicationContext());
+                    W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage");
+                } catch (Exception ex) {
+                    ex.toString();
+                }
+            }
+        }, 0, 1000);
+
         Timer _Timer = new Timer(true);
         _Timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 PrepareLocation();
                 InternetConnection = Tools.isOnline(mContext);
-                String SDate=" None";
-                if(LastLocation != null) {
+                String SDate = " None";
+                if (LastLocation != null) {
                     Date date = new Date(LastLocation.getTime());
                     SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
                 }
-                if(isGPSEnabled || isNetworkEnabled)
-                    Tools.Notificationm(mContext,"ZTracker","Last Get Location:"+SDate,"");
+                if (isGPSEnabled || isNetworkEnabled)
+                    Tools.Notificationm(mContext, "ZTracker", "Last Get Location:" + SDate, "");
                 else
                     Tools.HideNotificationm();
             }

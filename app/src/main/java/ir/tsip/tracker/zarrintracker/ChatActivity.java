@@ -1,5 +1,6 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.app.usage.UsageEvents;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +49,7 @@ public class ChatActivity extends AppCompatActivity {
     static LinearLayout lsvChat;
     static ChatActivity _this;
 
+    ImageView inInvite;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +59,20 @@ public class ChatActivity extends AppCompatActivity {
         _this=null;
         _this=this;
         context = getApplicationContext();
+
+         if( getIntent().getStringExtra("myGroup")=="true") {
+
+             inInvite = (ImageView) findViewById(R.id.ivInvite);
+             inInvite.setOnClickListener(new View.OnClickListener() {
+                 public void onClick(View v) {
+                     Intent myIntent = new Intent(ChatActivity.this, Invite.class);
+                     ChatActivity.this.startActivity(myIntent);
+                 }
+             });
+             inInvite.setVisibility(View.VISIBLE);
+         }
+        else
+             inInvite.setVisibility(View.INVISIBLE);
 
 
         gpID = getIntent().getStringExtra("gpID");
@@ -76,12 +92,11 @@ public class ChatActivity extends AppCompatActivity {
                 params.put("gpID", gpID);
                 WebServices W = new WebServices(getApplicationContext());
                 W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity",0,params,"SetMessage");
-                InsertMessages(txtMessage.getText().toString().split(String.valueOf((char) 26)));
+               // InsertMessages(txtMessage.getText().toString().split(String.valueOf((char) 26)));
                 txtMessage.setText("");
             }
         });
 
-        GetNewstMessages();
         ShowMessages();
         ScrollView svChatView = (ScrollView)_this.findViewById(R.id.svChatView);
         svChatView.scrollTo(0, lsvChat.getBottom());
@@ -95,26 +110,6 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    private void GetNewstMessages() {
-
-        Timer _Timer = new Timer(true);
-        _Timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    HashMap<String, String> params2;
-                    params2 = new HashMap<>();
-                    params2.put("imei", Tools.GetImei(getApplicationContext()));
-                    params2.put("gpID", gpID);
-                    WebServices W = new WebServices(getApplicationContext());
-                    W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage");
-                } catch (Exception ex) {
-                    ex.toString();
-                }
-            }
-
-        }, 0, 1000);
-    }
 
     DatabaseHelper dbh;
     SQLiteDatabase db;
@@ -129,10 +124,17 @@ public class ChatActivity extends AppCompatActivity {
         ContentValues Data;
         for (String msg : messages) {
             Data = new ContentValues();
-            Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Data, msg);
-            Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Group, gpID);
-            db.insert(DatabaseContracts.ChatLog.TABLE_NAME, DatabaseContracts.ChatLog.COLUMN_NAME_ID, Data);
-            CreateGroupLayer(new Date(), msg, null, 0);
+            if(msg.contains("[C]")) {
+                Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Data, msg.replace("[C]",""));
+                Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Group, gpID);
+                db.insert(DatabaseContracts.ChatLog.TABLE_NAME, DatabaseContracts.ChatLog.COLUMN_NAME_ID, Data);
+                CreateGroupLayer(new Date(), msg, null, 0);
+                MessageEvent.InsertMessage(context, "New message!");
+            }
+            else  if(msg.contains("[E]"))
+            {
+                MessageEvent.InsertMessage(context,msg.replace("[E]",""));
+            }
             Data=null;
         }
 
@@ -151,13 +153,17 @@ public class ChatActivity extends AppCompatActivity {
 
             String[] columns = {DatabaseContracts.ChatLog.COLUMN_NAME_ID, DatabaseContracts.ChatLog.COLUMN_NAME_Group, DatabaseContracts.ChatLog.COLUMN_NAME_Data};
             Cursor c = readabledb.query(DatabaseContracts.ChatLog.TABLE_NAME, columns, DatabaseContracts.ChatLog.COLUMN_NAME_Group + "=?", new String[]{String.valueOf(gpID)}, "", "",DatabaseContracts.ChatLog.COLUMN_NAME_ID );
-            c.moveToFirst();
-            while (true) {
-                CreateGroupLayer(new Date(),c.getString(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_Data)),null,0);
-                if (c.isLast())
-                    break;
-                c.moveToNext();
-            }
+           if(c.getCount()>0) {
+               c.moveToFirst();
+               while (true) {
+
+                   CreateGroupLayer(new Date(), c.getString(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_Data)), null, 0);
+
+                   if (c.isLast())
+                       break;
+                   c.moveToNext();
+               }
+           }
             c.close();
         }
     }
@@ -196,7 +202,7 @@ public class ChatActivity extends AppCompatActivity {
         llGroupList4.setOnClickListener(ClickOpenGroup);
 
         ScrollView svChatView = (ScrollView)_this.findViewById(R.id.svChatView);
-        svChatView.scrollTo(0, lsvChat.getBottom());
+        svChatView.scrollTo(0, lsvChat.getHeight());
     }
 
     @Override

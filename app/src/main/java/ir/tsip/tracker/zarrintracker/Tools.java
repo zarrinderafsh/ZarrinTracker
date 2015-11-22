@@ -166,12 +166,13 @@ public class Tools {
     }
 
 
-
+public static  GoogleMap GoogleMapObj;
 
 static Boolean isFirst=true;
     public static void setUpMap(GoogleMap googleMap, Context context) {
         if (googleMap == null || LocationListener.CurrentLocation == null)
             return;
+        GoogleMapObj=googleMap;
 
         if (markers == null)
             markers = new HashMap<Integer, Marker>();
