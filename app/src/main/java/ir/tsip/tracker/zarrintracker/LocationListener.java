@@ -320,7 +320,8 @@ public class LocationListener  extends Service implements android.location.Locat
     public static void StartPause(int hour) {
         PauseDate = new Date();
         PauseDate.setTime(PauseDate.getTime() + hour * 3600 * 1000);
-        (new EventManager(mContext)).AddEvevnt("Puase for " + hour + " hour.", "-3");
+        if(hour > 0)
+            (new EventManager(mContext)).AddEvevnt("Puase for " + hour + " hour.", "-3");
     }
 
     public static Location getLastLocation() {

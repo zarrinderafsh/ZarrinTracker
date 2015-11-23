@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     ImageView ivGPS;
     ImageView ivNetLocation;
     ImageView ivBattery;
+    ImageView ivArrowDown;
     GoogleMap googleMap;
     ImageView ivCloseMap;
     ImageButton ibtnChat;
@@ -102,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     TextView tvHelp;
     TextView tvPause;
     MessageEvent MEvent;
+    public static  LinearLayout.LayoutParams lpTop;
+    public static  LinearLayout.LayoutParams lpDown;
 
    public static Activity Base;
 
@@ -122,6 +125,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         LinearLayout.LayoutParams llD = (LinearLayout.LayoutParams) llDown.getLayoutParams();
         llD.height = Tools.GetDesktopSize(Base).y - ((LinearLayout.LayoutParams) llTop.getLayoutParams()).height;
         llDown.setLayoutParams(llD);
+
+        lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
+        lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
 
         ivPause = (ImageView) findViewById(R.id.ivPause);
         ivPause.setOnClickListener(new View.OnClickListener() {
@@ -159,8 +165,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         ivCloseMap = (ImageView) findViewById(R.id.ivCloseMap);
         ivCloseMap.setOnClickListener(new View.OnClickListener() {
                                           public void onClick(View v) {
-                                              LinearLayout.LayoutParams lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
-                                              LinearLayout.LayoutParams lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
+                                              lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
+                                              lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
 
                                               lpTop.topMargin = 0;
                                               lpDown.topMargin = 0;
@@ -177,7 +183,21 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         llTop.setOnTouchListener(this);
         llMain.setOnTouchListener(this);
 
+        ivArrowDown = (ImageView) findViewById(R.id.ivArrowDown);
+        ivArrowDown.setOnTouchListener(this);
+        ivArrowDown.setOnClickListener(new View.OnClickListener() {
+                                          public void onClick(View v) {
+                                              lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
+                                              lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
 
+                                              lpTop.topMargin = -lpTop.height;
+                                              lpDown.topMargin = Tools.GetDesktopSize(Base).y + lpTop.height / 2;
+                                              llMain.setVisibility(View.INVISIBLE);
+                                          }
+
+                                          ;
+                                      }
+        );
 
         View.OnClickListener ShowProfile = new View.OnClickListener() {
             public void onClick(View v) {
@@ -202,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         mMapFragment = MapFragment.newInstance();
         FragmentTransaction fragmentTransaction =
                 getFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.mapLayout, mMapFragment);
+        fragmentTransaction.add(R.id.llMapLoad, mMapFragment);
         fragmentTransaction.commit();
         llmapLayout.setGravity(android.view.Gravity.BOTTOM);
 
@@ -403,8 +423,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
      * ***************************************************************
      */
 
-  public static  LinearLayout.LayoutParams lpTop;
-    public static  LinearLayout.LayoutParams lpDown;
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int x = (int) event.getRawX();
@@ -767,7 +785,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                         public void run() {
                             if (HelpCount < 6) {
                                 tvShowTime.setText(String.valueOf(HelpCount));
-                                v.vibrate(500);
+                                v.vibrate(100);
                             }
                             if (HelpCount >= 6) {
                                 EventManager E = new EventManager(getApplicationContext());
