@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setContentView(R.layout.activity_main);
+        Tools.setTitleColor(this);
         checkRegistration();
         Base = this;
         ShowMessage();
@@ -184,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         llMain.setOnTouchListener(this);
 
         ivArrowDown = (ImageView) findViewById(R.id.ivArrowDown);
-        ivArrowDown.setOnTouchListener(this);
         ivArrowDown.setOnClickListener(new View.OnClickListener() {
                                           public void onClick(View v) {
                                               lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
@@ -304,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         IntentFilter filter = new IntentFilter("");
         registerReceiver(new ProximityIntentReceiver(), filter);
+
     }
 
     // nav drawer title
