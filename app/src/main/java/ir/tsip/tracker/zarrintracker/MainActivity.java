@@ -112,6 +112,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         this.setContentView(R.layout.activity_main);
         checkRegistration();
         Base = this;
+        //here we try invite once, in server it will generate a group for current user.
+        //we no need generated code here!
+        WebServices w=new WebServices(this);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("imei", Tools.GetImei(getApplicationContext()));
+        w.addQueue("ir.tsip.tracker.zarrintracker", 0, params, "GenerateJoinKey");
+        w=null;
+        //
         ShowMessage();
         StartServices();
 
@@ -219,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         lsvtest = (ListView) findViewById(R.id.lsvtest);
 
         lsvtest.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawerlistlayout, new String[]{"Map", "Invite", "Groups", "Chat", "About"}));
+                R.layout.drawerlistlayout, new String[]{"Map", "Chat", "About"}));
 
 
         mTitle = mDrawerTitle = getTitle();
@@ -261,18 +269,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                         onTouch(lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 548, 906, 1));
                         break;
                     case 1:
-                        myIntent = new Intent(Base, Invite.class);
-                        Base.startActivity(myIntent);
-                        break;
-                    case 2:
-                        myIntent = new Intent(Base, JoinGroupActivity.class);
-                        Base.startActivity(myIntent);
-                        break;
-                    case 3:
                         myIntent = new Intent(Base, GroupsActivity.class);
                         Base.startActivity(myIntent);
                         break;
-                    case 4:
+                    case 2:
                         myIntent = new Intent(Base, about.class);
                         Base.startActivity(myIntent);
                         break;
@@ -305,6 +305,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void checkRegistration() {
 
+        //check if this device registered already
         params = new HashMap<>();
         // the POST parameters:
         params.put("pData", Tools.GetImei(this) + "/");// "351520060796671");

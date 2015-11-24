@@ -1,8 +1,10 @@
 package ir.tsip.tracker.zarrintracker;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -14,16 +16,31 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.zip.Inflater;
 
 public class GroupsActivity extends AppCompatActivity {
 
@@ -31,6 +48,7 @@ public class GroupsActivity extends AppCompatActivity {
     static LinearLayout lsvGroups;
     static Activity context;
     static List<Integer> GroupList;
+    private static com.android.volley.RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +61,57 @@ public class GroupsActivity extends AppCompatActivity {
         imgGroupJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(GroupsActivity.this, JoinGroupActivity.class);
-                GroupsActivity.this.startActivity(myIntent);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(GroupsActivity.this);
+                builder.setTitle("Join Group");
+                LayoutInflater inflate=GroupsActivity.this.getLayoutInflater();
+                View view=inflate.inflate(R.layout.activity_join_group,null);
+                builder.setView(view);
+               final EditText txtCode = (EditText) findViewById(R.id.txtJoinCode);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("key", txtCode.getText().toString());
+                            params.put("imei", Tools.GetImei(getApplicationContext()));
+                            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, "http://tstracker.ir/services/webbasedefineservice.asmx/AddDevice",
+                                    new JSONObject(params), new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    try {
+                                        String data = response.getString("d");
+                                        if (data.contains("1")) {
+                                            Toast.makeText(GroupsActivity.this, "Your device registered.", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else
+                                            Toast.makeText(GroupsActivity.this, "Code is not valid.", Toast.LENGTH_SHORT).show();
+                                    } catch (Exception er) {
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                }
+                            });
+                            if (queue == null)
+                                queue = Volley.newRequestQueue(getApplicationContext());
+                            queue.add(jsObjRequest);
+                            } catch (Exception ex) {
+
+                        }
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
             }
         });
 
