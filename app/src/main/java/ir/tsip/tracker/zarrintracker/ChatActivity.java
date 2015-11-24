@@ -1,8 +1,10 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.app.AlertDialog;
 import android.app.usage.UsageEvents;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -22,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -48,7 +51,7 @@ public class ChatActivity extends AppCompatActivity {
     String gpID;
     static LinearLayout lsvChat;
     static ChatActivity _this;
-
+static TextView txtGeneratedJoinCode;
     ImageView inInvite;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +62,43 @@ public class ChatActivity extends AppCompatActivity {
         _this=null;
         _this=this;
         context = getApplicationContext();
+        inInvite = (ImageView) findViewById(R.id.ivInvite);
 
          if( getIntent().getStringExtra("myGroup")=="true") {
 
-             inInvite = (ImageView) findViewById(R.id.ivInvite);
              inInvite.setOnClickListener(new View.OnClickListener() {
                  public void onClick(View v) {
-                     Intent myIntent = new Intent(ChatActivity.this, Invite.class);
-                     ChatActivity.this.startActivity(myIntent);
+                     AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+                     builder.setTitle("Invite Others");
+                     LayoutInflater inflate=ChatActivity.this.getLayoutInflater();
+                     View view=inflate.inflate(R.layout.activity_invate,null);
+                     txtGeneratedJoinCode=(TextView)findViewById(R.id.txtGeneratedJOinCode);
+                     WebServices w=new WebServices(ChatActivity.this);
+                     HashMap<String, String> params = new HashMap<>();
+                     params.put("imei", Tools.GetImei(getApplicationContext()));
+                     w.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "GenerateJoinKey");
+                     w=null;
+                     builder.setView(view);
+                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                         @Override
+                         public void onClick(DialogInterface dialog, int which) {
+                             try {
+                                 Tools.ShareText(txtGeneratedJoinCode.getText().toString(), _this);
+
+                             } catch (Exception ex) {
+
+                             }
+                         }
+                     });
+                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                         @Override
+                         public void onClick(DialogInterface dialog, int which) {
+
+                             dialog.cancel();
+                         }
+                     });
+
+                     builder.show();
                  }
              });
              inInvite.setVisibility(View.VISIBLE);
@@ -107,6 +139,11 @@ public class ChatActivity extends AppCompatActivity {
             if(_this == null || Data == "null")
                 return;
             _this.InsertMessages(Data.split(","));
+        }
+        else if(ObjectCode==0) {
+            if (Data != ("0")) {
+                txtGeneratedJoinCode.setText(Data);
+            }
         }
     }
 
