@@ -3,13 +3,6 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme"  parent="@style/Theme.AppCompat.Light">
-        <item name="actionBarStyle">@style/MyActionBar</item>
-        <!-- Customize your theme here. -->
-    </style>
-
-
-    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/BackColor</item>
     </style>
 
     <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
