@@ -10,6 +10,7 @@ import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,6 +34,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.cast.CastRemoteDisplayLocalService;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -123,9 +127,10 @@ static TextView txtGeneratedJoinCode;
                 params.put("imei", Tools.GetImei(getApplicationContext()));
                 params.put("gpID", gpID);
                 WebServices W = new WebServices(getApplicationContext());
-                W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity",0,params,"SetMessage");
+                W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "SetMessage");
                // InsertMessages(txtMessage.getText().toString().split(String.valueOf((char) 26)));
                 txtMessage.setText("");
+                W=null;
             }
         });
 
@@ -172,6 +177,28 @@ static TextView txtGeneratedJoinCode;
             {
                 MessageEvent.InsertMessage(context,msg.replace("[E]",""));
             }
+            else  if(msg.contains("[G]"))
+            {
+                String[] data=msg.replace("[G]","").split("~");
+                LatLng latLng=new LatLng(Double.valueOf(data[0].split(",")[0]),Double.valueOf(data[0].split(",")[1]));
+                Circle circle = Tools.GoogleMapObj.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(data[1])));
+                MainActivity.circles.add(circle);
+
+                ContentValues Val = new ContentValues();
+                DatabaseHelper dbh = new DatabaseHelper(ChatActivity.this);
+                SQLiteDatabase db = dbh.getWritableDatabase();
+                try {
+                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, latLng.toString());
+                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, data[2]);
+                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, data[1]);
+                    db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
+                }
+                catch (Exception er){
+
+                }
+                db.close();
+                dbh.close();
+                }
             Data=null;
         }
 

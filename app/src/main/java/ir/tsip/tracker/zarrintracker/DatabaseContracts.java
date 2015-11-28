@@ -141,14 +141,31 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_Image = "Image";
         public static final String COLUMN_NAME_name = "name";
         public static final String SQL_CREATE_Table =
-                "CREATE TABLE " + Groups.TABLE_NAME + " (" +
+                "CREATE TABLE " + Temp.TABLE_NAME + " (" +
                         Temp.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
                         Temp.COLUMN_NAME_name + " nvarchar(250)," +
                         Temp.COLUMN_NAME_Image + " BLOB )";
 
         public static final String SQL_DELETE_Table =
-                "DROP TABLE IF EXISTS " + Groups.TABLE_NAME;
+                "DROP TABLE IF EXISTS " + Temp.TABLE_NAME;
     }
 
+
+    public static abstract class Geogences implements BaseColumns {
+        public static final String TABLE_NAME = "geofences";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_radius = "radius";
+        public static final String COLUMN_NAME_name = "name";
+        public static final String COLUMN_NAME_center = "center";
+        public static final String SQL_CREATE_Table =
+                "CREATE TABLE " + Geogences.TABLE_NAME + " (" +
+                        Geogences.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                        Geogences.COLUMN_NAME_name + " nvarchar(250)," +
+                        Geogences.COLUMN_NAME_center + " nvarchar(250)," +
+                        Geogences.COLUMN_NAME_radius + " INTEGER )";
+
+        public static final String SQL_DELETE_Table =
+                "DROP TABLE IF EXISTS " + Geogences.TABLE_NAME;
+    }
 }
 

@@ -10,22 +10,34 @@ import android.location.LocationManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
 /**
  * Created by ali on 11/21/15.
  */
 public class ProximityIntentReceiver extends BroadcastReceiver {
+    String key = LocationManager.KEY_PROXIMITY_ENTERING;
+    Boolean entering;
+    String state;
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        String key = LocationManager.KEY_PROXIMITY_ENTERING;
-        Boolean entering = intent.getBooleanExtra(key, false);
+        entering = intent.getBooleanExtra(key, false);
         if (entering) {
-            (new EventManager(context)).AddEvevnt("enter.","-1");
-            Toast.makeText(context, "Enter", Toast.LENGTH_SHORT).show();
-            Log.d(getClass().getSimpleName(), "entering");
+            state="enter";
         }else {
-            (new EventManager(context)).AddEvevnt("exit.","-1");
-            Toast.makeText(context, "exit", Toast.LENGTH_SHORT).show();
-            Log.d(getClass().getSimpleName(), "exiting");
+            state="exit";
         }
+        HashMap<String, String> params;
+        params = new HashMap<>();
+        params.put("message", state);
+        params.put("imei", Tools.GetImei(context));
+        params.put("gpID", "-1");
+        WebServices W = new WebServices(context);
+        W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "SetMessage");
+        W=null;
+        (new EventManager(context)).AddEvevnt(state, "-1");
+        Toast.makeText(context, state, Toast.LENGTH_SHORT).show();
+        Log.d(getClass().getSimpleName(),state);
     }
 }

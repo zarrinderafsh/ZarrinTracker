@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -48,6 +49,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     MessageEvent MEvent;
     public static  LinearLayout.LayoutParams lpTop;
     public static  LinearLayout.LayoutParams lpDown;
+    Spinner spnrGeofences;
 
    public static Activity Base;
 
@@ -125,6 +128,25 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         //
         ShowMessage();
         StartServices();
+
+        spnrGeofences=(Spinner)findViewById(R.id.spnrGeofences);
+        ArrayAdapter<String> spnrAdapter=new ArrayAdapter<String>(this,R.layout.drawerlistlayout);
+        DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius,DatabaseContracts.Geogences.COLUMN_NAME_center,DatabaseContracts.Geogences.COLUMN_NAME_name};
+        Cursor c;
+        c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
+        c.moveToFirst();
+        while(true && c.getCount()>0){
+            spnrAdapter.add( c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_name)));
+            if (c.isLast())
+                break;
+            c.moveToNext();
+        }
+c.close();
+        db.close();
+        dh.close();
+        spnrGeofences.setAdapter(spnrAdapter);
 
         llTop = (LinearLayout) findViewById(R.id.llTop);
         llDown = (LinearLayout) findViewById(R.id.llDown);
@@ -580,10 +602,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         return true;
     }
 
-    private ArrayList<Circle> circles;
+    public static ArrayList<Circle> circles;
     LinearLayout ll;
     TextView lblMeters;
     EditText txtMeters;
+    EditText txtGeoName;
     AlertDialog.Builder builder;
 
     private void mapGeofenceSetup() {
@@ -606,6 +629,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 if (txtMeters == null)
                     txtMeters = new EditText(MainActivity.this);
                 txtMeters.setText("100");
+                if (txtGeoName == null)
+                    txtGeoName = new EditText(MainActivity.this);
+                txtGeoName.setText("geo"+circles.size()+1);
 
                 //If layout has no child, add views to it
                 if (ll.getChildCount() == 0) {
@@ -624,6 +650,29 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                             Circle circle = googleMap.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(txtMeters.getText().toString())));
                             LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1, PendingIntent.getBroadcast(MainActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.ProximityAlert"), 0));
                             circles.add(circle);
+
+                            ContentValues Val = new ContentValues();
+                            DatabaseHelper dbh = new DatabaseHelper(MainActivity.this);
+                            SQLiteDatabase db = dbh.getWritableDatabase();
+                            try {
+                                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center,latLng.toString());
+                                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name,txtGeoName.getText().toString());
+                                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius,txtMeters.getText().toString());
+ db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
+
+                                HashMap<String, String> params;
+                                params = new HashMap<>();
+                                params.put("message", latLng.toString()+"~"+txtMeters.getText().toString()+"~"+txtGeoName.getText().toString());
+                                params.put("imei", Tools.GetImei(getApplicationContext()));
+                                params.put("gpID", "-10");
+                                WebServices W = new WebServices(getApplicationContext());
+                                W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "SetMessage");
+
+
+                            } catch (Exception ex) {
+                            }
+                            db.close();
+                            dbh.close();
 
                         } catch (Exception ex) {
 

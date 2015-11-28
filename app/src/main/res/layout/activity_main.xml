@@ -27,10 +27,12 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:id="@+id/llMapLoad"></LinearLayout>
+                android:id="@+id/llMapLoad">
 
-        <LinearLayout
-            android:orientation="vertical"
+            </LinearLayout>
+
+            <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/llDownMap"
@@ -38,7 +40,12 @@
             android:gravity="center_vertical|center_horizontal|right"
             android:layout_gravity="top">
 
-            <ImageView
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spnrGeofences" />
+                <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/ivCloseMap"
@@ -46,7 +53,7 @@
                 android:layout_marginRight="20dp"
                 android:contentDescription="@string/ivCloseMapString"
                 android:clickable="true" />
-        </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
