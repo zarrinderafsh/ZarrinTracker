@@ -28,6 +28,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
 import android.view.Display;
+import android.view.View;
+import android.view.ViewParent;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -320,6 +323,11 @@ static Boolean isFirst=true;
             }
         }
         return  Ret;
+    }
+
+    public static void setTitleColor(Activity context)
+    {
+        context.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
     }
 }
 

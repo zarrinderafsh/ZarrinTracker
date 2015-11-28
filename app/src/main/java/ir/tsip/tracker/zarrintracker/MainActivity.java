@@ -71,6 +71,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setContentView(R.layout.activity_main);
+        Tools.setTitleColor(this);
         checkRegistration();
         Base = this;
         //here we try invite once, in server it will generate a group for current user.
@@ -214,7 +216,6 @@ c.close();
         llMain.setOnTouchListener(this);
 
         ivArrowDown = (ImageView) findViewById(R.id.ivArrowDown);
-        ivArrowDown.setOnTouchListener(this);
         ivArrowDown.setOnClickListener(new View.OnClickListener() {
                                           public void onClick(View v) {
                                               lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
@@ -326,6 +327,7 @@ c.close();
 
         IntentFilter filter = new IntentFilter("");
         registerReceiver(new ProximityIntentReceiver(), filter);
+
     }
 
     // nav drawer title
@@ -341,9 +343,17 @@ c.close();
 
 
     private HashMap params;
-    private DatabaseHelper dh;
-    private SQLiteDatabase db;
     private static RequestQueue queue;
+
+    public static void backWebServices(int ObjectCode, String Data) throws JSONException {
+        if (ObjectCode == 1) {
+            insertDevice(Data);
+        }
+        if (ObjectCode == 2) {
+        }
+        if (ObjectCode == 3) {
+        }
+    }
 
     private void checkRegistration() {
 
@@ -351,57 +361,47 @@ c.close();
         params = new HashMap<>();
         // the POST parameters:
         params.put("pData", Tools.GetImei(this) + "/");// "351520060796671");
+        WebServices WS = new WebServices(getApplicationContext());
+        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity",1,params,"CheckRegistration");
+        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity",2,params,"loadprofile");
+        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity",3,params,"loadimage");
+    }
 
-        JSONObject jo1 = new JSONObject(params);
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, "http://tstracker.ir/services/webbasedefineservice.asmx/CheckRegistration", jo1, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
+    public static void insertDevice(String Data) throws JSONException {
+        if(Data == "null")
+            return;
+        JSONObject jo = new JSONObject(Data);
+        String key = jo.getString("key");
+        String logo = jo.getString("logo");
+        String site = jo.getString("site");
+        String tell = jo.getString("tell");
 
-                    String data = response.getString("d");
-                    JSONObject jo = new JSONObject(data);
-                    String key = jo.getString("key");
-                    String logo = jo.getString("logo");
-                    String site = jo.getString("site");
-                    String tell = jo.getString("tell");
+        DatabaseHelper dh;
+        SQLiteDatabase db;
+        dh = new DatabaseHelper(Base.getApplicationContext());
+        if (key != null) {
+            db = dh.getWritableDatabase();
 
-                    dh = new DatabaseHelper(getApplicationContext());
-                    if (key != null) {
-                        db = dh.getWritableDatabase();
+            // Create a new map of values, where column names are the keys
+            ContentValues values = new ContentValues();
+            values.put(DatabaseContracts.Settings.COLUMN_NAME_ID, 1);
+            values.put(DatabaseContracts.Settings.COLUMN_NAME_key, key);
+            values.put(DatabaseContracts.Settings.COLUMN_NAME_days, "0,1,2,3,4,5,6");
+            values.put(DatabaseContracts.Settings.COLUMN_NAME_endTime, "14");
+            values.put(DatabaseContracts.Settings.COLUMN_NAME_fromTime, "07");
+            values.put(DatabaseContracts.Settings.COLUMN_NAME_logo, logo);
+            values.put(DatabaseContracts.Settings.COLUMN_NAME_site, site);
+            values.put(DatabaseContracts.Settings.COLUMN_NAME_tell, tell);
+            values.put(DatabaseContracts.Settings.COLUMN_NAME_Accurate, "h");
+            values.put(DatabaseContracts.Settings.COLUMN_NAME_interval, 5000);
+            // Insert the new row, returning the primary key value of the new row
 
-                        // Create a new map of values, where column names are the keys
-                        ContentValues values = new ContentValues();
-                        values.put(DatabaseContracts.Settings.COLUMN_NAME_ID, 1);
-                        values.put(DatabaseContracts.Settings.COLUMN_NAME_key, key);
-                        values.put(DatabaseContracts.Settings.COLUMN_NAME_days, "0,1,2,3,4,5,6");
-                        values.put(DatabaseContracts.Settings.COLUMN_NAME_endTime, "14");
-                        values.put(DatabaseContracts.Settings.COLUMN_NAME_fromTime, "07");
-                        values.put(DatabaseContracts.Settings.COLUMN_NAME_logo, logo);
-                        values.put(DatabaseContracts.Settings.COLUMN_NAME_site, site);
-                        values.put(DatabaseContracts.Settings.COLUMN_NAME_tell, tell);
-                        values.put(DatabaseContracts.Settings.COLUMN_NAME_Accurate, "h");
-                        values.put(DatabaseContracts.Settings.COLUMN_NAME_interval, 5000);
-                        // Insert the new row, returning the primary key value of the new row
-
-                        long newRowId = db.insert(DatabaseContracts.Settings.TABLE_NAME, "", values);
-                        if (newRowId > 0) {
-                        }
-                        db.close();
-                        dh.close();
-                    }
-                } catch (Exception er) {
-                }
+            long newRowId = db.insert(DatabaseContracts.Settings.TABLE_NAME, "", values);
+            if (newRowId > 0) {
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // TODO Auto-generated method stub
-
-            }
-        });
-        if (queue == null)
-            queue = Volley.newRequestQueue(getApplicationContext());
-        queue.add(jsObjRequest);
+            db.close();
+            dh.close();
+        }
     }
 
     /********************************************************************DrawerLayout Methods*/
