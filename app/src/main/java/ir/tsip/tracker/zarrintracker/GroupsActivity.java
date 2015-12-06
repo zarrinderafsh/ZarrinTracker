@@ -72,11 +72,11 @@ _context=this;
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            Map<String, String> params = new HashMap<>();
+                            HashMap<String, String> params = new HashMap<>();
                             params.put("key", txtCode.getText().toString());
                             params.put("imei", Tools.GetImei(getApplicationContext()));
                             WebServices ws = new WebServices(GroupsActivity.this);
-                            ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 1, Tools.GetImei(GroupsActivity.this), "AddDevice");
+                            ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 1, params, "AddDevice");
                             ws=null;
                             } catch (Exception ex) {
 
