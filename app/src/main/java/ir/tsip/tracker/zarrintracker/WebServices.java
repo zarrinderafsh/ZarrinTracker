@@ -14,6 +14,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -35,6 +36,7 @@ public class WebServices {
 
     public void addQueue(String ClassName, int ObjectCode , String Data, String WebServiceName)
     {
+
         ContentValues Val = new ContentValues();
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getWritableDatabase();
@@ -45,6 +47,7 @@ public class WebServices {
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
 
+
             db.insert(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.QueueTable.COLUMN_NAME_ID, Val);
         } catch (Exception ex) {
         }
@@ -54,6 +57,7 @@ public class WebServices {
 
     public void addQueue(String ClassName, int ObjectCode , HashMap<String,String> Data, String WebServiceName)
     {
+
         ContentValues Val = new ContentValues();
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getWritableDatabase();
@@ -64,7 +68,7 @@ public class WebServices {
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
 
-            db.insert(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.QueueTable.COLUMN_NAME_ID, Val);
+        db.insert(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.QueueTable.COLUMN_NAME_ID, Val);
         } catch (Exception ex) {
         }
         db.close();
@@ -84,7 +88,7 @@ public class WebServices {
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
 
             long id = db.insert(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.QueueTable.COLUMN_NAME_ID, Val);
-            Toast.makeText(context,"-"+id,Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context,"-"+id,Toast.LENGTH_SHORT).show();
         } catch (Exception ex) {
         }
         db.close();
@@ -92,7 +96,7 @@ public class WebServices {
     }
     public void RunSend() {
         RunSend(1000,0);
-        RunSend(1000 * 60 * 10 ,2);
+        RunSend(1000 * 60 * 10, 2);
     }
     Cursor c;
     public void RunSend(int DelaySecound, final int pState) {
@@ -137,6 +141,15 @@ public class WebServices {
 
     private void SendData(final int Id,final String ClassName, final int ObjectCode , String Data, String FuncName)
     {
+        //SaveImage or saveprofile
+        //to send image toward server, needs to url encode the image
+        if(ClassName.contains("ProfileActivity") && ObjectCode==0){
+            try {
+                Data = URLEncoder.encode(Data, "utf-8");
+            }
+            catch (Exception er){
+            }
+        }
         Map<String, String> params = new HashMap<>();
         params = Tools.StringToHashMap(Data);
         if(params.size() == 0)
@@ -155,7 +168,6 @@ public class WebServices {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 SetState(Id,2);
             }
         });

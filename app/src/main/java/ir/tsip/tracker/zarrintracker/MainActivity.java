@@ -1,6 +1,6 @@
 package ir.tsip.tracker.zarrintracker;
 
-import android.app.ActionBar;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,72 +17,39 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.os.Vibrator;
-import android.provider.ContactsContract;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import ir.tsip.tracker.zarrintracker.util.MapActivity;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
@@ -108,9 +75,18 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     MessageEvent MEvent;
     public static  LinearLayout.LayoutParams lpTop;
     public static  LinearLayout.LayoutParams lpDown;
-    Spinner spnrGeofences;
-
    public static Activity Base;
+    // nav drawer title
+    private CharSequence mDrawerTitle;
+    ListView lsvtest;
+    // used to store app title
+    private CharSequence mTitle;
+    android.support.v4.widget.DrawerLayout mDrawerLayout;
+    ActionBarDrawerToggle mDrawerToggle;
+    MapFragment mMapFragment;
+    int StartTouchX = 0;
+    int StartTouchY = 0;
+    private HashMap params;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,36 +96,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         Tools.setTitleColor(this);
         checkRegistration();
         Base = this;
-        //here we try invite once, in server it will generate a group for current user.
-        //we no need generated code here!
-        WebServices w=new WebServices(this);
-        HashMap<String, String> params = new HashMap<>();
-        params.put("imei", Tools.GetImei(getApplicationContext()));
-        w.addQueue("ir.tsip.tracker.zarrintracker", 0, params, "GenerateJoinKey");
-        w=null;
-        //
+
         ShowMessage();
         StartServices();
-
-        spnrGeofences=(Spinner)findViewById(R.id.spnrGeofences);
-        ArrayAdapter<String> spnrAdapter=new ArrayAdapter<String>(this,R.layout.drawerlistlayout);
-        DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = dbh.getWritableDatabase();
-        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius,DatabaseContracts.Geogences.COLUMN_NAME_center,DatabaseContracts.Geogences.COLUMN_NAME_name};
-        Cursor c;
-        c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
-        c.moveToFirst();
-        while(true && c.getCount()>0){
-            spnrAdapter.add( c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_name)));
-            if (c.isLast())
-                break;
-            c.moveToNext();
-        }
-c.close();
-        db.close();
-        dh.close();
-        spnrGeofences.setAdapter(spnrAdapter);
-
         llTop = (LinearLayout) findViewById(R.id.llTop);
         llDown = (LinearLayout) findViewById(R.id.llDown);
         llMain = (LinearLayout) findViewById(R.id.llMain);
@@ -217,17 +166,17 @@ c.close();
 
         ivArrowDown = (ImageView) findViewById(R.id.ivArrowDown);
         ivArrowDown.setOnClickListener(new View.OnClickListener() {
-                                          public void onClick(View v) {
-                                              lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
-                                              lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
+                                           public void onClick(View v) {
+                                               lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
+                                               lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
 
-                                              lpTop.topMargin = -lpTop.height;
-                                              lpDown.topMargin = Tools.GetDesktopSize(Base).y + lpTop.height / 2;
-                                              llMain.setVisibility(View.INVISIBLE);
-                                          }
+                                               lpTop.topMargin = -lpTop.height;
+                                               lpDown.topMargin = Tools.GetDesktopSize(Base).y + lpTop.height / 2;
+                                               llMain.setVisibility(View.INVISIBLE);
+                                           }
 
-                                          ;
-                                      }
+                                           ;
+                                       }
         );
 
         View.OnClickListener ShowProfile = new View.OnClickListener() {
@@ -240,6 +189,7 @@ c.close();
         ivPersonImage.setOnClickListener(ShowProfile);
         tvPersonName = (TextView) findViewById(R.id.tvPersonName);
         tvPersonName.setOnClickListener(ShowProfile);
+
 
         View.OnClickListener GPSClick = new View.OnClickListener() {
             public void onClick(View v) {
@@ -270,7 +220,7 @@ c.close();
         lsvtest = (ListView) findViewById(R.id.lsvtest);
 
         lsvtest.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawerlistlayout, new String[]{"Map", "Chat", "About"}));
+                R.layout.drawerlistlayout, new String[]{"Map", "Chat","Add Place", "About"}));
 
 
         mTitle = mDrawerTitle = getTitle();
@@ -303,7 +253,7 @@ c.close();
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Toast.makeText(MainActivity.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
-                mDrawerLayout.closeDrawer(Gravity.START);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
                 Intent myIntent;
                 switch (position) {
                     case 0:
@@ -316,6 +266,10 @@ c.close();
                         Base.startActivity(myIntent);
                         break;
                     case 2:
+                        myIntent = new Intent(Base, Places.class);
+                        Base.startActivity(myIntent);
+                        break;
+                    case 3:
                         myIntent = new Intent(Base, about.class);
                         Base.startActivity(myIntent);
                         break;
@@ -328,30 +282,47 @@ c.close();
         IntentFilter filter = new IntentFilter("");
         registerReceiver(new ProximityIntentReceiver(), filter);
 
+
     }
 
-    // nav drawer title
-    private CharSequence mDrawerTitle;
-    ListView lsvtest;
-    // used to store app title
-    private CharSequence mTitle;
-    android.support.v4.widget.DrawerLayout mDrawerLayout;
-    ActionBarDrawerToggle mDrawerToggle;
-    MapFragment mMapFragment;
-    int StartTouchX = 0;
-    int StartTouchY = 0;
+    private void setupGeofences(){
 
+        DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius,DatabaseContracts.Geogences.COLUMN_NAME_center,DatabaseContracts.Geogences.COLUMN_NAME_name};
+        Cursor c;
+        c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
+        c.moveToFirst();
+        String center;
+        String meters;
+        while(true && c.getCount()>0){
+            try {
+                center=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).replace("lat/lng: (","").replace(")","");
+                meters=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
+                googleMap.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]),                        Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf( meters)));
+                LocationListener.locationManager.addProximityAlert(
+                        Double.valueOf(center.split(",")[0]),
+                        Double.valueOf(center.split(",")[1]),
+                        Float.valueOf( meters),
+                        -1,
+                        PendingIntent.getBroadcast(MainActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.ProximityAlert"), 0));
+            }
+            catch (Exception er){
 
-    private HashMap params;
-    private static RequestQueue queue;
+            }
+            if (c.isLast())
+                break;
+            c.moveToNext();
+        }
+        c.close();
+        db.close();
+        dbh.close();
+
+    }
 
     public static void backWebServices(int ObjectCode, String Data) throws JSONException {
         if (ObjectCode == 1) {
-            insertDevice(Data);
-        }
-        if (ObjectCode == 2) {
-        }
-        if (ObjectCode == 3) {
+                insertDevice(Data);
         }
     }
 
@@ -362,9 +333,10 @@ c.close();
         // the POST parameters:
         params.put("pData", Tools.GetImei(this) + "/");// "351520060796671");
         WebServices WS = new WebServices(getApplicationContext());
-        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity",1,params,"CheckRegistration");
-        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity",2,params,"loadprofile");
-        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity",3,params,"loadimage");
+        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 1, params, "CheckRegistration");
+        ProfileActivity.GetImageFromServer(this);
+        ProfileActivity.GetProfileFromServer(this);
+     WS=null;
     }
 
     public static void insertDevice(String Data) throws JSONException {
@@ -596,103 +568,11 @@ c.close();
         getMenuInflater().inflate(R.menu.menu_main, menu);
         if (googleMap == null) {
             googleMap = Tools.initGoogleMap(mMapFragment);
-            mapGeofenceSetup();
-
+            setupGeofences();
         }
         return true;
     }
 
-    public static ArrayList<Circle> circles;
-    LinearLayout ll;
-    TextView lblMeters;
-    EditText txtMeters;
-    EditText txtGeoName;
-    AlertDialog.Builder builder;
-
-    private void mapGeofenceSetup() {
-        if (googleMap == null)
-            return;
-        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(final LatLng latLng) {
-
-                if (builder == null)
-                    builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Geofence");
-
-                if (ll == null)
-                    ll = new LinearLayout(MainActivity.this);
-                ll.setOrientation(LinearLayout.VERTICAL);
-                if (lblMeters == null)
-                    lblMeters = new TextView(MainActivity.this);
-                lblMeters.setText("Specify a radius (meters).");
-                if (txtMeters == null)
-                    txtMeters = new EditText(MainActivity.this);
-                txtMeters.setText("100");
-                if (txtGeoName == null)
-                    txtGeoName = new EditText(MainActivity.this);
-                txtGeoName.setText("geo"+circles.size()+1);
-
-                //If layout has no child, add views to it
-                if (ll.getChildCount() == 0) {
-                    ll.addView(lblMeters);
-                    ll.addView(txtMeters);
-
-                    builder.setView(ll);
-                }
-
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            if (circles == null)
-                                circles = new ArrayList<Circle>();
-                            Circle circle = googleMap.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(txtMeters.getText().toString())));
-                            LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1, PendingIntent.getBroadcast(MainActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.ProximityAlert"), 0));
-                            circles.add(circle);
-
-                            ContentValues Val = new ContentValues();
-                            DatabaseHelper dbh = new DatabaseHelper(MainActivity.this);
-                            SQLiteDatabase db = dbh.getWritableDatabase();
-                            try {
-                                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center,latLng.toString());
-                                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name,txtGeoName.getText().toString());
-                                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius,txtMeters.getText().toString());
- db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
-
-                                HashMap<String, String> params;
-                                params = new HashMap<>();
-                                params.put("message", latLng.toString()+"~"+txtMeters.getText().toString()+"~"+txtGeoName.getText().toString());
-                                params.put("imei", Tools.GetImei(getApplicationContext()));
-                                params.put("gpID", "-10");
-                                WebServices W = new WebServices(getApplicationContext());
-                                W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "SetMessage");
-
-
-                            } catch (Exception ex) {
-                            }
-                            db.close();
-                            dbh.close();
-
-                        } catch (Exception ex) {
-
-                        }
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.cancel();
-                    }
-                });
-                if (ll.getParent() != null)
-                    ((ViewGroup) ll.getParent()).removeView(ll);
-                builder.show();
-            }
-        });
-
-    }
 
 
     @Override

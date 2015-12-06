@@ -21,13 +21,14 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class EditProfileActivity extends ActionBarActivity {
 
-    private static com.android.volley.RequestQueue queue;
+
     private static Context mContext;
 
     @Override
@@ -38,8 +39,7 @@ public class EditProfileActivity extends ActionBarActivity {
 
         String Data = ShareSettings.getValue(mContext,"Profile");
         String[] DataP = Data.split(";;;");
-        if(DataP.length == 5)
-        {
+        if(DataP.length > 3) {
             EditText tvName = (EditText) findViewById(R.id.etName);
             EditText tvPhone = (EditText) findViewById(R.id.etPhone);
             EditText tvEmail = (EditText) findViewById(R.id.etEmail);
@@ -48,7 +48,11 @@ public class EditProfileActivity extends ActionBarActivity {
             tvName.setText(DataP[1]);
             tvPhone.setText(DataP[2]);
             tvEmail.setText(DataP[3]);
-            tvActiveCode.setText(DataP[4]);
+            try {
+                tvActiveCode.setText(DataP[4]);
+            } catch(Exception er) {
+
+            }
         }
 
         Button clickButton = (Button) findViewById(R.id.btSaveProfile);
@@ -64,7 +68,7 @@ public class EditProfileActivity extends ActionBarActivity {
     {
         String Data = ShareSettings.getValue(mContext,"Profile");
         String[] DataP = Data.split(";;;");
-        if(DataP.length == 5)
+        if(DataP.length >1)
         {
             return DataP[1];
         }
@@ -75,7 +79,7 @@ public class EditProfileActivity extends ActionBarActivity {
     {
         String Data = ShareSettings.getValue(mContext,"Profile");
         String[] DataP = Data.split(";;;");
-        if(DataP.length == 5)
+        if(DataP.length >2)
         {
             return DataP[2];
         }
@@ -96,16 +100,20 @@ public class EditProfileActivity extends ActionBarActivity {
                 tvEmail.getText()+";;;"+
                 tvActiveCode.getText();
 
-        ShareSettings.SetValue(mContext,"Profile",Data);
+        ShareSettings.SetValue(mContext, "Profile", Data);
         SendData(Data);
     }
 
     private void SendData(String Data)
     {
         WebServices W = new WebServices(getApplicationContext());
-        W.addQueue("ir.tsip.tracker.zarrintracker.EditProfileActivity",0,Data,"SaveProfile");
-        Toast.makeText(mContext, "Send save profile ... .", Toast.LENGTH_SHORT).show();
-    }
+       try {
+           W.addQueue("ir.tsip.tracker.zarrintracker.EditProfileActivity", 0, Data, "SaveProfile");
+       }
+       catch (  Exception er){
+       }
+           W=null;
+   }
 
     public static void backWebServices (int ObjectCode, String Data)
     {

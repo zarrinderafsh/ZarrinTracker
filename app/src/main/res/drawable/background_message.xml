@@ -2,11 +2,16 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <corners
-        android:radius="2dp"
+        android:radius="5dp"
         android:topRightRadius="0dp"
         android:bottomRightRadius="0dp"
         android:bottomLeftRadius="0dp" />
     <stroke
         android:width="1dp"
         android:color="#ff0a86cd" />
+
+    <gradient
+        android:startColor="@color/wallet_highlighted_text_holo_light"
+         android:endColor="#ff0a86cd"
+        />
 </shape>

@@ -48,6 +48,7 @@ import com.google.android.gms.drive.internal.QueryRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -69,6 +70,8 @@ import java.util.Map;
  * Created by Administrator on 11/1/2015.
  */
 public class Tools {
+
+
 
     public static boolean isOnline(Context context) {
         ConnectivityManager cm =
@@ -176,63 +179,61 @@ static Boolean isFirst=true;
         if (googleMap == null || LocationListener.CurrentLocation == null)
             return;
         GoogleMapObj=googleMap;
+        GoogleMapObj.setMyLocationEnabled(true);
 
         if (markers == null)
             markers = new HashMap<Integer, Marker>();
         if (Tools.isOnline(context))
             getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom), context, googleMap);
         else {
-            if(!markers.containsKey(0))
-                markers.put(0, googleMap.addMarker(new MarkerOptions().position(new LatLng(LocationListener.getLatitude(), LocationListener.getLongitude())).title("I'm right here!")));
-        }
+      }
         if(isFirst) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
-        isFirst=false;
+            isFirst = false;
         }
     }
 
-    private static RequestQueue queue;
+//    private static RequestQueue queue;
     public static Map<Integer, Marker> markers;
+private  static  WebServices WS;
+    public static void backWebServices(int ObjectCode, String Data) {
+        if (ObjectCode == 0) {//Markers
+            try {
+                JSONObject jo = new JSONObject(Data);
+                Marker m;
+                String lat, lng;
+                JSONArray ja = jo.getJSONArray("ChangingMarkers");
+                for (int i = 0; i < ja.length(); i++) {
+                    m = markers.get(Integer.valueOf(ja.getJSONObject(i).getString("ID")));
+                    lat = ja.getJSONObject(i).getJSONObject("Location").getString("X");
+                    lng = ja.getJSONObject(i).getJSONObject("Location").getString("Y");
+                    if (m == null) {
 
+                        markers.put(Integer.valueOf(ja.getJSONObject(i).getString("ID").toString()),
+                                GoogleMapObj.addMarker(new MarkerOptions().position(
+                                        new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title"))));
+                    } else {
+                        m.setPosition(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
+                        m.setTitle(ja.getJSONObject(i).getString("Title"));
+                    }
+                }
+            } catch (Exception er) {
+
+            }
+        }
+    }
     public static void getDevicesLocation(String bounds, String zoom, final Context context, final GoogleMap gmap) {
         bounds = bounds.replace("LatLngBounds{southwest=lat/lng: ", "(");
         bounds = bounds.replace("northeast=lat/lng: ", "");
         bounds = bounds.replace("}", ")");
-        Map<String, String> params = new HashMap<>();
+        HashMap<String, String> params = new HashMap<>();
         params.put("bounds", bounds);
         params.put("zoom", zoom);
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, "http://tstracker.ir/services/webbasedefineservice.asmx/GetMarkers",
-                new JSONObject(params), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String data = response.getString("d");
-                    JSONObject jo = new JSONObject(data);
+        if(WS==null)
+            WS=new WebServices(context);
 
-                    JSONArray ja = jo.getJSONArray("ChangingMarkers");
-                    for (int i = 0; i < ja.length(); i++) {
-                        if (markers.get(Integer.valueOf(ja.getJSONObject(i).getString("ID"))) == null) {
+         WS.addQueue("ir.tsip.tracker.zarrintracker.Tools",0,params,"GetMarkers");
 
-                            String lat = ja.getJSONObject(i).getJSONObject("Location").getString("X");
-                            String lng = ja.getJSONObject(i).getJSONObject("Location").getString("Y");
-                            markers.put(Integer.valueOf(ja.getJSONObject(i).getString("ID").toString()),
-                                    gmap.addMarker(new MarkerOptions().position(
-                                            new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title"))));
-                        }
-                    }
-                } catch (Exception er) {
-
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });
-
-        if (queue == null)
-            queue = Volley.newRequestQueue(context);
-        queue.add(jsObjRequest);
     }
 
     public static float getBatteryLevel(Context activate) {

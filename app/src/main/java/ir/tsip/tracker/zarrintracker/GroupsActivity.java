@@ -48,7 +48,7 @@ public class GroupsActivity extends AppCompatActivity {
     static LinearLayout lsvGroups;
     static Activity context;
     static List<Integer> GroupList;
-    private static com.android.volley.RequestQueue queue;
+    static Context _context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public class GroupsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_groups);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-
+_context=this;
         imgGroupJoin = (ImageView) findViewById(R.id.ivGroup);
         imgGroupJoin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +67,7 @@ public class GroupsActivity extends AppCompatActivity {
                 LayoutInflater inflate=GroupsActivity.this.getLayoutInflater();
                 View view=inflate.inflate(R.layout.activity_join_group,null);
                 builder.setView(view);
-               final EditText txtCode = (EditText) findViewById(R.id.txtJoinCode);
+               final EditText txtCode = (EditText) view.findViewById(R.id.txtJoinCode);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -75,28 +75,9 @@ public class GroupsActivity extends AppCompatActivity {
                             Map<String, String> params = new HashMap<>();
                             params.put("key", txtCode.getText().toString());
                             params.put("imei", Tools.GetImei(getApplicationContext()));
-                            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, "http://tstracker.ir/services/webbasedefineservice.asmx/AddDevice",
-                                    new JSONObject(params), new Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    try {
-                                        String data = response.getString("d");
-                                        if (data.contains("1")) {
-                                            Toast.makeText(GroupsActivity.this, "Your device registered.", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else
-                                            Toast.makeText(GroupsActivity.this, "Code is not valid.", Toast.LENGTH_SHORT).show();
-                                    } catch (Exception er) {
-                                    }
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                }
-                            });
-                            if (queue == null)
-                                queue = Volley.newRequestQueue(getApplicationContext());
-                            queue.add(jsObjRequest);
+                            WebServices ws = new WebServices(GroupsActivity.this);
+                            ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 1, Tools.GetImei(GroupsActivity.this), "AddDevice");
+                            ws=null;
                             } catch (Exception ex) {
 
                         }
@@ -122,6 +103,7 @@ public class GroupsActivity extends AppCompatActivity {
         WebServices ws = new WebServices(this);
         GetGroups();
         ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(this), "GroupsList");
+   ws=null;
     }
 
     public void GetGroups() {
@@ -149,9 +131,16 @@ public class GroupsActivity extends AppCompatActivity {
                 if(GroupList.indexOf(id)<0)
                     GroupList.add(id);
                 Bitmap B = ProfileActivity.getProfileImage(96,context.getApplicationContext());
-                CreateGroupLayer(id,Name,"","",B);
-                //CreateGroupLayer(id,Name,"",Message,Tools.LoadImage(Image,96));
-            }
+                boolean isowner=false;
+                if(Name.length()>2)
+                    isowner=(Name.substring(Name.length()-3).contains(";;;"));
+                Name=Name.replace(";;;","");
+                if(Name=="")
+                    Name="NoName";
+                CreateGroupLayer(id,Name,"","",B,
+                        //this condition define if group name contains ;;; . if true it means current device is owner of group
+                        isowner);
+           }
             while (c.moveToNext());
         }
         c.close();
@@ -160,27 +149,50 @@ public class GroupsActivity extends AppCompatActivity {
     }
 
     public static void backWebServices(int ObjectCode, String Data) {
-        for (String s : Data.split(",")
-                ) {
-            try {
-                if (s.length() > 2) {
+        if (ObjectCode == 0) {
+            String groupname;
+            boolean isowner=false;
+            for (String s : Data.split(",")
+                    ) {
+                try {
+                    if (s.length() > 1) {
 
-                    Integer gpID = Integer.valueOf(s.split("~")[0]);
-                    if(GroupList.indexOf(gpID)>=0) {
+                        if(s.split("~").length==1)
+                            s+="NoName";
+                        groupname= s.split("~")[1];
+                        Integer gpID = Integer.valueOf(s.split("~")[0]);
+                        if (GroupList.indexOf(gpID) >= 0) {
+                            //Update group in database
+                            UpdateGroup(gpID,groupname,"","",null);
+                        } else {
+                            GroupList.add(gpID);
+isowner=false;
+                            //this condition define if group name contains ;;; . if true it means current device is owner of group
+                            if(groupname.length()>2)
+                                isowner=(groupname.substring(groupname.length()-3).contains(";;;"));
+
+                            InsertGroup(gpID,groupname, "", "", null);
+                            groupname=groupname.replace(";;;","");
+                            if(groupname=="")
+                                groupname="NoName";
+                            CreateGroupLayer(gpID, groupname, "", "", null, isowner );
+                        }
                     }
-                    else {
-                        GroupList.add(gpID);
-                        InsertGroup(gpID, s.split("~")[1], "", "", null);
-                        CreateGroupLayer(gpID, s.split("~")[1], "", "", null);
-                    }
+                } catch (Exception ex) {
+                    ex.toString();
                 }
-            } catch (Exception ex) {
-                ex.toString();
             }
+        }
+        else if (ObjectCode == 1) {
+            if (Data.contains("1")) {
+                Toast.makeText(_context, "Your device registered.", Toast.LENGTH_SHORT).show();
+            } else
+                Toast.makeText(_context, "Code is not valid.", Toast.LENGTH_SHORT).show();
+
         }
     }
 
-    private static void CreateGroupLayer(Integer gpID,String Name,String Time,String LastMessage,Bitmap img)
+    private static void CreateGroupLayer(Integer gpID,String Name,String Time,String LastMessage,Bitmap img, final Boolean isGroupOwner)
     {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.group_list, null);
@@ -200,7 +212,7 @@ public class GroupsActivity extends AppCompatActivity {
 
                 Intent myIntent = new Intent(context, ChatActivity.class);
                 myIntent.putExtra("gpID", String.valueOf((int) v.getTag()));
-                myIntent.putExtra("myGroup", "true");
+                myIntent.putExtra("myGroup", isGroupOwner);
                 context.startActivity(myIntent);
             }
         };
@@ -239,6 +251,20 @@ public class GroupsActivity extends AppCompatActivity {
         dbh.close();
     }
 
+    private static void UpdateGroup(Integer gpID,String Name,String Time,String LastMessage,Bitmap img)
+    {
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        ContentValues V = new ContentValues();
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_ID,gpID);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_Name,Name);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastTime,Time);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastMessage,LastMessage);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_Image,Tools.getBytesFromBitmap(img));
+        db.update(DatabaseContracts.Groups.TABLE_NAME, V, DatabaseContracts.Groups.COLUMN_NAME_ID+"=?",new String[]{String.valueOf(gpID)});
+        db.close();
+        dbh.close();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_groups, menu);

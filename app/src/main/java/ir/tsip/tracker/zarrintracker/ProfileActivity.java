@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.method.DateTimeKeyListener;
+import android.util.Base64InputStream;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,12 +27,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
@@ -46,8 +51,8 @@ public class ProfileActivity extends ActionBarActivity {
     private  TextView tvName;
     private  TextView tvPhone;
     private  Timer _Timer;
-
-    private static Activity Base;
+private  static  Context _context;
+    private static ProfileActivity Base;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,6 +183,8 @@ public class ProfileActivity extends ActionBarActivity {
         }
     }
 
+
+
     private Boolean SaveBitmap(Bitmap bm)
     {
         boolean ret = false;
@@ -295,29 +302,39 @@ public class ProfileActivity extends ActionBarActivity {
 
     public static void backWebServices (int ObjectCode, String Data)
     {
-        switch(ObjectCode)
-        {
+        switch(ObjectCode) {
             case 0:// SaveImage
+                Toast.makeText(_context, "Image uploaded on server.", Toast.LENGTH_SHORT).show();
                 break;
             case 1:// GetProfile
+                ShareSettings.SetValue(_context, "Profile", Tools.GetImei(_context) + ";;;" + Data + ";;;0");
                 break;
             case 2:// GetImage
+                try {
+                    String content = URLDecoder.decode(Data, "utf-8");
+                    InputStream istream=new ByteArrayInputStream(content.getBytes());
+                    Bitmap bitmap = BitmapFactory.decodeStream(istream);
+                   new ProfileActivity().SaveBitmap(bitmap);
+                } catch (Exception er) {
+                }
                 break;
         }
 
     }
 
-    public void GetProfileFromServer()
+    public static void GetProfileFromServer(Context context)
     {
-        WebServices W = new WebServices(Base);
-        W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",1,Tools.GetImei(Base),"GetProfile");
+        _context=context;
+        WebServices W = new WebServices(context);
+        W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",1,Tools.GetImei(context),"loadprofile");
         W=null;
     }
 
-    public void GetImageFromServer()
+    public static void GetImageFromServer(Context context)
     {
-        WebServices W = new WebServices(Base);
-        W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",2,Tools.GetImei(Base),"GetImageProfile");
+        _context=context;
+        WebServices W = new WebServices(context);
+        W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",2,Tools.GetImei(context),"loadimage");
         W=null;
     }
 

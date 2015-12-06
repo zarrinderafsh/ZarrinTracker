@@ -1,6 +1,8 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.usage.UsageEvents;
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,18 +13,22 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,10 +40,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.cast.CastRemoteDisplayLocalService;
+import com.google.android.gms.games.GameRef;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,7 +76,7 @@ static TextView txtGeneratedJoinCode;
         context = getApplicationContext();
         inInvite = (ImageView) findViewById(R.id.ivInvite);
 
-         if( getIntent().getStringExtra("myGroup")=="true") {
+         if( getIntent().getBooleanExtra("myGroup",false)) {
 
              inInvite.setOnClickListener(new View.OnClickListener() {
                  public void onClick(View v) {
@@ -76,7 +84,7 @@ static TextView txtGeneratedJoinCode;
                      builder.setTitle("Invite Others");
                      LayoutInflater inflate=ChatActivity.this.getLayoutInflater();
                      View view=inflate.inflate(R.layout.activity_invate,null);
-                     txtGeneratedJoinCode=(TextView)findViewById(R.id.txtGeneratedJOinCode);
+                     txtGeneratedJoinCode=(TextView)view.findViewById(R.id.txtGeneratedJOinCode);
                      WebServices w=new WebServices(ChatActivity.this);
                      HashMap<String, String> params = new HashMap<>();
                      params.put("imei", Tools.GetImei(getApplicationContext()));
@@ -102,7 +110,13 @@ static TextView txtGeneratedJoinCode;
                          }
                      });
 
-                     builder.show();
+                   AlertDialog av=  builder.create();
+                     av.show();
+//                     RelativeLayout.LayoutParams lp=new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//
+//                     lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+//                     av.getButton(AlertDialog.BUTTON_NEGATIVE).setLayoutParams(lp);
+//                     av.getButton(AlertDialog.BUTTON_POSITIVE).setGravity(Gravity.TOP| Gravity.RIGHT);
                  }
              });
              inInvite.setVisibility(View.VISIBLE);
@@ -127,7 +141,7 @@ static TextView txtGeneratedJoinCode;
                 params.put("imei", Tools.GetImei(getApplicationContext()));
                 params.put("gpID", gpID);
                 WebServices W = new WebServices(getApplicationContext());
-                W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "SetMessage");
+                W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", -1, params, "SetMessage");
                // InsertMessages(txtMessage.getText().toString().split(String.valueOf((char) 26)));
                 txtMessage.setText("");
                 W=null;
@@ -182,7 +196,12 @@ static TextView txtGeneratedJoinCode;
                 String[] data=msg.replace("[G]","").split("~");
                 LatLng latLng=new LatLng(Double.valueOf(data[0].split(",")[0]),Double.valueOf(data[0].split(",")[1]));
                 Circle circle = Tools.GoogleMapObj.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(data[1])));
-                MainActivity.circles.add(circle);
+                try {
+                    LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1, PendingIntent.getBroadcast(ChatActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.ProximityAlert"), 0));
+                }
+                catch (SecurityException er) {
+
+                }
 
                 ContentValues Val = new ContentValues();
                 DatabaseHelper dbh = new DatabaseHelper(ChatActivity.this);
@@ -238,35 +257,23 @@ static TextView txtGeneratedJoinCode;
             return;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.chat_list, null);
+        if(Message.contains("~~ME~~")) {
+            Message=  Message.replace("~~ME~~", "");
+            view = inflater.inflate(R.layout.chat_list_owner, null);
+        }
         view.setId(new Random().nextInt());
-
         lsvChat.addView(view);
-        TextView tvChatDate = (TextView) view.findViewById(R.id.tvChatDate);
-        tvChatDate.setText(date.toString());
-        TextView tvLastChatMessage = (TextView) view.findViewById(R.id.tvLastChatMessage);
-        tvLastChatMessage.setText(Message);
+       TextView tvLastChatMessage = (TextView) view.findViewById(R.id.tvLastChatMessage);
+        TextView txtUsername = (TextView) view.findViewById(R.id.txtUsername);
+        txtUsername.setText(Message.split(" : ")[0]);
+        tvLastChatMessage.setText(Message.replace("[","").replace("]","").split(" : ")[1]);
         if(img!=null) {
             ImageView ivChatPic = (ImageView) view.findViewById(R.id.ivChatPic);
             ivChatPic.setImageBitmap(img);
         }
-        View.OnClickListener ClickOpenGroup = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        };
-
-        LinearLayout llGroupList1 = (LinearLayout) view.findViewById(R.id.llChatList1);
-        LinearLayout llGroupList2 = (LinearLayout) view.findViewById(R.id.llChatList2);
-        LinearLayout llGroupList3 = (LinearLayout) view.findViewById(R.id.llChatList3);
-        LinearLayout llGroupList4 = (LinearLayout) view.findViewById(R.id.llChatList4);
-
-        llGroupList1.setOnClickListener(ClickOpenGroup);
-        llGroupList2.setOnClickListener(ClickOpenGroup);
-        llGroupList3.setOnClickListener(ClickOpenGroup);
-        llGroupList4.setOnClickListener(ClickOpenGroup);
 
         ScrollView svChatView = (ScrollView)_this.findViewById(R.id.svChatView);
-        svChatView.scrollTo(0, lsvChat.getHeight());
+        svChatView.scrollTo(0, lsvChat.getScrollY());
     }
 
     @Override
