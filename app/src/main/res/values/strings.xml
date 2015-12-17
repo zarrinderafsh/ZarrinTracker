@@ -30,5 +30,10 @@
     <string name="title_activity_about">about</string>
     <string name="title_activity_places">Places</string>
     <string name="title_activity_map_places">Map</string>
+    <string name="GroupLabel">Group</string>
+    <string name="JoinGroup">Join Group</string>
+    <string name="EnterJoinCode">ENTER CODE HERE!</string>
+    <string name="InviteBuddies">Invite Others to your group.</string>
+    <string name="LeaveGroupMessage">Are you sure you want to leave this group!? All the messages will be deleted.</string>
 
 </resources>

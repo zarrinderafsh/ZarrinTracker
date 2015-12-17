@@ -199,7 +199,7 @@ isowner=false;
         view.setId(new Random().nextInt());
         lsvGroups.addView(view);
         TextView tvGroupName = (TextView) view.findViewById(R.id.tvGroupName);
-        tvGroupName.setText(Name);
+        tvGroupName.setText(Name + " "+_context.getResources().getString( R.string.GroupLabel));
         TextView tvLastGroupMessage = (TextView) view.findViewById(R.id.tvLastGroupMessage);
         if(img!=null) {
             ImageView ivImageGroup = (ImageView) view.findViewById(R.id.ivGroupPic);
@@ -213,7 +213,7 @@ isowner=false;
                 Intent myIntent = new Intent(context, ChatActivity.class);
                 myIntent.putExtra("gpID", String.valueOf((int) v.getTag()));
                 myIntent.putExtra("myGroup", isGroupOwner);
-                context.startActivity(myIntent);
+                context.startActivityForResult(myIntent, 1);
             }
         };
 
@@ -282,4 +282,11 @@ isowner=false;
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==1)
+            if(resultCode==1)
+                this.finish();
+    }
 }

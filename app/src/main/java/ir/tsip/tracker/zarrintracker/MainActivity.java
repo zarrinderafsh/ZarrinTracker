@@ -235,14 +235,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 R.string.app_name // nav drawer close - description for accessibility
         ) {
 
+            boolean isclose=true;
             public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(mTitle);
+                isclose=false;
+                //getSupportActionBar().setTitle(mTitle);
                 // calling onPrepareOptionsMenu() to show action bar icons
                 invalidateOptionsMenu();
             }
 
             public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle(mDrawerTitle);
+                isclose=true;
+               // getSupportActionBar().setTitle(mDrawerTitle);
                 // calling onPrepareOptionsMenu() to hide action bar icons
                 invalidateOptionsMenu();
             }
@@ -305,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                         Double.valueOf(center.split(",")[1]),
                         Float.valueOf( meters),
                         -1,
-                        PendingIntent.getBroadcast(MainActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.ProximityAlert"), 0));
+                        PendingIntent.getBroadcast(MainActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.Main"), 0));
             }
             catch (Exception er){
 

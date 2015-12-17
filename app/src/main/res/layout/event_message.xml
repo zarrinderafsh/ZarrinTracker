@@ -83,5 +83,13 @@
             android:layout_marginRight="20dp"
             android:textColor="#ff0364d2" />
     </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp" android:background="@color/common_action_bar_splitter"
+            android:layout_weight=".7"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp">
+        </LinearLayout>
 </LinearLayout>
 </LinearLayout>

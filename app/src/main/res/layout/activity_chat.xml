@@ -8,23 +8,48 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:background="@color/BackColor"
-        android:gravity="center_vertical">
+        android:gravity="right">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/imgGroupPhoto"
+            android:src="@drawable/sample_user"
+            android:layout_gravity="left" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtGroupName"
+            android:text="Group Name"
+            android:textColor="@color/common_signin_btn_dark_text_pressed"
+            android:layout_gravity="center_vertical|left"
+            android:layout_marginRight="35dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/InviteBuddies"
+            android:id="@+id/txtInvitetoGroup"
+            android:textColor="@color/common_signin_btn_dark_text_pressed"
+            android:layout_gravity="center_vertical"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/ivInvite"
-            android:contentDescription="@string/ivWiFiDesc"
             android:src="@drawable/person_white_add"
             android:clickable="true"
-            android:layout_toLeftOf="@+id/ivGroup"
-            android:layout_below="@+id/textView5"
-            android:layout_marginRight="10dp"
-            android:layout_gravity="right" />
+            android:layout_marginRight="10dp" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgLeaveGroup"
+            android:src="@drawable/leavegroup"
+            android:clickable="true"
+            android:layout_gravity="end"
+            android:visibility="gone"/>
     </LinearLayout>
     <LinearLayout
         android:orientation="vertical"

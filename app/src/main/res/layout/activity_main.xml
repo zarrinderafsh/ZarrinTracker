@@ -140,7 +140,7 @@
                     android:id="@+id/textView5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chat"
+                    android:text="Groups"
                     android:textSize="18sp"
                     android:textColor="#FFFFFF"
                     android:gravity="center_horizontal"

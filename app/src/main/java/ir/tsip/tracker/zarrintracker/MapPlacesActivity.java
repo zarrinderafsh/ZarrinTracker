@@ -103,7 +103,7 @@ String name="Default";
                                 db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
 
                                 //Add proximity alert to location manager
-                                LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1, PendingIntent.getBroadcast(MapPlacesActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.ProximityAlert"), 0));
+                                LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1, PendingIntent.getBroadcast(MapPlacesActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.MapPlace"), 0));
                             } else {
                                 db.update(DatabaseContracts.Geogences.TABLE_NAME, Val, DatabaseContracts.Geogences.COLUMN_NAME_ID+"=?", new String[]{String.valueOf(id)});
                             }

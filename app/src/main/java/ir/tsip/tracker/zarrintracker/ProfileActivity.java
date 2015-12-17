@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.method.DateTimeKeyListener;
+import android.util.Base64;
 import android.util.Base64InputStream;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,13 +47,14 @@ import java.util.TimerTask;
 public class ProfileActivity extends ActionBarActivity {
 
 
-    private  ImageView ivGetPersonImage;
-    private  LinearLayout llEditProfile;
-    private  TextView tvName;
-    private  TextView tvPhone;
-    private  Timer _Timer;
-private  static  Context _context;
+    private ImageView ivGetPersonImage;
+    private LinearLayout llEditProfile;
+    private TextView tvName;
+    private TextView tvPhone;
+    private Timer _Timer;
+    private static Context _context;
     private static ProfileActivity Base;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,9 +62,9 @@ private  static  Context _context;
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Base = this;
 
-        ivGetPersonImage =(ImageView) findViewById(R.id.ivGetPersonImage);
+        ivGetPersonImage = (ImageView) findViewById(R.id.ivGetPersonImage);
         ivGetPersonImage.hasOnClickListeners();
-        ivGetPersonImage.setOnClickListener(new View.OnClickListener(){
+        ivGetPersonImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 selectImage();
             }
@@ -72,9 +74,8 @@ private  static  Context _context;
         tvName = (TextView) findViewById(R.id.tvName);
         tvPhone = (TextView) findViewById(R.id.tvPhonNumber);
 
-        View.OnClickListener EditProfile = new View.OnClickListener(){
-            public void onClick(View v)
-            {
+        View.OnClickListener EditProfile = new View.OnClickListener() {
+            public void onClick(View v) {
                 ShowEditProfile();
             }
         };
@@ -110,8 +111,8 @@ private  static  Context _context;
     }
 
     private void selectImage() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library",
-                "Cancel" };
+        final CharSequence[] items = {"Take Photo", "Choose from Library",
+                "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
         builder.setTitle("Add Photo!");
@@ -173,30 +174,26 @@ private  static  Context _context;
                 }
             }
         }
-        if(bm != null)
-        {
-            ShareSettings.SetValue(Base, "ProfileImage","");
-            if(SaveBitmap(bm))
-            {
+        if (bm != null) {
+            ShareSettings.SetValue(Base, "ProfileImage", "");
+            if (SaveBitmap(bm)) {
                 SendImageServer();
             }
         }
     }
 
 
-
-    private Boolean SaveBitmap(Bitmap bm)
-    {
+    private Boolean SaveBitmap(Bitmap bm) {
         boolean ret = false;
         String path = ShareSettings.getValue(Base, "ProfileImage");
-        if(path.length() == 0) {
+        if (path.length() == 0) {
             path = android.os.Environment
                     .getExternalStorageDirectory()
                     + File.separator
                     + "Pictures" + File.separator + "Ztracker"
                     + File.separator
-                    +(new java.text.SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-", Locale.US).format(new Date())
-                    +"profilePic.jpg"
+                    + (new java.text.SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-", Locale.US).format(new Date())
+                    + "profilePic.jpg"
             );
         }
         File file = new File(path);
@@ -204,11 +201,11 @@ private  static  Context _context;
         if (!file.getParentFile().exists()) {
             success = file.getParentFile().mkdir();
         }
-        if(!success)
+        if (!success)
             return false;
 
         OutputStream fOut = null;
-        if(file.exists())
+        if (file.exists())
             file.delete();
         try {
             fOut = new FileOutputStream(file);
@@ -227,6 +224,7 @@ private  static  Context _context;
         }
         return ret;
     }
+
     private Bitmap getBitmapFromUri(Uri uri) throws IOException {
         ParcelFileDescriptor parcelFileDescriptor =
                 getContentResolver().openFileDescriptor(uri, "r");
@@ -236,25 +234,27 @@ private  static  Context _context;
         return image;
     }
 
-    public static void setProfileImage(ImageView ivPersonImage, int Radious, Context mBase)
-    {
+    public static void setProfileImage(ImageView ivPersonImage, int Radious, Context mBase) {
         String path = ShareSettings.getValue(mBase, "ProfileImage");
-        if(path.length() > 0) {
+        if (path.length() > 0) {
             File file = new File(path);
-            if(!file.exists()) {
+            if (!file.exists()) {
                 ShareSettings.SetValue(mBase, "ProfileImage", "");
                 return;
             }
             BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-
-            ivPersonImage.setImageBitmap(
-                    CircleImage.getRoundedRectBitmap(
-                            Bitmap.createScaledBitmap(
-                                    BitmapFactory.decodeFile(file.getAbsolutePath(),btmapOptions), Radious, Radious, true), Radious
-                    )
-            );
+            try {
+                ivPersonImage.setImageBitmap(
+                        CircleImage.getRoundedRectBitmap(
+                                Bitmap.createScaledBitmap(
+                                        BitmapFactory.decodeFile(file.getAbsolutePath(), btmapOptions), Radious, Radious, true), Radious
+                        )
+                );
+            } catch (Exception er) {
+            }
         }
     }
+
 
     public static Bitmap getProfileImage(int Radious, Context mBase) {
         String path = ShareSettings.getValue(mBase, "ProfileImage");
@@ -292,7 +292,7 @@ private  static  Context _context;
 
             byte[] destination = new byte[imei.length + res.length + 1];
             System.arraycopy(imei, 0, destination, 0, imei.length);
-            destination[imei.length] = (byte)255;
+            //destination[imei.length] = (byte)255;
             System.arraycopy(res, 0, destination, imei.length + 1, res.length);
 
             W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",0,destination,"SaveImage");
@@ -311,10 +311,12 @@ private  static  Context _context;
                 break;
             case 2:// GetImage
                 try {
-                    String content = URLDecoder.decode(Data, "utf-8");
-                    InputStream istream=new ByteArrayInputStream(content.getBytes());
-                    Bitmap bitmap = BitmapFactory.decodeStream(istream);
-                   new ProfileActivity().SaveBitmap(bitmap);
+                    String content =new String(Base64.decode(Data, Base64.DEFAULT) ,"UTF-8"); //URLDecoder.decode(Data, "utf-8");
+//                    InputStream istream=new ByteArrayInputStream(content.getBytes());
+                    byte[] data=Base64.decode(Data, Base64.DEFAULT);//content.getBytes();
+
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(data,0,data.length);
+                   Base.SaveBitmap(bitmap);
                 } catch (Exception er) {
                 }
                 break;

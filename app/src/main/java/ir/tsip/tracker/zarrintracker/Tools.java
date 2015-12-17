@@ -208,7 +208,6 @@ private  static  WebServices WS;
                     lat = ja.getJSONObject(i).getJSONObject("Location").getString("X");
                     lng = ja.getJSONObject(i).getJSONObject("Location").getString("Y");
                     if (m == null) {
-
                         markers.put(Integer.valueOf(ja.getJSONObject(i).getString("ID").toString()),
                                 GoogleMapObj.addMarker(new MarkerOptions().position(
                                         new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title"))));
@@ -228,7 +227,7 @@ private  static  WebServices WS;
         bounds = bounds.replace("}", ")");
         HashMap<String, String> params = new HashMap<>();
         params.put("bounds", bounds);
-        params.put("zoom", zoom);
+        params.put("zoom", zoom+","+Tools.GetImei(context));
         if(WS==null)
             WS=new WebServices(context);
 

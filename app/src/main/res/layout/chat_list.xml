@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/txtUsername"
                 android:text="SAMPLE MESSAGE"
-                android:padding="10dp" />
+                android:textStyle="bold" />
         </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
@@ -39,7 +39,24 @@
             android:id="@+id/tvLastChatMessage"
             android:background="@drawable/background_message"
             android:text="SAMPLE MESSAGE"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:textColor="#000000" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtDate"
+            android:text="SAMPLE MESSAGE"
+            android:textColor="#ff28ab8b"
+            android:textStyle="bold"
+            android:layout_gravity="right" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp" android:background="@color/common_action_bar_splitter"
+            android:layout_weight=".7"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp">
+        </LinearLayout>
     </LinearLayout>
+
 </LinearLayout>

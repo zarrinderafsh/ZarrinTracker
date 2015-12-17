@@ -2,6 +2,7 @@ package ir.tsip.tracker.zarrintracker;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ public class GroupListAdapter extends BaseAdapter {
 
        Objects.GroupListItem item=(Objects.GroupListItem)this.getItem(position);
 
-        ((TextView)convertView.findViewById(R.id.txtGroupNameListItem)).setText(item.name);
+        ((TextView)convertView.findViewById(R.id.txtGroupNameListItem)).setText(item.name +" "+convertView.getResources().getString( R.string.GroupLabel));
         ((TextView)convertView.findViewById(R.id.txtCountGroupListItem)).setText(item.MemberCount);
         //((ImageView)findViewById(R.id.imgAvatarGroupListItem)).set(item.name);
         return  convertView;

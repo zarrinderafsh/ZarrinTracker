@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Base64;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -14,6 +15,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -142,15 +144,16 @@ public class WebServices {
     private void SendData(final int Id,final String ClassName, final int ObjectCode , String Data, String FuncName)
     {
         //SaveImage or saveprofile
-        //to send image toward server, needs to url encode the image
+        //to send image toward server, needs to encode it using base64
         if(ClassName.contains("ProfileActivity") && ObjectCode==0){
             try {
-                Data = URLEncoder.encode(Data, "utf-8");
+                Data = Base64.encodeToString( Data.getBytes(),Base64.DEFAULT);
             }
             catch (Exception er){
             }
         }
-        Map<String, String> params = new HashMap<>();
+
+            Map<String, String> params = new HashMap<>();
         params = Tools.StringToHashMap(Data);
         if(params.size() == 0)
             params.put("Data", Data);
