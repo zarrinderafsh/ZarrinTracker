@@ -57,7 +57,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -249,11 +251,33 @@ private  static  WebServices WS;
     }
 
     public static byte[] getBytesFromBitmap(Bitmap bitmap) {
-        if (bitmap == null)
+        try {
+            if (bitmap == null)
+                return null;
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+            Bitmap bTemp = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.toByteArray().length);
+            return stream.toByteArray();
+        }
+        catch (Exception e)
+        {
             return null;
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
-        return stream.toByteArray();
+        }
+    }
+
+    public static Bitmap getBitmapFromByte(byte[] bitmapByte) {
+        if (bitmapByte == null)
+            return null;
+        try {
+            Bitmap bitmap;
+            bitmap = BitmapFactory.decodeByteArray(bitmapByte,0,bitmapByte.length);
+            return bitmap;
+        }
+        catch (Exception e)
+        {
+
+        }
+        return null;
     }
 
     public  static void PlayAlert(Context c)

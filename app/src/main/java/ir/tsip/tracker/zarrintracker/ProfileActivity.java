@@ -183,9 +183,9 @@ public class ProfileActivity extends ActionBarActivity {
     }
 
 
-    private Boolean SaveBitmap(Bitmap bm) {
+    private static Boolean SaveBitmap(Bitmap bm) {
         boolean ret = false;
-        String path = ShareSettings.getValue(Base, "ProfileImage");
+        String path = ShareSettings.getValue(MainActivity.Base, "ProfileImage");
         if (path.length() == 0) {
             path = android.os.Environment
                     .getExternalStorageDirectory()
@@ -212,7 +212,7 @@ public class ProfileActivity extends ActionBarActivity {
 
             Bitmap resize = Bitmap.createScaledBitmap(bm, 512, 512, true);
             ret = resize.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-            ShareSettings.SetValue(Base, "ProfileImage", file.getPath());
+            ShareSettings.SetValue(MainActivity.Base, "ProfileImage", file.getPath());
             fOut.flush();
             fOut.close();
         } catch (FileNotFoundException e) {
@@ -284,25 +284,24 @@ public class ProfileActivity extends ActionBarActivity {
                 ShareSettings.SetValue(Base, "ProfileImage", "");
                 return;
             }
-            BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-            Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath(),btmapOptions);
+            Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+
             WebServices W = new WebServices(Base);
             byte[] res = Tools.getBytesFromBitmap(bm);
             byte[] imei = Tools.GetImei(Base).getBytes();
 
             byte[] destination = new byte[imei.length + res.length + 1];
-            System.arraycopy(imei, 0, destination, 0, imei.length);
+            destination[0] = (byte)imei.length;
+            System.arraycopy(imei, 0, destination, 1, imei.length);
             //destination[imei.length] = (byte)255;
-            System.arraycopy(res, 0, destination, imei.length + 1, res.length);
-
-            W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",0,destination,"SaveImage");
+            System.arraycopy(res, 0 , destination, imei.length+1 , res.length);
+            W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",0,Base64.encode(destination,Base64.DEFAULT),"SaveImage");
             W=null;
         }
     }
 
-    public static void backWebServices (int ObjectCode, String Data)
-    {
-        switch(ObjectCode) {
+    public static void backWebServices (int ObjectCode, String Data) {
+        switch (ObjectCode) {
             case 0:// SaveImage
                 Toast.makeText(_context, "Image uploaded on server.", Toast.LENGTH_SHORT).show();
                 break;
@@ -311,12 +310,9 @@ public class ProfileActivity extends ActionBarActivity {
                 break;
             case 2:// GetImage
                 try {
-                    String content =new String(Base64.decode(Data, Base64.DEFAULT) ,"UTF-8"); //URLDecoder.decode(Data, "utf-8");
-//                    InputStream istream=new ByteArrayInputStream(content.getBytes());
-                    byte[] data=Base64.decode(Data, Base64.DEFAULT);//content.getBytes();
-
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(data,0,data.length);
-                   Base.SaveBitmap(bitmap);
+                    byte[] data = Base64.decode(Data, Base64.DEFAULT);//content.getBytes();
+                    Bitmap bitmap = Tools.getBitmapFromByte(data);
+                    SaveBitmap(bitmap);
                 } catch (Exception er) {
                 }
                 break;

@@ -77,7 +77,8 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_ClassName = "ClassName";
         public static final String COLUMN_NAME_ObjectCode = "ObjectCode";
         public static final String COLUMN_NAME_WebServiceName = "WebServiceName";
-        public static final String COLUMN_NAME_Data = "Data";
+        public static final String COLUMN_NAME_Data_String = "DataString";
+        public static final String COLUMN_NAME_Data_Blob = "DataBlob";
         public static final String COLUMN_NAME_State = "State";
         public static final String COLUMN_NAME_Resault = "Resault";
 
@@ -87,7 +88,8 @@ public class DatabaseContracts {
                         QueueTable.COLUMN_NAME_ClassName + " nvarchar(250)," +
                         QueueTable.COLUMN_NAME_ObjectCode + " INTEGER," +
                         QueueTable.COLUMN_NAME_WebServiceName + " nvarchar(250)," +
-                        QueueTable.COLUMN_NAME_Data + " BLOB," +
+                        QueueTable.COLUMN_NAME_Data_String + " Text," +
+                        QueueTable.COLUMN_NAME_Data_Blob + " BLOB," +
                         QueueTable.COLUMN_NAME_State + " INTEGER," +
                         QueueTable.COLUMN_NAME_Resault + " nvarchar(1024));";
 

@@ -45,7 +45,7 @@ public class WebServices {
         try {
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ClassName,ClassName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ObjectCode,ObjectCode);
-            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data,Data);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data_String,Data);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
 
@@ -66,7 +66,7 @@ public class WebServices {
         try {
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ClassName,ClassName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ObjectCode,ObjectCode);
-            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data,Tools.HashMapToString(Data));
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data_String,Tools.HashMapToString(Data));
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
 
@@ -85,7 +85,7 @@ public class WebServices {
         try {
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ClassName,ClassName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_ObjectCode,ObjectCode);
-            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data,Data);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data_Blob,Data);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
 
@@ -107,22 +107,26 @@ public class WebServices {
             @Override
             public void run() {
                 try {
-                    if(!Tools.isOnline(context))
+                    if (!Tools.isOnline(context))
                         return;
                     DatabaseHelper dbh = new DatabaseHelper(context);
                     SQLiteDatabase db = dbh.getReadableDatabase();
 
-                    c = db.query(DatabaseContracts.QueueTable.TABLE_NAME, null, " State = "+pState, null, "", "", "");
+                    c = db.query(DatabaseContracts.QueueTable.TABLE_NAME, null, DatabaseContracts.QueueTable.COLUMN_NAME_State + "=" + pState, null, "", "", "");
                     try {
-                        if (c.moveToFirst())
-                        {
+                        if (c.moveToFirst()) {
                             do {
-                                SetState(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_ID)),2);
+                                SetState(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_ID)), 2);
+                                String S = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_Data_String));
+                                if (S == null || S.length() == 0) {
+                                    byte[] B = c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_Data_Blob));
+                                    S = new String(B);
+                                }
                                 SendData(
                                         c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_ID)),
                                         c.getString(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_ClassName)),
                                         c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_ObjectCode)),
-                                        new String(c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_Data))),
+                                        S,
                                         c.getString(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName))
                                 );
                             } while (c.moveToNext());
@@ -143,17 +147,7 @@ public class WebServices {
 
     private void SendData(final int Id,final String ClassName, final int ObjectCode , String Data, String FuncName)
     {
-        //SaveImage or saveprofile
-        //to send image toward server, needs to encode it using base64
-        if(ClassName.contains("ProfileActivity") && ObjectCode==0){
-            try {
-                Data = Base64.encodeToString( Data.getBytes(),Base64.DEFAULT);
-            }
-            catch (Exception er){
-            }
-        }
-
-            Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>();
         params = Tools.StringToHashMap(Data);
         if(params.size() == 0)
             params.put("Data", Data);
@@ -171,6 +165,7 @@ public class WebServices {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+//                Delete(Id);
                 SetState(Id,2);
             }
         });
@@ -181,11 +176,39 @@ public class WebServices {
         }
     }
 
+//    private void SendData(final int Id,final String ClassName, final int ObjectCode , byte[] Data, String FuncName)
+//    {
+//        Map<String, byte[]> params = new HashMap<>();
+//        params.put("Data", Data);
+//        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url+FuncName,
+//                new JSONObject(params), new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                try {
+//                    Delete(Id);
+//                    String data = response.getString("d");
+//                    Object ret  = Action.run(ClassName,"backWebServices",new Class[] {int.class,data.getClass()}, new Object[] {ObjectCode,data});
+//                } catch (Exception er) {
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                SetState(Id,2);
+//            }
+//        });
+//        if (Data.length > 1) {
+//            if(queue == null)
+//                queue = Volley.newRequestQueue(context);
+//            queue.add(jsObjRequest);
+//        }
+//    }
+
     private void Delete(int id)
     {
         DatabaseHelper dh = new DatabaseHelper(context);
         SQLiteDatabase db = dh.getReadableDatabase();
-        if(db.delete(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.AVLData.COLUMN_NAME_ID+ " in ("+id+")", null)>0){
+        if(db.delete(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.QueueTable.COLUMN_NAME_ID+ " in ("+id+")", null)>0){
         }
         db.close();
         dh.close();
@@ -197,7 +220,7 @@ public class WebServices {
         V.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,State);
         DatabaseHelper dh = new DatabaseHelper(context);
         SQLiteDatabase db = dh.getReadableDatabase();
-        if(db.update(DatabaseContracts.QueueTable.TABLE_NAME,V, DatabaseContracts.AVLData.COLUMN_NAME_ID + " in (" + id + ")", null)>0){
+        if(db.update(DatabaseContracts.QueueTable.TABLE_NAME,V, DatabaseContracts.QueueTable.COLUMN_NAME_ID + " = " + id + "", null)>0){
         }
         db.close();
         dh.close();

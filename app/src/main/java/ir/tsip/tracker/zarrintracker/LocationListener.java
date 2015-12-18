@@ -393,7 +393,7 @@ public class LocationListener  extends Service implements android.location.Locat
                     ex.toString();
                 }
             }
-        }, 0, 1000);
+        }, 0, 1000*60);
 
         Timer _Timer = new Timer(true);
         _Timer.schedule(new TimerTask() {
