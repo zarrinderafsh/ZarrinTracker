@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,8 +23,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.renderscript.Sampler;
+import android.service.media.MediaBrowserService;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
@@ -37,6 +41,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.android.vending.billing.IInAppBillingService;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -312,7 +317,7 @@ private  static  WebServices WS;
     public static HashMap<String,String> StringToHashMap(String Data)
     {
         HashMap<String,String> Ret = new HashMap<>();
-        String[] Splt = Data.split(String.valueOf((char)25));
+        String[] Splt = Data.split(String.valueOf((char) 25));
         for(String S : Splt)
         {
             if(S.length() > 0)
@@ -329,5 +334,93 @@ private  static  WebServices WS;
     {
         context.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
     }
+
+   static com.android.vending.billing.IInAppBillingService mService;
+    static ServiceConnection mServiceConn = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name,
+                                       IBinder service) {
+            mService = IInAppBillingService.Stub.asInterface(service);
+        }
+
+    };
+    public static void CreatePurchaseAlert(final Activity context){
+
+
+        final AlertDialog.Builder builder=new AlertDialog.Builder(context);
+        builder.setTitle("Purchase a plan.");
+        builder.setMessage("To purchase a plan for 5$");
+        builder.setPositiveButton("Choose", new DialogInterface.OnClickListener() {
+            HashMap<String,String> products=new HashMap<String, String>();
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent serviceIntent = new Intent("ir.cafebazaar.pardakht.InAppBillingService.BIND");
+                serviceIntent.setPackage("com.farsitel.bazaar");
+                context.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
+                /******************************************************************* THREAD */
+                //List of items
+                ArrayList skuList = new ArrayList();
+                skuList.add("OneMonth");
+                Bundle querySkus = new Bundle();
+                querySkus.putStringArrayList("id***", skuList);
+                //get list id of products
+                try {
+                    Bundle skuDetails = mService.getSkuDetails(3, context.getPackageName(), "inapp", querySkus);
+                    /******************************************************************* THREAD */
+                    //get products details
+                    int response = skuDetails.getInt("RESPONSE_CODE");
+                    if (response == 0) {
+                        ArrayList<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
+                        for (String thisResponse1 : responseList) {
+                            try {
+                                JSONObject object = new JSONObject(thisResponse1);
+                                if (!products.containsKey(object.getString("productId")))
+                                    products.put(object.getString("productId"), object.getString("price"));
+                            } catch (Exception er) {
+                            }
+                        }
+                    }
+                    //subscription
+                    try {
+                        Bundle bundle = mService.getBuyIntent(3, "com.example.myapp", "OneMonth", "subs", "developerPayload");
+
+                        PendingIntent pendingIntent = bundle.getParcelable("RESPONSE_BUY_INTENT");
+                        if (bundle.getInt("RESPONSE_CODE") == 0) {
+                            // Start purchase flow (this brings up the Google Play UI).
+                            // Result will be delivered through onActivityResult().
+                            context.startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
+
+                        }
+                    } catch (Exception er) {
+
+                    }
+                } catch (Exception er) {
+                }
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+
+                if (mServiceConn != null) {
+                    context.unbindService(mServiceConn);
+                }
+            }
+        });
+        builder.show();
+    }
+
 }
 
