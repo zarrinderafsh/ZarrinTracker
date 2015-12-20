@@ -35,5 +35,10 @@
     <string name="EnterJoinCode">ENTER CODE HERE!</string>
     <string name="InviteBuddies">Invite Others to your group.</string>
     <string name="LeaveGroupMessage">Are you sure you want to leave this group!? All the messages will be deleted.</string>
+    <string name="title_activity_purchase">PurchaseActivity</string>
+    <string name="txtPurchaseMessage">You are purchasing for one month to get more. Upgrade to family version for features: \n - Invite 4 more person \n - 5 more geofences \n - chat to others \n - Check out your group \n - Be informed when others enter or exit geofences \n - Send rate decreased for faster location updates \n PURCHASE NOW FOR ONE MONTH WITH ONLY 3$</string>
+    <string name="btnPurchase">Purchase</string>
+    <string name="btnPurchaseWaitMessage">We are getting plans and items.Please wait!!!</string>
+    <string name="gpsIsOff">GPS is off. Turn it on to locate you.</string>
 
 </resources>

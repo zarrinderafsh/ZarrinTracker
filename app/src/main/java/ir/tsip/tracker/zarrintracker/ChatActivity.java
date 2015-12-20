@@ -226,6 +226,11 @@ public class ChatActivity extends AppCompatActivity {
                 txtGeneratedJoinCode.setText(Data);
                 av.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
             }
+            else if(Data.split(",")[0]=="-1"){
+                Intent myIntent = new Intent(context, PurchaseActivity.class);
+                myIntent.putExtra("msg", "You can not invite more than " + Data.split(",")[1] + " persons.");
+                context.startActivity(myIntent);
+           }
         } else if (ObjectCode == -10) {
             if (Data != null) {
                 DatabaseHelper dh = new DatabaseHelper(_this);
@@ -306,7 +311,7 @@ public class ChatActivity extends AppCompatActivity {
                 LatLng latLng = new LatLng(Double.valueOf(data[0].split(",")[0]), Double.valueOf(data[0].split(",")[1]));
                 Circle circle = Tools.GoogleMapObj.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(data[1])));
                 try {
-                    LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1, PendingIntent.getBroadcast(ChatActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.Chat"), 0));
+                    LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1,   PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity"), 0));
                 } catch (SecurityException er) {
 
                 }

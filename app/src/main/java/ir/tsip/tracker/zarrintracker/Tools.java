@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -53,6 +55,8 @@ import com.google.android.gms.drive.internal.QueryRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -75,7 +79,6 @@ import java.util.Map;
  * Created by Administrator on 11/1/2015.
  */
 public class Tools {
-
 
 
     public static boolean isOnline(Context context) {
@@ -177,30 +180,67 @@ public class Tools {
     }
 
 
-public static  GoogleMap GoogleMapObj;
+    public static GoogleMap GoogleMapObj;
 
-static Boolean isFirst=true;
+    static Boolean isFirst = true;
+
     public static void setUpMap(GoogleMap googleMap, Context context) {
         if (googleMap == null || LocationListener.CurrentLocation == null)
             return;
-        GoogleMapObj=googleMap;
-        GoogleMapObj.setMyLocationEnabled(true);
-
+        else if (isFirst)
+            GoogleMapObj = googleMap;
         if (markers == null)
             markers = new HashMap<Integer, Marker>();
         if (Tools.isOnline(context))
             getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom), context, googleMap);
         else {
-      }
-        if(isFirst) {
+        }
+        if (isFirst) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
             isFirst = false;
+            setupGeofences(context);
+            GoogleMapObj.setMyLocationEnabled(true);
         }
     }
 
-//    private static RequestQueue queue;
+    private static void setupGeofences(Context context){
+
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius,DatabaseContracts.Geogences.COLUMN_NAME_center,DatabaseContracts.Geogences.COLUMN_NAME_name};
+        Cursor c;
+        c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
+        c.moveToFirst();
+        String center;
+        String meters;
+        while(true && c.getCount()>0) {
+            try {
+                center = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).replace("lat/lng: (", "").replace(")", "");
+                meters = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
+                GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]), Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(meters)));
+                LocationListener.locationManager.addProximityAlert(
+                        Double.valueOf(center.split(",")[0]),
+                        Double.valueOf(center.split(",")[1]),
+                        Float.valueOf(meters),
+                        -1,
+                        PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity"), 0));
+            } catch (Exception er) {
+
+            }
+            if (c.isLast())
+                break;
+            c.moveToNext();
+        }
+        c.close();
+        db.close();
+        dbh.close();
+
+    }
+
+    //    private static RequestQueue queue;
     public static Map<Integer, Marker> markers;
-private  static  WebServices WS;
+    private static WebServices WS;
+
     public static void backWebServices(int ObjectCode, String Data) {
         if (ObjectCode == 0) {//Markers
             try {
@@ -226,17 +266,18 @@ private  static  WebServices WS;
             }
         }
     }
+
     public static void getDevicesLocation(String bounds, String zoom, final Context context, final GoogleMap gmap) {
         bounds = bounds.replace("LatLngBounds{southwest=lat/lng: ", "(");
         bounds = bounds.replace("northeast=lat/lng: ", "");
         bounds = bounds.replace("}", ")");
         HashMap<String, String> params = new HashMap<>();
         params.put("bounds", bounds);
-        params.put("zoom", zoom+","+Tools.GetImei(context));
-        if(WS==null)
-            WS=new WebServices(context);
+        params.put("zoom", zoom + "," + Tools.GetImei(context));
+        if (WS == null)
+            WS = new WebServices(context);
 
-         WS.addQueue("ir.tsip.tracker.zarrintracker.Tools",0,params,"GetMarkers");
+        WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 0, params, "GetMarkers");
 
     }
 
@@ -261,8 +302,7 @@ private  static  WebServices WS;
         return stream.toByteArray();
     }
 
-    public  static void PlayAlert(Context c)
-    {
+    public static void PlayAlert(Context c) {
         try {
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Ringtone r = RingtoneManager.getRingtone(c.getApplicationContext(), notification);
@@ -272,155 +312,62 @@ private  static  WebServices WS;
         }
     }
 
-    public static void LoadImage(ImageView iv,byte[] imageAsBytes , int Radious)
-    {
+    public static void LoadImage(ImageView iv, byte[] imageAsBytes, int Radious) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDither = false;
         options.inPurgeable = true;
         options.inInputShareable = true;
-        options.inTempStorage = new byte[1024 *32];
+        options.inTempStorage = new byte[1024 * 32];
 
         Bitmap bm = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length, options);
-        if(Radious>0)
-            bm = CircleImage.getRoundedRectBitmap(bm,Radious);
+        if (Radious > 0)
+            bm = CircleImage.getRoundedRectBitmap(bm, Radious);
         iv.setImageBitmap(bm);
     }
 
-    public static Bitmap LoadImage(byte[] imageAsBytes , int Radious)
-    {
-        if(imageAsBytes == null)
+    public static Bitmap LoadImage(byte[] imageAsBytes, int Radious) {
+        if (imageAsBytes == null)
             return null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDither = false;
         options.inPurgeable = true;
         options.inInputShareable = true;
-        options.inTempStorage = new byte[1024 *32];
+        options.inTempStorage = new byte[1024 * 32];
 
         Bitmap bm = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length, options);
-        if(Radious>0)
-            bm = CircleImage.getRoundedRectBitmap(bm,Radious);
+        if (Radious > 0)
+            bm = CircleImage.getRoundedRectBitmap(bm, Radious);
         return bm;
     }
 
-    public static String HashMapToString(HashMap<String,String> Data)
-    {
+    public static String HashMapToString(HashMap<String, String> Data) {
         String Ret = "";
         Iterator myVeryOwnIterator = Data.keySet().iterator();
-        while(myVeryOwnIterator.hasNext()) {
-            String key=(String)myVeryOwnIterator.next();
-            String value=(String)Data.get(key);
-            Ret+=key+String.valueOf((char)26)+value+String.valueOf((char)25);
+        while (myVeryOwnIterator.hasNext()) {
+            String key = (String) myVeryOwnIterator.next();
+            String value = (String) Data.get(key);
+            Ret += key + String.valueOf((char) 26) + value + String.valueOf((char) 25);
         }
-        return  Ret;
+        return Ret;
     }
 
-    public static HashMap<String,String> StringToHashMap(String Data)
-    {
-        HashMap<String,String> Ret = new HashMap<>();
+    public static HashMap<String, String> StringToHashMap(String Data) {
+        HashMap<String, String> Ret = new HashMap<>();
         String[] Splt = Data.split(String.valueOf((char) 25));
-        for(String S : Splt)
-        {
-            if(S.length() > 0)
-            {
-                String[] b = S.split(String.valueOf((char)26));
-                if(b.length == 2)
-                    Ret.put(b[0],b[1]);
+        for (String S : Splt) {
+            if (S.length() > 0) {
+                String[] b = S.split(String.valueOf((char) 26));
+                if (b.length == 2)
+                    Ret.put(b[0], b[1]);
             }
         }
-        return  Ret;
+        return Ret;
     }
 
-    public static void setTitleColor(Activity context)
-    {
+    public static void setTitleColor(Activity context) {
         context.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
     }
 
-   static com.android.vending.billing.IInAppBillingService mService;
-    static ServiceConnection mServiceConn = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mService = null;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name,
-                                       IBinder service) {
-            mService = IInAppBillingService.Stub.asInterface(service);
-        }
-
-    };
-    public static void CreatePurchaseAlert(final Activity context){
-
-
-        final AlertDialog.Builder builder=new AlertDialog.Builder(context);
-        builder.setTitle("Purchase a plan.");
-        builder.setMessage("To purchase a plan for 5$");
-        builder.setPositiveButton("Choose", new DialogInterface.OnClickListener() {
-            HashMap<String,String> products=new HashMap<String, String>();
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent serviceIntent = new Intent("ir.cafebazaar.pardakht.InAppBillingService.BIND");
-                serviceIntent.setPackage("com.farsitel.bazaar");
-                context.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
-                /******************************************************************* THREAD */
-                //List of items
-                ArrayList skuList = new ArrayList();
-                skuList.add("OneMonth");
-                Bundle querySkus = new Bundle();
-                querySkus.putStringArrayList("id***", skuList);
-                //get list id of products
-                try {
-                    Bundle skuDetails = mService.getSkuDetails(3, context.getPackageName(), "inapp", querySkus);
-                    /******************************************************************* THREAD */
-                    //get products details
-                    int response = skuDetails.getInt("RESPONSE_CODE");
-                    if (response == 0) {
-                        ArrayList<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
-                        for (String thisResponse1 : responseList) {
-                            try {
-                                JSONObject object = new JSONObject(thisResponse1);
-                                if (!products.containsKey(object.getString("productId")))
-                                    products.put(object.getString("productId"), object.getString("price"));
-                            } catch (Exception er) {
-                            }
-                        }
-                    }
-                    //subscription
-                    try {
-                        Bundle bundle = mService.getBuyIntent(3, "com.example.myapp", "OneMonth", "subs", "developerPayload");
-
-                        PendingIntent pendingIntent = bundle.getParcelable("RESPONSE_BUY_INTENT");
-                        if (bundle.getInt("RESPONSE_CODE") == 0) {
-                            // Start purchase flow (this brings up the Google Play UI).
-                            // Result will be delivered through onActivityResult().
-                            context.startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
-
-                        }
-                    } catch (Exception er) {
-
-                    }
-                } catch (Exception er) {
-                }
-
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-
-                if (mServiceConn != null) {
-                    context.unbindService(mServiceConn);
-                }
-            }
-        });
-        builder.show();
-    }
 
 }
 

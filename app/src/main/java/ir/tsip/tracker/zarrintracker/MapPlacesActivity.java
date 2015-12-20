@@ -37,8 +37,7 @@ private double lat;
     private double lng;
     private double radius;
     Button btnDeacrease,btnIncrease,btnSave;
-    ImageButton btnSearchLocation;
-    EditText txtSearchPlace,txtCirleName;
+    EditText txtCirleName;
     Circle circle;
     int id;
 String name="Default";
@@ -54,17 +53,15 @@ String name="Default";
         btnDeacrease = (Button) findViewById(R.id.btnDecreaseArea);
         btnIncrease = (Button) findViewById(R.id.btnIncreaseArea);
         btnSave = (Button) findViewById(R.id.btnSaveNewPlace);
-        btnSearchLocation = (ImageButton) findViewById(R.id.btnSearchPlace);
-        txtSearchPlace = (EditText) findViewById(R.id.txtSearchPlaces);
 
         id = this.getIntent().getIntExtra("id", 0);
         lat = this.getIntent().getDoubleExtra("lat", 0);
         lng = this.getIntent().getDoubleExtra("lng", 0);
         radius = this.getIntent().getDoubleExtra("radius", 100);
-        name=this.getIntent().getStringExtra("name");
-     if (lat != 0 && lng != 0) {
+        name = this.getIntent().getStringExtra("name");
+        if (lat != 0 && lng != 0) {
             circle = mMap.addCircle(new CircleOptions().center(new LatLng(lat, lng)).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(radius));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 16.0f));
 
 
         }
@@ -84,7 +81,7 @@ String name="Default";
                 builder.setTitle("Choose a name!");
                 LayoutInflater inflate = MapPlacesActivity.this.getLayoutInflater();
                 View view = inflate.inflate(R.layout.name_of_circle, null);
-                txtCirleName=(EditText)view.findViewById(R.id.txtCircleName);
+                txtCirleName = (EditText) view.findViewById(R.id.txtCircleName);
                 txtCirleName.setText(name);
                 builder.setView(view);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -95,27 +92,54 @@ String name="Default";
                             ContentValues Val = new ContentValues();
                             DatabaseHelper dbh = new DatabaseHelper(MapPlacesActivity.this);
                             SQLiteDatabase db = dbh.getWritableDatabase();
-                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, circle.getCenter().toString());
+                            Val.clear();
                             Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, txtCirleName.getText().toString());
-                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, String.valueOf(circle.getRadius()));
+                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, circle.getCenter().toString().replace("lat/lng: (","").replace(")", ""));
+                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, circle.getRadius());
 
-                            if (id == 0) {
-                                db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
+                            //Add proximity alert to location manager
+                            try {
+                                LocationListener.locationManager.addProximityAlert(
+                                        circle.getCenter().latitude,
+                                        circle.getCenter().longitude,
+                                        (float)circle.getRadius(),
+                                        -1,
+                                        PendingIntent.getBroadcast(LocationListener.mContext,0, new Intent("ir.tstracker.activity.proximity"), 0));
+                            }
+                            catch (Exception er){
 
-                                //Add proximity alert to location manager
-                                LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1, PendingIntent.getBroadcast(MapPlacesActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.MapPlace"), 0));
-                            } else {
-                                db.update(DatabaseContracts.Geogences.TABLE_NAME, Val, DatabaseContracts.Geogences.COLUMN_NAME_ID+"=?", new String[]{String.valueOf(id)});
                             }
                             //Send circle to the server for exposing to others
                             HashMap<String, String> params;
                             params = new HashMap<>();
-                            params.put("message", circle.getCenter().toString() + "~" + String.valueOf(circle.getRadius()) + "~" + txtCirleName.getText().toString());
                             params.put("imei", Tools.GetImei(getApplicationContext()));
-                            params.put("gpID", "-10");
+                            int objectcode;
+                            if (id == 0) {
+                                id=(int)db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
+                                //add new
+                                params.put("clientCode", String.valueOf(id));
+                                params.put("center", circle.getCenter().toString().replace("lat/lng: (","").replace(")",""));
+                                params.put("radius", String.valueOf(circle.getRadius()));
+                                params.put("name", txtCirleName.getText().toString());
+                                params.put("operation", "1");
+                                objectcode=0;
+                          } else {
+                                db.update(DatabaseContracts.Geogences.TABLE_NAME, Val, DatabaseContracts.Geogences.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(id)});
+                                //edit
+                                params.put("clientCode", String.valueOf(id));
+                                params.put("center", circle.getCenter().toString().replace("lat/lng: (","").replace(")",""));
+                                params.put("radius", String.valueOf(circle.getRadius()));
+                                params.put("name", txtCirleName.getText().toString());
+                                params.put("operation", "2");
+                                objectcode=1;
+                            }
                             WebServices W = new WebServices(getApplicationContext());
-                            W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "SetMessage");
-
+                            W.addQueue("ir.tsip.tracker.zarrintracker.Places", objectcode, params, "GeofenceOperations");
+                            db.close();
+                            dbh.close();
+                            db = null;
+                            dbh = null;
+                            W = null;
                         } catch (Exception er) {
 
                         }
@@ -142,23 +166,6 @@ String name="Default";
             @Override
             public void onClick(View v) {
                 circle.setRadius(circle.getRadius() + 100);
-            }
-        });
-        btnSearchLocation.setOnClickListener(new View.OnClickListener() {
-            Address _address;
-
-            @Override
-            public void onClick(View v) {
-                if (txtSearchPlace.getText().toString().length() > 2) {
-                    Geocoder g = new Geocoder(MapPlacesActivity.this);
-                    try {
-                        _address = g.getFromLocationName(txtSearchPlace.getText().toString(), 1).get(0);
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(_address.getLatitude(), _address.getLongitude()), 14));
-                    } catch (Exception er) {
-
-                    }
-                }
-
             }
         });
     }

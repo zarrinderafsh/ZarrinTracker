@@ -1,5 +1,8 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.app.PendingIntent;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,11 +26,12 @@ public class Places extends AppCompatActivity {
     ArrayList<Objects.GeofenceItem> geos=new ArrayList<>();
     GeofenceItemAdapter geoAdapter;
     ListView lsvPlaces;
+    static Context _context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_places);
-
+_context=this;
         lsvPlaces=(ListView)findViewById(R.id.lsvPlaces);
         GetGeofences();
 
@@ -84,6 +88,54 @@ public class Places extends AppCompatActivity {
         lsvPlaces.setAdapter(geoAdapter);
     }
 
+    public static void backWebServices (int ObjectCode, String Data) {
+        if(ObjectCode==0){
+            if((!Data.startsWith("-1")) && Data.length()>3){
+            }
+            else if(Data.startsWith("-1")){
+                //                               Name~Points~radius~clientAreaCode
+                DatabaseHelper dbh = new DatabaseHelper(_context);
+                SQLiteDatabase db = dbh.getWritableDatabase();
+                db.delete(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(Data.split("~")[3])});
+                db.close();
+                dbh.close();
+                db=null;
+                dbh=null;
+                try {
+                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity"), 0));
+                }
+                catch (Exception er){
+
+                }
+                Intent myIntent = new Intent(_context, PurchaseActivity.class);
+                myIntent.putExtra("msg","You can not create more than "+Data.split(",")[1]+" geofences.");
+               _context.startActivity(myIntent);
+            }
+        }
+        else if (ObjectCode == 4) {
+            if (Data.length() > 1) {
+                //add new area to database
+                ContentValues Val = new ContentValues();
+                DatabaseHelper dbh = new DatabaseHelper(_context);
+                SQLiteDatabase db = dbh.getWritableDatabase();
+
+                String[] geos = Data.split("|");
+                //                               Name~Points~radius~clientAreaCode|
+                for (String g : geos) {
+                    Val.clear();
+                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, g.split("~")[0]);
+                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, g.split("~")[1]);
+                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, g.split("~")[2]);
+                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_ID, g.split("~")[3]);
+                    db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
+                }
+                db.close();
+                dbh.close();
+                db = null;
+                dbh = null;
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

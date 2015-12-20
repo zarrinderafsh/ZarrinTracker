@@ -12,6 +12,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -23,7 +25,7 @@ import java.util.TimerTask;
 
 public class LocationListener  extends Service implements android.location.LocationListener,GpsStatus.Listener {
 
-    private static Context mContext;
+    public static Context mContext;
 
     // flag for GPS status
     public static boolean isGPSEnabled = false;
@@ -226,6 +228,7 @@ public class LocationListener  extends Service implements android.location.Locat
 
     @Override
     public void onGpsStatusChanged(int p) {
+        ((TextView)MainActivity.Base.findViewById(R.id.txtgpsMessage)).setVisibility(View.INVISIBLE);
         switch (p) {
             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                 break;
@@ -233,7 +236,8 @@ public class LocationListener  extends Service implements android.location.Locat
                 break;
             case GpsStatus.GPS_EVENT_STOPPED:
                 String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
-                (new EventManager(mContext)).AddEvevnt("turned GPS OFF:" + SDate, "-3");
+                (new EventManager(mContext)).AddEvevnt(" GPS turned off." + SDate, "-3");
+                ((TextView)MainActivity.Base.findViewById(R.id.txtgpsMessage)).setVisibility(View.VISIBLE);
                 break;
             case GpsStatus.GPS_EVENT_STARTED:
                 break;

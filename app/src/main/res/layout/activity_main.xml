@@ -39,7 +39,11 @@
             android:background="@color/BackColor"
             android:gravity="center_vertical|center_horizontal|right"
             android:layout_gravity="top">
-
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/gpsIsOff"
+    android:id="@+id/txtgpsMessage"/>
 
                 <ImageView
                 android:layout_width="wrap_content"

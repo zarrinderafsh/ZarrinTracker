@@ -1,8 +1,10 @@
 package ir.tsip.tracker.zarrintracker;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by ali on 12/3/15.
@@ -64,9 +67,32 @@ ImageButton ibtnEdit,ibtnDelete;
         ibtnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                items.remove(position);
-//                GeofenceItemAdapter.this.notifyDataSetChanged();
-                Toast.makeText(activity, "Disabled", Toast.LENGTH_SHORT).show();
+                HashMap<String, String> params;
+                params = new HashMap<>();
+                params.put("imei", Tools.GetImei(GeofenceItemAdapter.this.activity));
+                params.put("clientCode",String.valueOf( items.get(position).id));
+                params.put("center", String.valueOf(items.get(position).latitude)+","+String.valueOf( items.get(position).longitude));
+                params.put("radius", String.valueOf( items.get(position).radius));
+                params.put("name", items.get(position).name);
+                params.put("operation", "3");//delete
+                WebServices W = new WebServices(GeofenceItemAdapter.this.activity);
+                W.addQueue("ir.tsip.tracker.zarrintracker.Places", 1, params, "GeofenceOperations");
+                W = null;
+                DatabaseHelper dbh = new DatabaseHelper(GeofenceItemAdapter.this.activity);
+                SQLiteDatabase db = dbh.getWritableDatabase();
+                db.delete(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(items.get(position).id)});
+                db.close();
+                dbh.close();
+                db=null;
+                dbh=null;
+                try {
+                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity"), 0));
+                }
+                catch (Exception er){
+
+                }
+                items.remove(position);
+                GeofenceItemAdapter.this.notifyDataSetChanged();
             }
         });
         return  convertView;
