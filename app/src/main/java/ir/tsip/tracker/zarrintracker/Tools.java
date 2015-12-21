@@ -184,12 +184,11 @@ public class Tools {
 
     public static GoogleMap GoogleMapObj;
 
-    static Boolean isFirst = true;
-
-    public static void setUpMap(GoogleMap googleMap, Context context) {
+static boolean IsFirst=true;
+    public static void setUpMap(GoogleMap googleMap, Context context,boolean isfirst) {
         if (googleMap == null || LocationListener.CurrentLocation == null)
             return;
-        else if (isFirst)
+        else if (isfirst || IsFirst)
             GoogleMapObj = googleMap;
         if (markers == null)
             markers = new HashMap<Integer, Marker>();
@@ -197,15 +196,18 @@ public class Tools {
             getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom), context, googleMap);
         else {
         }
-        if (isFirst) {
+        if (isfirst || IsFirst) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
-            isFirst = false;
-            setupGeofences(context);
+setupGeofences(context);
             GoogleMapObj.setMyLocationEnabled(true);
+            IsFirst=false;
         }
     }
 
-    private static void setupGeofences(Context context){
+    public static void DrawCircles(Context context){
+        if(Tools.GoogleMapObj== null)
+            return;
+        Tools.GoogleMapObj.clear();
 
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getWritableDatabase();
@@ -219,13 +221,43 @@ public class Tools {
             try {
                 center = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).replace("lat/lng: (", "").replace(")", "");
                 meters = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
-                GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]), Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(meters)));
+                Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]), Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(meters)));
+          } catch (Exception er) {
+
+            }
+            if (c.isLast())
+                break;
+            c.moveToNext();
+        }
+        c.close();
+        db.close();
+        dbh.close();
+    }
+
+    private static void setupGeofences(Context context){
+        if(Tools.GoogleMapObj== null)
+            return;
+        Tools.GoogleMapObj.clear();
+
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius,DatabaseContracts.Geogences.COLUMN_NAME_center,DatabaseContracts.Geogences.COLUMN_NAME_name};
+        Cursor c;
+        c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
+        c.moveToFirst();
+        String center;
+        String meters;
+        while(true && c.getCount()>0) {
+            try {
+                center = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).replace("lat/lng: (", "").replace(")", "");
+                meters = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
+                Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]), Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(meters)));
                 LocationListener.locationManager.addProximityAlert(
                         Double.valueOf(center.split(",")[0]),
                         Double.valueOf(center.split(",")[1]),
                         Float.valueOf(meters),
                         -1,
-                        PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity"), 0));
+                        PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity").putExtra("id",c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID))), 0));
             } catch (Exception er) {
 
             }
@@ -238,7 +270,6 @@ public class Tools {
         dbh.close();
 
     }
-
     //    private static RequestQueue queue;
     public static Map<Integer, Marker> markers;
     private static WebServices WS;

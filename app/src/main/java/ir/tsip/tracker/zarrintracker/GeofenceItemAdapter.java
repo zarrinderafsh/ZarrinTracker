@@ -76,7 +76,7 @@ ImageButton ibtnEdit,ibtnDelete;
                 params.put("name", items.get(position).name);
                 params.put("operation", "3");//delete
                 WebServices W = new WebServices(GeofenceItemAdapter.this.activity);
-                W.addQueue("ir.tsip.tracker.zarrintracker.Places", 1, params, "GeofenceOperations");
+                W.addQueue("ir.tsip.tracker.zarrintracker.Places", 3, params, "GeofenceOperations");
                 W = null;
                 DatabaseHelper dbh = new DatabaseHelper(GeofenceItemAdapter.this.activity);
                 SQLiteDatabase db = dbh.getWritableDatabase();
@@ -86,7 +86,7 @@ ImageButton ibtnEdit,ibtnDelete;
                 db=null;
                 dbh=null;
                 try {
-                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity"), 0));
+                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity").putExtra("id",String.valueOf(items.get(position).id)), 0));
                 }
                 catch (Exception er){
 

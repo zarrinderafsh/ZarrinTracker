@@ -59,56 +59,56 @@ HashMap<String,String> products=new HashMap<>();
         txtMessage = (TextView) findViewById(R.id.txtmsg);
         txtMessage.setText(getIntent().getStringExtra("msg"));
         /******************************************************************* THREAD */
-//        Thread t = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                //List of items
-//                ArrayList skuList = new ArrayList();
-//                skuList.add("OneMonth");
-//                skuList.add("Family");
-//                Bundle querySkus = new Bundle();
-//                querySkus.putStringArrayList("id of item from bazar panel", skuList);
-//                //get list id of products
-//                try {
-//                    Bundle skuDetails = mService.getSkuDetails(3, getPackageName(), "subs", querySkus);
-//                    //get products details
-//                    int response = skuDetails.getInt("RESPONSE_CODE");
-//                    if (response == 0) {
-//                        ArrayList<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
-//                        for (String thisResponse1 : responseList) {
-//                            try {
-//                                JSONObject object = new JSONObject(thisResponse1);
-//                                if (!products.containsKey(object.getString("productId")))
-//                                    products.put(object.getString("productId"), object.getString("price"));
-//                            } catch (Exception er) {
-//                            }
-//                        }
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                spnrItems.setAdapter(new ArrayAdapter<String>(PurchaseActivity.this,
-//                                        R.layout.drawerlistlayout, new String[]{"Map", "Chat","Add Place", "About"}));
-//                                btnPurchase.setEnabled(true);
-//                                btnPurchase.setText(getResources().getString(R.string.btnPurchaseWaitMessage));
-//                            }
-//                        });
-//                    }
-//                } catch (Exception er) {
-//                }
-//            }
-//        });
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //List of items
+                ArrayList skuList = new ArrayList();
+                skuList.add("OneMonth");
+                skuList.add("Family");
+                Bundle querySkus = new Bundle();
+                querySkus.putStringArrayList("Family", skuList);
+                //get list id of products
+                try {
+                    Bundle skuDetails = mService.getSkuDetails(3, getPackageName(), "subs", querySkus);
+                    //get products details
+                    int response = skuDetails.getInt("RESPONSE_CODE");
+                    if (response == 0) {
+                        ArrayList<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
+                        for (String thisResponse1 : responseList) {
+                            try {
+                                JSONObject object = new JSONObject(thisResponse1);
+                                if (!products.containsKey(object.getString("productId")))
+                                    products.put(object.getString("productId"), object.getString("price"));
+                            } catch (Exception er) {
+                            }
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                btnPurchase.setEnabled(true);
+                                btnPurchase.setText(getResources().getString(R.string.btnPurchaseWaitMessage));
+                            }
+                        });
+                    }
+                } catch (Exception er) {
+                }
+            }
+        });
 
         /******************************************************************* THREAD */
 
         btnPurchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //ir.tsip.tracker.zarrintracker.PurchaseActivity
                 Intent serviceIntent = new Intent("ir.cafebazaar.pardakht.InAppBillingService.BIND");
                 serviceIntent.setPackage("com.farsitel.bazaar");
                 bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
-               //subscription
+                //subscription
                 try {
-                    Bundle bundle = mService.getBuyIntent(3, getPackageName(), "OneMonth", "subs", "developerPayload");
+                    Bundle bundle = mService.getBuyIntent(3, getPackageName(), "Family", "subs", "developerPayload");
 
                     PendingIntent pendingIntent = bundle.getParcelable("RESPONSE_BUY_INTENT");
                     if (bundle.getInt("RESPONSE_CODE") == 0) {
@@ -118,7 +118,7 @@ HashMap<String,String> products=new HashMap<>();
 
                     }
                 } catch (Exception er) {
-
+int vs=0;
                 }
 
 

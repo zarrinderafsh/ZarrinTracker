@@ -307,28 +307,28 @@ public class ChatActivity extends AppCompatActivity {
             } else if (msg.contains("[E]")) {
                 MessageEvent.InsertMessage(context, msg.replace("[E]", ""));
             } else if (msg.contains("[G]")) {
-                String[] data = msg.replace("[G]", "").split("~");
-                LatLng latLng = new LatLng(Double.valueOf(data[0].split(",")[0]), Double.valueOf(data[0].split(",")[1]));
-                Circle circle = Tools.GoogleMapObj.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(data[1])));
-                try {
-                    LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1,   PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity"), 0));
-                } catch (SecurityException er) {
-
-                }
-
-                ContentValues Val = new ContentValues();
-                DatabaseHelper dbh = new DatabaseHelper(ChatActivity.this);
-                SQLiteDatabase db = dbh.getWritableDatabase();
-                try {
-                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, latLng.toString());
-                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, data[2]);
-                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, data[1]);
-                    db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
-                } catch (Exception er) {
-
-                }
-                db.close();
-                dbh.close();
+//                String[] data = msg.replace("[G]", "").split("~");
+//                LatLng latLng = new LatLng(Double.valueOf(data[0].split(",")[0]), Double.valueOf(data[0].split(",")[1]));
+//                Circle circle = Tools.GoogleMapObj.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(data[1])));
+//                try {
+//                    LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1,   PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity"), 0));
+//                } catch (SecurityException er) {
+//
+//                }
+//
+//                ContentValues Val = new ContentValues();
+//                DatabaseHelper dbh = new DatabaseHelper(ChatActivity.this);
+//                SQLiteDatabase db = dbh.getWritableDatabase();
+//                try {
+//                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, latLng.toString());
+//                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, data[2]);
+//                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, data[1]);
+//                    db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
+//                } catch (Exception er) {
+//
+//                }
+//                db.close();
+//                dbh.close();
             }
             Data = null;
         }

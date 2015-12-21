@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,6 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -91,22 +96,46 @@ _context=this;
     public static void backWebServices (int ObjectCode, String Data) {
         if(ObjectCode==0){
             if((!Data.startsWith("-1")) && Data.length()>3){
-            }
-            else if(Data.startsWith("-1")){
                 //                               Name~Points~radius~clientAreaCode
+                Circle circle=  Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(Data.split("~")[1].split(",")[0]),Double.valueOf(Data.split("~")[1].split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(Data.split("~")[2])));
+
+                ContentValues Val = new ContentValues();
                 DatabaseHelper dbh = new DatabaseHelper(_context);
                 SQLiteDatabase db = dbh.getWritableDatabase();
-                db.delete(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(Data.split("~")[3])});
-                db.close();
-                dbh.close();
-                db=null;
-                dbh=null;
+                Val.clear();
+                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, Data.split("~")[0]);
+                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, circle.getCenter().toString().replace("lat/lng: (", "").replace(")", ""));
+                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, circle.getRadius());
+              int id=(int) db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
+
+                //Add proximity alert to location manager
                 try {
-                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity"), 0));
+                    LocationListener.locationManager.addProximityAlert(
+                            circle.getCenter().latitude,
+                            circle.getCenter().longitude,
+                            (float)circle.getRadius(),
+                            -1,
+                            PendingIntent.getBroadcast(LocationListener.mContext,0, new Intent("ir.tstracker.activity.proximity").putExtra("id",id), 0));
                 }
                 catch (Exception er){
 
                 }
+
+            }
+            else if(Data.startsWith("-1")){
+//                DatabaseHelper dbh = new DatabaseHelper(_context);
+//                SQLiteDatabase db = dbh.getWritableDatabase();
+//                db.delete(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(Data.split("~")[3])});
+//                db.close();
+//                dbh.close();
+//                db=null;
+//                dbh=null;
+//                try {
+//                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity").putExtra("id",String.valueOf(Data.split("~")[3])), 0));
+//                }
+//                catch (Exception er){
+//
+//                }
                 Intent myIntent = new Intent(_context, PurchaseActivity.class);
                 myIntent.putExtra("msg","You can not create more than "+Data.split(",")[1]+" geofences.");
                _context.startActivity(myIntent);

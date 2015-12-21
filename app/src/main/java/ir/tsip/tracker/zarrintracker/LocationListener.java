@@ -1,10 +1,13 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -15,6 +18,9 @@ import android.os.SystemClock;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -375,6 +381,7 @@ public class LocationListener  extends Service implements android.location.Locat
         StartServices();
         WebServices W = new WebServices(mContext);
         W.RunSend();
+
         return START_STICKY;
     }
 

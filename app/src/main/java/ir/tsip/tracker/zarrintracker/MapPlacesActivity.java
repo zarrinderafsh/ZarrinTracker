@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Address;
@@ -69,8 +70,13 @@ String name="Default";
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                circle.remove();
-                circle = mMap.addCircle(new CircleOptions().center(latLng).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(radius));
+                try {
+                    circle.remove();
+                    circle = mMap.addCircle(new CircleOptions().center(latLng).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(radius));
+                }
+                catch (Exception er){
+
+                }
             }
         });
 
@@ -88,63 +94,66 @@ String name="Default";
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            //add new area to database
-                            ContentValues Val = new ContentValues();
+
                             DatabaseHelper dbh = new DatabaseHelper(MapPlacesActivity.this);
                             SQLiteDatabase db = dbh.getWritableDatabase();
-                            Val.clear();
-                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, txtCirleName.getText().toString());
-                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, circle.getCenter().toString().replace("lat/lng: (","").replace(")", ""));
-                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, circle.getRadius());
-
-                            //Add proximity alert to location manager
-                            try {
-                                LocationListener.locationManager.addProximityAlert(
-                                        circle.getCenter().latitude,
-                                        circle.getCenter().longitude,
-                                        (float)circle.getRadius(),
-                                        -1,
-                                        PendingIntent.getBroadcast(LocationListener.mContext,0, new Intent("ir.tstracker.activity.proximity"), 0));
-                            }
-                            catch (Exception er){
-
-                            }
                             //Send circle to the server for exposing to others
                             HashMap<String, String> params;
                             params = new HashMap<>();
                             params.put("imei", Tools.GetImei(getApplicationContext()));
+                            params.put("center", circle.getCenter().toString().replace("lat/lng: (", "").replace(")", ""));
+                            params.put("radius", String.valueOf(circle.getRadius()));
+                            params.put("name", txtCirleName.getText().toString());
                             int objectcode;
                             if (id == 0) {
-                                id=(int)db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
-                                //add new
-                                params.put("clientCode", String.valueOf(id));
-                                params.put("center", circle.getCenter().toString().replace("lat/lng: (","").replace(")",""));
-                                params.put("radius", String.valueOf(circle.getRadius()));
-                                params.put("name", txtCirleName.getText().toString());
-                                params.put("operation", "1");
-                                objectcode=0;
-                          } else {
-                                db.update(DatabaseContracts.Geogences.TABLE_NAME, Val, DatabaseContracts.Geogences.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(id)});
-                                //edit
-                                params.put("clientCode", String.valueOf(id));
-                                params.put("center", circle.getCenter().toString().replace("lat/lng: (","").replace(")",""));
-                                params.put("radius", String.valueOf(circle.getRadius()));
-                                params.put("name", txtCirleName.getText().toString());
-                                params.put("operation", "2");
-                                objectcode=1;
-                            }
-                            WebServices W = new WebServices(getApplicationContext());
-                            W.addQueue("ir.tsip.tracker.zarrintracker.Places", objectcode, params, "GeofenceOperations");
-                            db.close();
-                            dbh.close();
-                            db = null;
-                            dbh = null;
-                            W = null;
-                        } catch (Exception er) {
+                                db = dbh.getReadableDatabase();
+                                String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID};
+                                Cursor c;
+                                c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
+                                c.moveToLast();
+                                while (true && c.getCount() > 0) {
+                                    id=c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID));
+                                    break;
+                                }
 
+                            //add new
+                            params.put("clientCode", String.valueOf(id+1));
+                            params.put("operation", "1");
+                            objectcode = 0;
+
+                        }else{
+                            ContentValues Val = new ContentValues();
+                            Val.clear();
+                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, txtCirleName.getText().toString());
+                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, circle.getCenter().toString().replace("lat/lng: (", "").replace(")", ""));
+                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, circle.getRadius());
+
+                            db.update(DatabaseContracts.Geogences.TABLE_NAME, Val, DatabaseContracts.Geogences.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(id)});
+                            //edit
+                            params.put("clientCode", String.valueOf(id));
+                            params.put("operation", "2");
+                            objectcode = 1;
+                                Tools.DrawCircles(MapPlacesActivity.this);
                         }
+                        WebServices W = new WebServices(getApplicationContext());
+                        W.addQueue("ir.tsip.tracker.zarrintracker.Places", objectcode, params, "GeofenceOperations");
+                        db.close();
+                        dbh.close();
+                        db = null;
+                        dbh = null;
+                        W = null;
+                        MapPlacesActivity.this.finish();
                     }
-                });
+
+                    catch(
+                    Exception er
+                    )
+
+                    {
+
+                    }
+                }
+            });
 
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

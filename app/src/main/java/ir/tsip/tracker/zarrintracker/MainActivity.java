@@ -496,6 +496,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }, 0, 10000);
     }
 
+    boolean isfirst=true;
     private void ShowMessage() {
         if (_TimerMain == null) {
             _TimerMain = new Timer(true);
@@ -510,8 +511,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 try {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            if (mMapFragment != null)
-                                Tools.setUpMap(mMapFragment.getMap(), getApplicationContext());
+                            if (mMapFragment != null) {
+                                Tools.setUpMap(mMapFragment.getMap(), getApplicationContext(), isfirst);
+                            isfirst=false;
+                            }
 
                             String Mes = MessageManager.GetMessage();
                             if (Mes.length() > 0) {
