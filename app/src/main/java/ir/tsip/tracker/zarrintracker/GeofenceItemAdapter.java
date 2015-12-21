@@ -90,7 +90,7 @@ ImageButton ibtnEdit,ibtnDelete;
                 }
                 catch (Exception er){
 
-                }
+                 }
                 items.remove(position);
                 GeofenceItemAdapter.this.notifyDataSetChanged();
             }

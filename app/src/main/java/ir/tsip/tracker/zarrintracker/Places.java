@@ -137,7 +137,7 @@ _context=this;
 //
 //                }
                 Intent myIntent = new Intent(_context, PurchaseActivity.class);
-                myIntent.putExtra("msg","You can not create more than "+Data.split(",")[1]+" geofences.");
+                 myIntent.putExtra("msg","You can not create more than "+Data.split(",")[1]+" geofences.");
                _context.startActivity(myIntent);
             }
         }

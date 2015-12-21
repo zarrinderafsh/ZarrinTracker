@@ -22,7 +22,7 @@ public class ProximityIntentReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        entering = intent.getBooleanExtra(key, false);
+         entering = intent.getBooleanExtra(key, false);
         if (entering) {
             state="enter";
         }else {
