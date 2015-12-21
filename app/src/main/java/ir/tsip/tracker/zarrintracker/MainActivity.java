@@ -76,8 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public static  LinearLayout.LayoutParams lpTop;
     public static  LinearLayout.LayoutParams lpDown;
    public static Activity Base;
-    // nav drawer title
-    private CharSequence mDrawerTitle;
+
     ListView lsvtest;
     // used to store app title
     private CharSequence mTitle;
@@ -223,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 R.layout.drawerlistlayout, new String[]{"Map", "Chat","Add Place", "About"}));
 
 
-        mTitle = mDrawerTitle = getTitle();
+        mTitle =  getTitle();
         mDrawerLayout = (android.support.v4.widget.DrawerLayout) findViewById(R.id.drawer_layout);
         // enabling action bar app icon and behaving it as toggle button
         if (getSupportActionBar() != null) {
@@ -316,15 +315,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         Cursor c;
         Objects.GeofenceItem geo;
         c = db.query(DatabaseContracts.Geogences.TABLE_NAME, null, "", null, "", "","", "");
-        if (c.getCount()==0)//there is no geofences in database, lets check out server
+        if (c.getCount()<=0)//there is no geofences in database, lets check out server
         {
             HashMap<String, String> params;
             params = new HashMap<>();
             params.put("imei", Tools.GetImei(this));
-            params.put("clientCode","");
-            params.put("center", "");
-            params.put("radius", "");
-            params.put("name", "");
+            params.put("clientCode","-1");
+            params.put("center", "0,0");
+            params.put("radius", "0");
+            params.put("name", "0");
             params.put("operation", "4");//get all geofences
             WebServices W = new WebServices(this);
             W.addQueue("ir.tsip.tracker.zarrintracker.Places", 4, params, "GeofenceOperations");

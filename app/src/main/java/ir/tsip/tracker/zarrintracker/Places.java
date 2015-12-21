@@ -97,7 +97,7 @@ _context=this;
         if(ObjectCode==0){
             if((!Data.startsWith("-1")) && Data.length()>3){
                 //                               Name~Points~radius~clientAreaCode
-                Circle circle=  Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(Data.split("~")[1].split(",")[0]),Double.valueOf(Data.split("~")[1].split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(Data.split("~")[2])));
+                Circle circle=  Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(Data.split("~")[1].split(",")[0]), Double.valueOf(Data.split("~")[1].split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(Data.split("~")[2])));
 
                 ContentValues Val = new ContentValues();
                 DatabaseHelper dbh = new DatabaseHelper(_context);
@@ -143,25 +143,32 @@ _context=this;
         }
         else if (ObjectCode == 4) {
             if (Data.length() > 1) {
-                //add new area to database
-                ContentValues Val = new ContentValues();
-                DatabaseHelper dbh = new DatabaseHelper(_context);
-                SQLiteDatabase db = dbh.getWritableDatabase();
+                try {
+                    //add new area to database
+                    ContentValues Val = new ContentValues();
+                    DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+                    SQLiteDatabase db = dbh.getWritableDatabase();
 
-                String[] geos = Data.split("|");
-                //                               Name~Points~radius~clientAreaCode|
-                for (String g : geos) {
-                    Val.clear();
-                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, g.split("~")[0]);
-                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, g.split("~")[1]);
-                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, g.split("~")[2]);
-                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_ID, g.split("~")[3]);
-                    db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
+                    String[] geos = Data.split("\\|");
+                    //                               Name~Points~radius~clientAreaCode|
+                    for (String g : geos) {
+                        Val.clear();
+                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, g.split("~")[0]);
+                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, g.split("~")[1]);
+                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, g.split("~")[2]);
+                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_ID, g.split("~")[3]);
+                        db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
+                        Circle circle=  Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(Data.split("~")[1].split(",")[0]), Double.valueOf(Data.split("~")[1].split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(Data.split("~")[2])));
+
+                    }
+                    db.close();
+                    dbh.close();
+                    db = null;
+                    dbh = null;
                 }
-                db.close();
-                dbh.close();
-                db = null;
-                dbh = null;
+                catch (Exception er){
+                    String e="";
+                }
             }
         }
     }

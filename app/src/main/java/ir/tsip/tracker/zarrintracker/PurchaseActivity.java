@@ -54,6 +54,10 @@ HashMap<String,String> products=new HashMap<>();
         setContentView(R.layout.activity_purchase);
 
 
+        //ir.tsip.tracker.zarrintracker.PurchaseActivity
+        Intent serviceIntent = new Intent( "ir.cafebazaar.pardakht.InAppBillingService.BIND");
+        serviceIntent.setPackage("com.farsitel.bazaar");
+        PurchaseActivity.this.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
 
         btnPurchase = (Button) findViewById(R.id.btnPurchase);
         txtMessage = (TextView) findViewById(R.id.txtmsg);
@@ -102,19 +106,15 @@ HashMap<String,String> products=new HashMap<>();
         btnPurchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //ir.tsip.tracker.zarrintracker.PurchaseActivity
-                Intent serviceIntent = new Intent("ir.cafebazaar.pardakht.InAppBillingService.BIND");
-                serviceIntent.setPackage("com.farsitel.bazaar");
-                bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
                 //subscription
                 try {
-                    Bundle bundle = mService.getBuyIntent(3, getPackageName(), "Family", "subs", "developerPayload");
+                    Bundle bundle = mService.getBuyIntent(3,   PurchaseActivity.this.getPackageName(), "Family", "subs", "developerPayload");
 
-                    PendingIntent pendingIntent = bundle.getParcelable("RESPONSE_BUY_INTENT");
+                    PendingIntent pendingIntent = bundle.getParcelable("BUY_INTENT");
                     if (bundle.getInt("RESPONSE_CODE") == 0) {
                         // Start purchase flow (this brings up the Google Play UI).
                         // Result will be delivered through onActivityResult().
-                        startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
+                       PurchaseActivity.this. startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
 
                     }
                 } catch (Exception er) {
