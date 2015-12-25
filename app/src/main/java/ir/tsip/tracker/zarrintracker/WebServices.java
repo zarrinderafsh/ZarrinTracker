@@ -31,6 +31,11 @@ public class WebServices {
     private static com.android.volley.RequestQueue queue;
     private Context context;
 
+    public WebServices()
+    {
+        context = MainActivity.Base;
+    }
+
     public WebServices(Context pContext)
     {
         context = pContext;

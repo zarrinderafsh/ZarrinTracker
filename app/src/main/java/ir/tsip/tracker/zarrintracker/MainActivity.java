@@ -92,10 +92,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setContentView(R.layout.activity_main);
+        Base = this;
 
         Tools.setTitleColor(this);
         checkRegistration();
-        Base = this;
 
         ShowMessage();
         StartServices();

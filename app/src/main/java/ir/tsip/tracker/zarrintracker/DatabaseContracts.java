@@ -169,5 +169,21 @@ public class DatabaseContracts {
         public static final String SQL_DELETE_Table =
                 "DROP TABLE IF EXISTS " + Geogences.TABLE_NAME;
     }
+
+    public static abstract class Persons implements BaseColumns {
+        public static final String TABLE_NAME = "persons";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_name = "name";
+        public static final String COLUMN_NAME_image = "image";
+        public static final String SQL_CREATE_Table =
+                "CREATE TABLE " + Persons.TABLE_NAME + " (" +
+                        Persons.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                        Persons.COLUMN_NAME_name + " nvarchar(250)," +
+                        Persons.COLUMN_NAME_image + " BLOB )";
+
+        public static final String SQL_DELETE_Table =
+                "DROP TABLE IF EXISTS " + Persons.TABLE_NAME;
+    }
+
 }
 

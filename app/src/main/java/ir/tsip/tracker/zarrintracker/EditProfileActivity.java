@@ -37,7 +37,7 @@ public class EditProfileActivity extends ActionBarActivity {
         setContentView(R.layout.activity_edit_profile);
         mContext = this;
 
-        String Data = ShareSettings.getValue(mContext,"Profile");
+        String Data = ShareSettings.getValue("Profile");
         String[] DataP = Data.split(";;;");
         if(DataP.length > 3) {
             EditText tvName = (EditText) findViewById(R.id.etName);
@@ -66,7 +66,7 @@ public class EditProfileActivity extends ActionBarActivity {
 
     public static String getName(Context mContext)
     {
-        String Data = ShareSettings.getValue(mContext,"Profile");
+        String Data = ShareSettings.getValue("Profile");
         String[] DataP = Data.split(";;;");
         if(DataP.length >1)
         {
@@ -77,7 +77,7 @@ public class EditProfileActivity extends ActionBarActivity {
 
     public static String getPhone(Context mContext)
     {
-        String Data = ShareSettings.getValue(mContext,"Profile");
+        String Data = ShareSettings.getValue("Profile");
         String[] DataP = Data.split(";;;");
         if(DataP.length >2)
         {
@@ -100,7 +100,7 @@ public class EditProfileActivity extends ActionBarActivity {
                 tvEmail.getText()+";;;"+
                 tvActiveCode.getText();
 
-        ShareSettings.SetValue(mContext, "Profile", Data);
+        ShareSettings.SetValue("Profile", Data);
         SendData(Data);
     }
 
