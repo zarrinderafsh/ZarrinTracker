@@ -193,10 +193,10 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        ShowMessages();
         svChatView = (ScrollView) _this.findViewById(R.id.svChatView);
         svChatView.fullScroll(ScrollView.FOCUS_DOWN);
         txtMessage.clearFocus();
+        ShowMessages();
     }
 
     ScrollView svChatView;

@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public static  LinearLayout.LayoutParams lpTop;
     public static  LinearLayout.LayoutParams lpDown;
    public static Activity Base;
-
+    // nav drawer title
+    private CharSequence mDrawerTitle;
     ListView lsvtest;
     // used to store app title
     private CharSequence mTitle;
@@ -201,7 +202,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         ivBattery.setOnClickListener(GPSClick);
 
         mMapFragment = MapFragment.newInstance();
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction =
+                getFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.llMapLoad, mMapFragment);
         fragmentTransaction.commit();
         llmapLayout.setGravity(android.view.Gravity.BOTTOM);
@@ -222,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 R.layout.drawerlistlayout, new String[]{"Map", "Chat","Add Place", "About"}));
 
 
-        mTitle =  getTitle();
+        mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (android.support.v4.widget.DrawerLayout) findViewById(R.id.drawer_layout);
         // enabling action bar app icon and behaving it as toggle button
         if (getSupportActionBar() != null) {
@@ -281,15 +283,49 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         });
 
 
-        IntentFilter filter = new IntentFilter("ir.tsip.tracker.zarrintracker.Main");
+        IntentFilter filter = new IntentFilter("");
         registerReceiver(new ProximityIntentReceiver(), filter);
 
 
     }
 
+    private void setupGeofences(){
+
+        DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius,DatabaseContracts.Geogences.COLUMN_NAME_center,DatabaseContracts.Geogences.COLUMN_NAME_name};
+        Cursor c;
+        c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
+        c.moveToFirst();
+        String center;
+        String meters;
+        while(true && c.getCount()>0){
+            try {
+                center=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).replace("lat/lng: (","").replace(")","");
+                meters=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
+                googleMap.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]),                        Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf( meters)));
+                LocationListener.locationManager.addProximityAlert(
+                        Double.valueOf(center.split(",")[0]),
+                        Double.valueOf(center.split(",")[1]),
+                        Float.valueOf( meters),
+                        -1,
+                        PendingIntent.getBroadcast(MainActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.Main"), 0));
+            }
+            catch (Exception er){
+
+            }
+            if (c.isLast())
+                break;
+            c.moveToNext();
+        }
+        c.close();
+        db.close();
+        dbh.close();
+
+    }
+
     public static void backWebServices(int ObjectCode, String Data) throws JSONException {
         if (ObjectCode == 1) {
-            if(Data!=null)
                 insertDevice(Data);
         }
     }
@@ -304,36 +340,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 1, params, "CheckRegistration");
         ProfileActivity.GetImageFromServer(this);
         ProfileActivity.GetProfileFromServer(this);
-        checkGeofencesExist();
      WS=null;
     }
-
-
-    private void checkGeofencesExist(){
-        DatabaseHelper dbh = new DatabaseHelper(this);
-        SQLiteDatabase db = dbh.getReadableDatabase();
-        Cursor c;
-        Objects.GeofenceItem geo;
-        c = db.query(DatabaseContracts.Geogences.TABLE_NAME, null, "", null, "", "","", "");
-        if (c.getCount()<=0)//there is no geofences in database, lets check out server
-        {
-            HashMap<String, String> params;
-            params = new HashMap<>();
-            params.put("imei", Tools.GetImei(this));
-            params.put("clientCode","-1");
-            params.put("center", "0,0");
-            params.put("radius", "0");
-            params.put("name", "0");
-            params.put("operation", "4");//get all geofences
-            WebServices W = new WebServices(this);
-            W.addQueue("ir.tsip.tracker.zarrintracker.Places", 4, params, "GeofenceOperations");
-            W = null;
-        }
-        c.close();
-        db.close();
-        dbh.close();
-    }
-
 
     public static void insertDevice(String Data) throws JSONException {
         if(Data == "null")
@@ -495,7 +503,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }, 0, 10000);
     }
 
-    boolean isfirst=true;
     private void ShowMessage() {
         if (_TimerMain == null) {
             _TimerMain = new Timer(true);
@@ -510,10 +517,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 try {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            if (mMapFragment != null) {
-                                Tools.setUpMap(mMapFragment.getMap(), getApplicationContext(), isfirst);
-                            isfirst=false;
-                            }
+                            if (mMapFragment != null)
+                                Tools.setUpMap(mMapFragment.getMap(), getApplicationContext());
 
                             String Mes = MessageManager.GetMessage();
                             if (Mes.length() > 0) {
@@ -567,6 +572,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         getMenuInflater().inflate(R.menu.menu_main, menu);
         if (googleMap == null) {
             googleMap = Tools.initGoogleMap(mMapFragment);
+            setupGeofences();
         }
         return true;
     }
