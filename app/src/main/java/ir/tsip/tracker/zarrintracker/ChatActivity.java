@@ -85,9 +85,10 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
         _this = null;
         _this = this;
+        svChatView = (ScrollView) _this.findViewById(R.id.svChatView);
+
         context = getApplicationContext();
         inInvite = (ImageView) findViewById(R.id.ivInvite);
 
@@ -128,7 +129,7 @@ public class ChatActivity extends AppCompatActivity {
                     });
 
                     av = builder.create();
-                    av.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                 //   av.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                     av.show();
                 }
             });
@@ -194,7 +195,6 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         ShowMessages();
-        svChatView = (ScrollView) _this.findViewById(R.id.svChatView);
         svChatView.fullScroll(ScrollView.FOCUS_DOWN);
         txtMessage.clearFocus();
     }
@@ -221,16 +221,16 @@ public class ChatActivity extends AppCompatActivity {
                 return;
             _this.InsertMessages(Data.split(","));
         } else if (ObjectCode == 0) {
-            if (Data != ("0")) {
+             if(Data.split(",")[0].startsWith("-1")){
+                Intent myIntent = new Intent(context, PurchaseActivity.class);
+                myIntent.putExtra("msg", "You can not invite more than " + Data.split(",")[1] + " persons.");
+                _this.startActivity(myIntent);
+            }
+            else if (Data != ("0")) {
                 imgLoading.setVisibility(View.INVISIBLE);
                 txtGeneratedJoinCode.setText(Data);
                 av.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
             }
-            else if(Data.split(",")[0]=="-1"){
-                Intent myIntent = new Intent(context, PurchaseActivity.class);
-                myIntent.putExtra("msg", "You can not invite more than " + Data.split(",")[1] + " persons.");
-                context.startActivity(myIntent);
-           }
         } else if (ObjectCode == -10) {
             if (Data != null) {
                 DatabaseHelper dh = new DatabaseHelper(_this);
@@ -358,7 +358,7 @@ public class ChatActivity extends AppCompatActivity {
                             0,
                             c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_ID)));
 
-                    svChatView.fullScroll(ScrollView.FOCUS_DOWN);
+                    svChatView.scrollTo(0,lsvChat.getScrollY());
                     if (c.isLast())
                         break;
                     c.moveToNext();
