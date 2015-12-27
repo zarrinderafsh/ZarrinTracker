@@ -24,6 +24,7 @@ import android.os.Vibrator;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -283,10 +284,51 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         });
 
 
-        IntentFilter filter = new IntentFilter("");
-        registerReceiver(new ProximityIntentReceiver(), filter);
+//        IntentFilter filter = new IntentFilter("");
+//        registerReceiver(new ProximityIntentReceiver(), filter);
+initializeInviteButton();
 
+    }
 
+    private  void initializeInviteButton(){
+        ImageView inInvite = (ImageView) findViewById(R.id.ivInvite);
+
+        inInvite.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Invite Others");
+                LayoutInflater inflate = getLayoutInflater();
+                View view = inflate.inflate(R.layout.activity_invate, null);
+                ChatActivity.txtGeneratedJoinCode = (TextView) view.findViewById(R.id.txtGeneratedJOinCode);
+             ChatActivity.imgLoading = (ImageView) view.findViewById(R.id.imgLoading);
+
+                WebServices w = new WebServices(MainActivity.this);
+                HashMap<String, String> params = new HashMap<>();
+                params.put("imei", Tools.GetImei(getApplicationContext()));
+                w.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "GenerateJoinKey");
+                w = null;
+                builder.setView(view);
+                builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            Tools.ShareText(EditProfileActivity.getName(Base)+" "+ MainActivity.Base.getResources().getString(R.string.InvationMessage) +ChatActivity.txtGeneratedJoinCode.getText().toString(), MainActivity.this);
+
+                        } catch (Exception ex) {
+
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+                    }
+                });
+builder.show();
+            }
+        });
     }
 
     private void setupGeofences(){
@@ -502,7 +544,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         }, 0, 10000);
     }
-
+    int counter=0;
+Boolean isfirst=true;
     private void ShowMessage() {
         if (_TimerMain == null) {
             _TimerMain = new Timer(true);
@@ -511,15 +554,21 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         if (MEvent == null) {
             MEvent = new MessageEvent(Base);
         }
+
         _TimerMain.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            if (mMapFragment != null)
-                                Tools.setUpMap(mMapFragment.getMap(), getApplicationContext());
-
+                            if(counter==10) {
+                                if (mMapFragment != null)
+                                    Tools.setUpMap(mMapFragment.getMap(), getApplicationContext(), isfirst);
+                                if (isfirst)
+                                    isfirst = false;
+                            counter=0;
+                            }
+                            counter++;
                             String Mes = MessageManager.GetMessage();
                             if (Mes.length() > 0) {
                                 Toast.makeText(getBaseContext(), Mes, Toast.LENGTH_LONG).show();
@@ -617,6 +666,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
             @Override
             public void run() {
+                if(Tools.markers!=null) {
+                    Tools.markers.clear();
+                }
                 doubleBackToExitPressedOnce = false;
             }
         }, 2000);

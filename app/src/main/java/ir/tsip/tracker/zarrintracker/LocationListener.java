@@ -15,6 +15,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.support.v7.internal.app.ToolbarActionBar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -176,7 +178,12 @@ public class LocationListener  extends Service implements android.location.Locat
      */
     public void stopUsingGPS() {
         if (locationManager != null) {
-            locationManager.removeUpdates(LocationListener.this);
+            try {
+                locationManager.removeUpdates(LocationListener.this);
+            }
+            catch (Exception er){
+                Toast.makeText(LocationListener.this, er.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -234,8 +241,13 @@ public class LocationListener  extends Service implements android.location.Locat
 
     @Override
     public void onGpsStatusChanged(int p) {
-        ((TextView)MainActivity.Base.findViewById(R.id.txtgpsMessage)).setVisibility(View.INVISIBLE);
-        switch (p) {
+        try {
+            ((TextView) MainActivity.Base.findViewById(R.id.txtgpsMessage)).setVisibility(View.INVISIBLE);
+        }
+        catch (Exception er){
+            er.getMessage();
+        }
+            switch (p) {
             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                 break;
             case GpsStatus.GPS_EVENT_FIRST_FIX:
@@ -387,24 +399,25 @@ public class LocationListener  extends Service implements android.location.Locat
 
     private void StartServices() {
 
-
         Timer msgTimer = new Timer(true);
         msgTimer.schedule(new TimerTask() {
             @Override
             public void run() {
 
                 try {
+
                     HashMap<String, String> params2;
                     params2 = new HashMap<>();
                     params2.put("imei", Tools.GetImei(getApplicationContext()));
                     params2.put("gpID", "0");
                     WebServices W = new WebServices(getApplicationContext());
                     W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage");
+                    Log.e("getmessage","raised");
                 } catch (Exception ex) {
                     ex.toString();
                 }
             }
-        }, 0, 1000*60);
+        }, 0, 5000);
 
         Timer _Timer = new Timer(true);
         _Timer.schedule(new TimerTask() {
@@ -418,7 +431,7 @@ public class LocationListener  extends Service implements android.location.Locat
                     SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
                 }
                 if (isGPSEnabled || isNetworkEnabled)
-                    Tools.Notificationm(mContext, "ZTracker", "Last Get Location:" + SDate, "");
+                    Tools.Notificationm(mContext, "TsTracker", "Last Get Location:" + SDate, "");
                 else
                     Tools.HideNotificationm();
             }

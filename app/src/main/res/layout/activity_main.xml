@@ -39,6 +39,13 @@
             android:background="@color/BackColor"
             android:gravity="center_vertical|center_horizontal|right"
             android:layout_gravity="top">
+                <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ivInvite"
+                android:src="@drawable/person_white_add"
+                android:clickable="true"
+                android:layout_marginRight="10dp" />
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

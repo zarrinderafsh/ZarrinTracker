@@ -40,5 +40,7 @@
     <string name="btnPurchase">Purchase</string>
     <string name="btnPurchaseWaitMessage">We are getting plans and items.Please wait!!!</string>
     <string name="gpsIsOff">GPS is off. Turn it on to locate you.</string>
-
+    <string name="InvationMessage"> invited you to join his/her group  in TsTracker. If you don\'t have TsTracker, you can download it from here http://www.site.com. Your code is : </string>
+<string name="DontTranslate1">chatIDTag</string>
+    <string name="DontTranslate2">personIDTag</string>
 </resources>

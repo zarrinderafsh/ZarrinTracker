@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -32,6 +33,7 @@ public class PurchaseActivity extends AppCompatActivity {
 
     Button btnPurchase;
     TextView txtMessage;
+    RadioButton rdb5,rdb10;
 HashMap<String,String> products=new HashMap<>();
      com.android.vending.billing.IInAppBillingService mService;
      ServiceConnection mServiceConn = new ServiceConnection() {
@@ -48,11 +50,27 @@ HashMap<String,String> products=new HashMap<>();
 
     };
 
+ View.OnClickListener rdbClick= new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            RadioButton r=(RadioButton)v;
+            if(r == rdb5 && rdb5.isChecked())
+                rdb10.setChecked(false);
+            if(r == rdb10 && rdb10.isChecked())
+                rdb5.setChecked(false);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_purchase);
 
+        rdb5=(RadioButton)findViewById(R.id.rdb5);
+        rdb10=(RadioButton)findViewById(R.id.rdb10);
+
+        rdb5.setOnClickListener(rdbClick);
+        rdb10.setOnClickListener(rdbClick);
 
         //ir.tsip.tracker.zarrintracker.PurchaseActivity
         Intent serviceIntent = new Intent( "ir.cafebazaar.pardakht.InAppBillingService.BIND");
@@ -63,43 +81,42 @@ HashMap<String,String> products=new HashMap<>();
         txtMessage = (TextView) findViewById(R.id.txtmsg);
         txtMessage.setText(getIntent().getStringExtra("msg"));
         /******************************************************************* THREAD */
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //List of items
-                ArrayList skuList = new ArrayList();
-                skuList.add("OneMonth");
-                skuList.add("Family");
-                Bundle querySkus = new Bundle();
-                querySkus.putStringArrayList("Family", skuList);
-                //get list id of products
-                try {
-                    Bundle skuDetails = mService.getSkuDetails(3, getPackageName(), "subs", querySkus);
-                    //get products details
-                    int response = skuDetails.getInt("RESPONSE_CODE");
-                    if (response == 0) {
-                        ArrayList<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
-                        for (String thisResponse1 : responseList) {
-                            try {
-                                JSONObject object = new JSONObject(thisResponse1);
-                                if (!products.containsKey(object.getString("productId")))
-                                    products.put(object.getString("productId"), object.getString("price"));
-                            } catch (Exception er) {
-                            }
-                        }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                btnPurchase.setEnabled(true);
-                                btnPurchase.setText(getResources().getString(R.string.btnPurchaseWaitMessage));
-                            }
-                        });
-                    }
-                } catch (Exception er) {
-                }
-            }
-        });
+//        Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                //List of items
+//                ArrayList skuList = new ArrayList();
+//                skuList.add("family2");
+//                Bundle querySkus = new Bundle();
+//                querySkus.putStringArrayList("family2", skuList);
+//                //get list id of products
+//                try {
+//                    Bundle skuDetails = mService.getSkuDetails(3, getPackageName(), "inApp", querySkus);
+//                    //get products details
+//                    int response = skuDetails.getInt("RESPONSE_CODE");
+//                    if (response == 0) {
+//                        ArrayList<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
+//                        for (String thisResponse1 : responseList) {
+//                            try {
+//                                JSONObject object = new JSONObject(thisResponse1);
+//                                if (!products.containsKey(object.getString("productId")))
+//                                    products.put(object.getString("productId"), object.getString("price"));
+//                            } catch (Exception er) {
+//                            }
+//                        }
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//
+//                                btnPurchase.setEnabled(true);
+//                                btnPurchase.setText(getResources().getString(R.string.btnPurchaseWaitMessage));
+//                            }
+//                        });
+//                    }
+//                } catch (Exception er) {
+//                }
+//            }
+//        });
 
         /******************************************************************* THREAD */
 
@@ -108,13 +125,23 @@ HashMap<String,String> products=new HashMap<>();
             public void onClick(View v) {
                 //subscription
                 try {
-                    Bundle bundle = mService.getBuyIntent(3,   PurchaseActivity.this.getPackageName(), "Family", "subs", "developerPayload");
+                    String plan="";
+                    Integer code=0;
+                    if(rdb10.isChecked()) {
+                        plan = "plan3";
+                        code=1002;
+                    }
+                    else if(rdb5.isChecked()) {
+                        plan = "family2";
+                        code=1001;
+                    }
+                    Bundle bundle = mService.getBuyIntent(3,   PurchaseActivity.this.getPackageName(), plan, "inapp", "developerPayload");
 
                     PendingIntent pendingIntent = bundle.getParcelable("BUY_INTENT");
                     if (bundle.getInt("RESPONSE_CODE") == 0) {
                         // Start purchase flow (this brings up the Google Play UI).
                         // Result will be delivered through onActivityResult().
-                       PurchaseActivity.this. startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
+                       PurchaseActivity.this. startIntentSenderForResult(pendingIntent.getIntentSender(), code, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
 
                     }
                 } catch (Exception er) {
@@ -132,29 +159,35 @@ int vs=0;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1001) {
-             int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
-            String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
-            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
+        int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
+        String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
+        String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
+Double price=new Double(0);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1001) {
+                price=new Double(45871);
+            }
+            if(requestCode==1002){
+                price=new Double(91743);
 
+            }
             HashMap<String, String> params = new HashMap<>();
-            if (resultCode == RESULT_OK) {
-                try {
-                    jo= new JSONObject(purchaseData);
-                  //  String sku = jo.getString("productId");
-                    params.put("gateway", "bazar");
-                    params.put("Data", purchaseData);
+            try {
+                jo = new JSONObject(purchaseData);
+                //  String sku = jo.getString("productId");
+                params.put("gateway", "bazar");
+                params.put("price",String.valueOf( price) );
+                params.put("Data", purchaseData);
+                params.put("imei", Tools.GetImei(this));
 
-                    WebServices w=new WebServices(this);
-                    w.addQueue("ir.tsip.tracker.zarrintracker.PurchaseActivity",0,params,"Purchase");
-                    w=null;
+                WebServices w = new WebServices(this);
+                w.addQueue("ir.tsip.tracker.zarrintracker.PurchaseActivity", 0, params, "Purchase");
+                w = null;
 
-                    Toast.makeText(PurchaseActivity.this, "You have bought the \" + sku + \". Excellent choice, adventurer!", Toast.LENGTH_SHORT).show();
-                }
-                catch (JSONException e) {
-                    Toast.makeText(PurchaseActivity.this, "Failed to parse purchase data.", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
+                Toast.makeText(PurchaseActivity.this, "You have bought the \" + sku + \". Excellent choice, adventurer!", Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                Toast.makeText(PurchaseActivity.this, "Failed to parse purchase data.", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             }
         }
     }

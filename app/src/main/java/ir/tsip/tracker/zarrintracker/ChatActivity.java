@@ -19,15 +19,18 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.media.Image;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,6 +60,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -69,6 +73,7 @@ public class ChatActivity extends AppCompatActivity {
 
     Button btnSend;
     EditText txtMessage;
+    static Handler scrollHandler=new Handler();
     static Context context;
     String gpID;
     TextView txtGpName;
@@ -79,15 +84,18 @@ public class ChatActivity extends AppCompatActivity {
     static AlertDialog av;
     static ImageView imgLoading;
     ImageView inInvite;
+    static ScrollView svChatView;
+    static Boolean IsChatActivityShowing=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
+IsChatActivityShowing=true;
         _this = null;
         _this = this;
+        svChatView = (ScrollView) _this.findViewById(R.id.svChatView);
         context = getApplicationContext();
         inInvite = (ImageView) findViewById(R.id.ivInvite);
 
@@ -112,7 +120,7 @@ public class ChatActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             try {
-                                Tools.ShareText(txtGeneratedJoinCode.getText().toString(), _this);
+                                Tools.ShareText(EditProfileActivity.getName(_this)+" "+ _this.getResources().getString(R.string.InvationMessage) +txtGeneratedJoinCode.getText().toString(), _this);
 
                             } catch (Exception ex) {
 
@@ -128,7 +136,7 @@ public class ChatActivity extends AppCompatActivity {
                     });
 
                     av = builder.create();
-                    av.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+//                    av.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                     av.show();
                 }
             });
@@ -194,15 +202,24 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         ShowMessages();
-        svChatView = (ScrollView) _this.findViewById(R.id.svChatView);
-        svChatView.fullScroll(ScrollView.FOCUS_DOWN);
+
+
+        //To clear focus and prevent to show virtual keyboard at first.
         txtMessage.clearFocus();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
-    ScrollView svChatView;
 
     private void sendMessage(String msg) {
-
+if(msg==null || msg=="" || msg==" ")
+    return;
+        Persons p=new Persons();
+        if(!p.FindDeviceOwner()){
+            p.ID=-1;
+        }
+        //[C||E||G](date) [from] : message
+        String message=p.ID+"~~~~~ME~~[C]("+ new Date().toString()+") ["+EditProfileActivity.getName(_this)+"] : "+msg;
+        InsertMessages(new String[]{message});
         HashMap<String, String> params;
         params = new HashMap<>();
         params.put("message", msg);
@@ -219,12 +236,24 @@ public class ChatActivity extends AppCompatActivity {
         if (ObjectCode == 1) {
             if (_this == null || Data == "null")
                 return;
+            Log.e("msg", "backwebservice");
             _this.InsertMessages(Data.split(","));
         } else if (ObjectCode == 0) {
             if (Data != ("0")) {
-                imgLoading.setVisibility(View.INVISIBLE);
-                txtGeneratedJoinCode.setText(Data);
-                av.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                if(Data.startsWith("-1"))
+                {
+                    Intent myIntent = new Intent(_this, PurchaseActivity.class);
+                    myIntent.putExtra("msg","You can not Invite more than "+Data.split(",")[1]+" people.");
+                    _this.startActivity(myIntent);
+                    _this.finish();
+                }
+                else {
+
+                    imgLoading.setVisibility(View.INVISIBLE);
+                    txtGeneratedJoinCode.setText( Data);
+                 //   av.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                }
+
             }
             else if(Data.split(",")[0]=="-1"){
                 Intent myIntent = new Intent(context, PurchaseActivity.class);
@@ -271,7 +300,7 @@ public class ChatActivity extends AppCompatActivity {
             while (true) {
                 txtGpName.setText(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Name)).replace(";;;", ""));
                 try {
-                    imgGroupPhoto.setImageBitmap(Tools.LoadImage(c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Image)), 20));
+                    imgGroupPhoto.setImageBitmap(Tools.LoadImage(c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Image)), 96));
                 } catch (Exception er) {
                     Toast.makeText(ChatActivity.this, "Image didn't load.", Toast.LENGTH_SHORT).show();
                 }
@@ -291,19 +320,39 @@ public class ChatActivity extends AppCompatActivity {
     private void InsertMessages(String[] messages) {
         if (messages == null)
             return;
+        Log.e("msg", "insertmesage begin");
         if (dbh == null)
             dbh = new DatabaseHelper(context);
         if (db == null)
             db = dbh.getWritableDatabase();
+
         ContentValues Data;
+        Persons p;
         for (String msg : messages) {
+            Log.e("msg", msg);
+            p=new Persons();
+            p.ID=Integer.valueOf(msg.split("~~~")[0].replace("[\"",""));
+            msg=msg.split("~~~")[1];
+            if(!p.GetData(p.ID) && p.ID!=-1) {
+                p.name=msg.split("\\[")[2].split(":")[0].replace("]","");
+                p.isme=false;
+                p.Save();
+                p.GetImageFromServer();
+            }
+            if(p.image==null){
+                p.GetImageFromServer();
+            }
             Data = new ContentValues();
             if (msg.contains("[C]")) {
                 Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Data, msg.replace("[C]", ""));
                 Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Group, gpID);
+                Data.put(DatabaseContracts.ChatLog.COLUMN_Person_Id, p.ID);
                 long id = db.insert(DatabaseContracts.ChatLog.TABLE_NAME, DatabaseContracts.ChatLog.COLUMN_NAME_ID, Data);
-                CreateGroupLayer(new Date(), msg, null, 0, (int) id);
-                MessageEvent.InsertMessage(context, "New message!");
+                CreateGroupLayer(new Date(), msg, p.image, 0, (int) id,p.ID);
+                if (!ChatActivity.IsChatActivityShowing)
+                    MessageEvent.InsertMessage(context, "New message from " + ((p.name == null || p.name == "") ? "Someone" : p.name), p.image);
+                msg=msg.split("\\[")[2].split(":")[1].replace("]","");
+                GroupsActivity.UpdateGroup(Integer.valueOf(gpID),null,new Date().toString(),msg,null);
             } else if (msg.contains("[E]")) {
                 MessageEvent.InsertMessage(context, msg.replace("[E]", ""));
             } else if (msg.contains("[G]")) {
@@ -346,56 +395,68 @@ public class ChatActivity extends AppCompatActivity {
             if (readabledb == null)
                 readabledb = dbh.getReadableDatabase();
 
-            String[] columns = {DatabaseContracts.ChatLog.COLUMN_NAME_ID, DatabaseContracts.ChatLog.COLUMN_NAME_Group, DatabaseContracts.ChatLog.COLUMN_NAME_Data};
+            String[] columns = {DatabaseContracts.ChatLog.COLUMN_NAME_ID, DatabaseContracts.ChatLog.COLUMN_NAME_Group, DatabaseContracts.ChatLog.COLUMN_NAME_Data,DatabaseContracts.ChatLog.COLUMN_Person_Id};
             Cursor c = readabledb.query(DatabaseContracts.ChatLog.TABLE_NAME, columns, DatabaseContracts.ChatLog.COLUMN_NAME_Group + "=?", new String[]{String.valueOf(gpID)}, "", "", DatabaseContracts.ChatLog.COLUMN_NAME_ID);
             if (c.getCount() > 0) {
                 c.moveToFirst();
                 while (true) {
-
+                    Persons p = new Persons();
+                    p.GetData(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_Person_Id)));
                     CreateGroupLayer(new Date(),
                             c.getString(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_Data)),
-                            null,
+                            p.image,
                             0,
-                            c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_ID)));
+                            c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_ID)),
+                            p.ID);
 
-                    svChatView.fullScroll(ScrollView.FOCUS_DOWN);
                     if (c.isLast())
                         break;
                     c.moveToNext();
                 }
             }
             c.close();
+            ScrollListTOEnd();
 
         }
     }
 
-    private static void CreateGroupLayer(Date date, String Message, Bitmap img, int State, int ID) {
+    private static void CreateGroupLayer(Date date, String Message, Bitmap img, int State, int ID,int Pcode) {
         if (context == null)
             return;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.chat_list, null);
+        boolean isowner=false;
         if (Message.contains("~~ME~~")) {
-            Message = Message.replace("~~ME~~", "");
             view = inflater.inflate(R.layout.chat_list_owner, null);
+            isowner=true;
         }
-        view.setTag(String.valueOf(ID));
+        view.setTag(R.string.DontTranslate1,String.valueOf(ID));
+        view.setTag(R.string.DontTranslate2, Pcode);
         view.setId(new Random().nextInt());
         lsvChat.addView(view);
         TextView tvLastChatMessage = (TextView) view.findViewById(R.id.tvLastChatMessage);
         TextView txtUsername = (TextView) view.findViewById(R.id.txtUsername);
         TextView txtDate = (TextView) view.findViewById(R.id.txtDate);
-
+        ImageView imgPic = (ImageView) view.findViewById(R.id.ivChatPic);
 
         String s = Message.substring(Message.indexOf(" ["));
         txtUsername.setText(s.substring(2, s.indexOf("]")));
         txtDate.setText(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date));
-        tvLastChatMessage.setText(Message.replace("[", "").replace("]", "").split(" : ")[1].replace("\"", ""));
+
+String[] msgs=Message.replace("[", "").replace("]", "").split(" : ");
+        Message=msgs[msgs.length-1].replace("\"", "");
+        tvLastChatMessage.setText(Message);
+
+        ImageView ivChatPic = (ImageView) view.findViewById(R.id.ivChatPic);
         if (img != null) {
-            ImageView ivChatPic = (ImageView) view.findViewById(R.id.ivChatPic);
             ivChatPic.setImageBitmap(img);
+            imgPic.setImageBitmap(img);
+        }
+        else if(isowner){
+            ivChatPic.setImageBitmap(ProfileActivity.getProfileImage(96,_this));
         }
         view.setOnLongClickListener(new View.OnLongClickListener() {
-            final CharSequence[] items = {"Delete", "Copy", "Cancel"};
+            final CharSequence[] items = {"Details","Delete", "Copy", "Cancel"};
 
             @Override
             public boolean onLongClick(final View v) {
@@ -408,7 +469,7 @@ public class ChatActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int item) {
                         if (items[item].equals("Delete")) {
                             lsvChat.removeView(v);
-                            _this.deleteMessage(Integer.valueOf(v.getTag().toString()));
+                            _this.deleteMessage(Integer.valueOf(v.getTag(R.string.DontTranslate1).toString()));
                         } else if (items[item].equals("Copy")) {
                             ClipboardManager clipboard = (ClipboardManager) _this.getSystemService(CLIPBOARD_SERVICE);
                             ClipData clip = ClipData.newPlainText("Message", ((TextView) v.findViewById(R.id.tvLastChatMessage)).getText());
@@ -416,6 +477,25 @@ public class ChatActivity extends AppCompatActivity {
 
                         } else if (items[item].equals("Cancel")) {
                             dialog.dismiss();
+                        }else if (items[item].equals("Details")) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(_this);
+                            builder.setTitle("User Profile");
+                            LayoutInflater inflate = _this.getLayoutInflater();
+                            View view = inflate.inflate(R.layout.person_details, null);
+                            Persons p=new Persons();
+                            p.GetData(Integer.valueOf(v.getTag(R.string.DontTranslate2).toString()));
+                            ((ImageView) view.findViewById(R.id.imgUserPhoto)).setImageBitmap(p.image);
+                            ((TextView) view.findViewById(R.id.txtName)).setText(p.name);
+                            builder.setView(view);
+                            builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    dialog.cancel();
+                                }
+                            });
+
+                            builder.show();
                         }
                     }
                 });
@@ -424,7 +504,19 @@ public class ChatActivity extends AppCompatActivity {
                 return false;
             }
         });
+        ScrollListTOEnd();
     }
+
+private static   void ScrollListTOEnd(){
+
+    if (svChatView != null)
+        scrollHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                svChatView.smoothScrollTo(0, lsvChat.getBottom());
+            }
+        });
+}
 
     private void deleteMessage(int id) {
 
@@ -458,5 +550,11 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        IsChatActivityShowing=false;
     }
 }

@@ -190,6 +190,7 @@ static boolean IsFirst=true;
             return;
         else if (isfirst || IsFirst)
             GoogleMapObj = googleMap;
+        //Toast.makeText(MainActivity.Base, "from map", Toast.LENGTH_SHORT).show();
         if (markers == null)
             markers = new HashMap<Integer, Marker>();
         if (Tools.isOnline(context))
@@ -234,7 +235,7 @@ setupGeofences(context);
         dbh.close();
     }
 
-    private static void setupGeofences(Context context){
+    public static void setupGeofences(Context context){
         if(Tools.GoogleMapObj== null)
             return;
         Tools.GoogleMapObj.clear();
@@ -285,13 +286,16 @@ setupGeofences(context);
                     m = markers.get(Integer.valueOf(ja.getJSONObject(i).getString("ID")));
                     lat = ja.getJSONObject(i).getJSONObject("Location").getString("X");
                     lng = ja.getJSONObject(i).getJSONObject("Location").getString("Y");
+                    Persons p=new Persons();
+                            p.GetData(Integer.valueOf(ja.getJSONObject(i).getString("PCode")));
                     if (m == null) {
                         markers.put(Integer.valueOf(ja.getJSONObject(i).getString("ID").toString()),
                                 GoogleMapObj.addMarker(new MarkerOptions().position(
-                                        new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title"))));
+                                        new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title")).icon(BitmapDescriptorFactory.fromBitmap( LoadImage(p.image, 96 )))));
                     } else {
                         m.setPosition(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
                         m.setTitle(ja.getJSONObject(i).getString("Title"));
+                        m.setIcon(BitmapDescriptorFactory.fromBitmap( LoadImage(p.image, 96)));
                     }
                 }
             } catch (Exception er) {
@@ -306,7 +310,9 @@ setupGeofences(context);
         bounds = bounds.replace("}", ")");
         HashMap<String, String> params = new HashMap<>();
         params.put("bounds", bounds);
-        params.put("zoom", zoom + "," + Tools.GetImei(context));
+        //Zoom = zoomlevel,imei
+        String zoomAndImei=new String (zoom + "," + Tools.GetImei(context));
+        params.put("zoom",zoomAndImei);
         if (WS == null)
             WS = new WebServices(context);
 
@@ -366,7 +372,16 @@ setupGeofences(context);
             e.printStackTrace();
         }
     }
-
+    public static Bitmap LoadImage(Bitmap b, int Radious) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inDither = false;
+        options.inPurgeable = true;
+        options.inInputShareable = true;
+        options.inTempStorage = new byte[1024 * 32];
+if (Radious > 0)
+            b = CircleImage.getRoundedRectBitmap(b, Radious);
+        return  b;
+    }
     public static void LoadImage(ImageView iv, byte[] imageAsBytes, int Radious) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDither = false;

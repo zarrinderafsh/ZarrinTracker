@@ -4,8 +4,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="New Text"
-        android:textSize="30dp"
+        android:textSize="20dp"
         android:id="@+id/textView25"
-    android:background="@color/common_signin_btn_light_text_disabled"
+    android:background="@color/common_signin_btn_light_text_default"
     android:textColor="@android:color/white"
-    android:padding="15dp" />
+    android:padding="10dp" />

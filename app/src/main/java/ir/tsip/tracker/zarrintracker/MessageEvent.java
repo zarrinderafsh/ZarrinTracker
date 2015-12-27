@@ -62,6 +62,23 @@ public class MessageEvent {
         db.insert(DatabaseContracts.Events.TABLE_NAME,DatabaseContracts.Events.COLUMN_NAME_ID,V);
         db.close();
         dbh.close();
+    }public static void InsertMessage(Context context, String Message,Bitmap image)
+    {
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        ContentValues V = new ContentValues();
+        V.put(DatabaseContracts.Events.COLUMN_NAME_Data,Message);
+        V.put(DatabaseContracts.Events.COLUMN_NAME_Date,new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date()));
+        V.put(DatabaseContracts.Events.COLUMN_NAME_Lat,LocationListener.CurrentLat);
+        V.put(DatabaseContracts.Events.COLUMN_NAME_Lon,LocationListener.CurrentLon);
+
+        if(image!=null) {
+            byte[] b = Tools.getBytesFromBitmap(image);
+            V.put(DatabaseContracts.Events.COLUMN_NAME_Image, b);
+        }
+        db.insert(DatabaseContracts.Events.TABLE_NAME,DatabaseContracts.Events.COLUMN_NAME_ID,V);
+        db.close();
+        dbh.close();
     }
 
     public static void DeleteMessage(Context context, int id)
@@ -96,10 +113,11 @@ public class MessageEvent {
         if(c.moveToFirst())
         {
             Tools.PlayAlert(_Context);
-
             int id;
             do {
                 String Data = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Data));
+
+                Tools.Notificationm(_Context, "TsTracker Events", Data,_Context.getPackageName());
 
                 String DateTime = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Date));
                 DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -148,7 +166,7 @@ public class MessageEvent {
                         Loc L = (Loc)v.getTag();
                         if(L.Lon > 0 && L.Lat >0) {
                             Tools.GoogleMapObj.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(L.Lat, L.Lon), 16.0f));
-                            MainActivity.lpTop.topMargin = - MainActivity.lpTop.height;
+                            MainActivity.lpTop.topMargin = -1* MainActivity.lpTop.height;
                             MainActivity.lpDown.topMargin = Tools.GetDesktopSize(MainActivity.Base).y +MainActivity.lpTop.height / 2;
 
                         }

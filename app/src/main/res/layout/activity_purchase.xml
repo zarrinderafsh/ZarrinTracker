@@ -20,6 +20,18 @@
             android:text="@string/txtPurchaseMessage"/>
 
 
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50,000 ریال"
+            android:id="@+id/rdb5"
+            android:contextClickable="false" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100,000 ریال"
+            android:id="@+id/rdb10" />
 
         <Button
             android:layout_width="match_parent"

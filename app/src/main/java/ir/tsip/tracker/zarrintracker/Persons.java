@@ -19,6 +19,7 @@ public class Persons {
     public int ID;
     public String name;
     public Bitmap image;
+public boolean isme=false;
 
     public boolean Save() {
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
@@ -32,6 +33,8 @@ public class Persons {
                 byte[] b = Tools.getBytesFromBitmap(image);
                 V.put(DatabaseContracts.Persons.COLUMN_NAME_image, b);
             }
+            V.put(DatabaseContracts.Persons.COLUMN_is_me, (isme) ? 1 : 0);
+
             db.insert(DatabaseContracts.Persons.TABLE_NAME, null, V);
         } catch (Exception e) {
             return false;
@@ -53,6 +56,7 @@ public class Persons {
                 byte[] b = Tools.getBytesFromBitmap(image);
                 V.put(DatabaseContracts.Persons.COLUMN_NAME_image, b);
             }
+            V.put(DatabaseContracts.Persons.COLUMN_is_me, (isme) ? 1 : 0);
             db.update(DatabaseContracts.Persons.TABLE_NAME, V, DatabaseContracts.Persons.COLUMN_NAME_ID + "=" + ID, null);
         } catch (Exception e) {
             return false;
@@ -87,11 +91,12 @@ public class Persons {
         try {
             ContentValues V = new ContentValues();
             V.put(DatabaseContracts.Persons.COLUMN_NAME_name, name);
-
             if (image != null) {
                 byte[] b = Tools.getBytesFromBitmap(image);
                 V.put(DatabaseContracts.Persons.COLUMN_NAME_image, b);
             }
+
+            V.put(DatabaseContracts.Persons.COLUMN_is_me, (isme)?1:0);
             Cursor c = db.query(DatabaseContracts.Persons.TABLE_NAME,
                     null,
                     DatabaseContracts.Persons.COLUMN_NAME_ID + "=" + pID,
@@ -104,6 +109,8 @@ public class Persons {
                     ID = c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID));
                     name = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_name));
                     image = Tools.getBitmapFromByte(c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_image)));
+               isme=c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_is_me))>0?true:false;
+
                 }
                 return true;
             }
@@ -118,6 +125,41 @@ public class Persons {
 
     public boolean GetData(int pID) {
         return Find(pID, true);
+    }
+    public boolean FindDeviceOwner() {
+        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        try {
+            ContentValues V = new ContentValues();
+            V.put(DatabaseContracts.Persons.COLUMN_NAME_name, name);
+            if (image != null) {
+                byte[] b = Tools.getBytesFromBitmap(image);
+                V.put(DatabaseContracts.Persons.COLUMN_NAME_image, b);
+            }
+
+            V.put(DatabaseContracts.Persons.COLUMN_is_me, (isme)?1:0);
+            Cursor c = db.query(DatabaseContracts.Persons.TABLE_NAME,
+                    null,
+                    DatabaseContracts.Persons.COLUMN_is_me + "=1",
+                    null,
+                    null,
+                    null,
+                    null);
+            if (c.moveToFirst()) {
+                    ID = c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID));
+                    name = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_name));
+                    image = Tools.getBitmapFromByte(c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_image)));
+                    isme=c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_is_me))>0?true:false;
+
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        } finally {
+            db.close();
+            dbh.close();
+        }
+        return false;
     }
 
     public void GetImageFromServer() {

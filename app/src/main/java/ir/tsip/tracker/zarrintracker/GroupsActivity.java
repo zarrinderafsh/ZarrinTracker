@@ -130,14 +130,16 @@ public class GroupsActivity extends AppCompatActivity {
                 String Name = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Name));
                 if (GroupList.indexOf(id) < 0)
                     GroupList.add(id);
-                Bitmap B = ProfileActivity.getProfileImage(96, context.getApplicationContext());
+                Bitmap B=Tools.LoadImage(Image,96);
                 boolean isowner = false;
                 if (Name.length() > 2)
                     isowner = (Name.substring(Name.length() - 3).contains(";;;"));
+                if(isowner && Image==null)
+                    B = ProfileActivity.getProfileImage(96, context.getApplicationContext());
                 Name = Name.replace(";;;", "");
                 if (Name == "")
                     Name = "NoName";
-                CreateGroupLayer(id, Name, "", "", B,
+                CreateGroupLayer(id, Name, "", Message, B,
                         //this condition define if group name contains ;;; . if true it means current device is owner of group
                         isowner);
             }
@@ -160,22 +162,33 @@ public class GroupsActivity extends AppCompatActivity {
                         if (s.split("~").length == 1)
                             s += "NoName";
                         groupname = s.split("~")[1];
+                        Persons p=new Persons();
+                        p.ID=Integer.valueOf(s.split("~")[2].replace(";;;",""));
+                        p.GetData(p.ID);
                         Integer gpID = Integer.valueOf(s.split("~")[0]);
                         if (GroupList.indexOf(gpID) >= 0) {
+
                             //Update group in database
-                            UpdateGroup(gpID, groupname, "", "", null);
+                            UpdateGroup(gpID, groupname,null, null,p.image);
                         } else {
                             GroupList.add(gpID);
                             isowner = false;
                             //this condition define if group name contains ;;; . if true it means current device is owner of group
                             if (groupname.length() > 2)
                                 isowner = (groupname.substring(groupname.length() - 3).contains(";;;"));
-
-                            InsertGroup(gpID, groupname, "", "", null);
+                            if(isowner && p.image==null)
+                            {
+                                p.ID=p.ID;
+                                p.image=ProfileActivity.getProfileImage(96,_context);
+                                p.name=EditProfileActivity.getName(_context);
+                                p.isme=true;
+                                p.Save();
+                            }
+                            InsertGroup(gpID, groupname, "", "", p.image);
                             groupname = groupname.replace(";;;", "");
                             if (groupname == "")
                                 groupname = "NoName";
-                            CreateGroupLayer(gpID, groupname, "", "", null, isowner);
+                            CreateGroupLayer(gpID, groupname, "", "", p.image, isowner);
                         }
                     }
                 } catch (Exception ex) {
@@ -183,9 +196,11 @@ public class GroupsActivity extends AppCompatActivity {
                 }
             }
         } else if (ObjectCode == 1) {
-            if (Data.contains("1")) {
+            if (Data.length()>2) {
                 Toast.makeText(_context, "Your device registered.", Toast.LENGTH_SHORT).show();
-            } else
+            } else if(Data=="-1")
+                Toast.makeText(_context, "You are registered in group already.", Toast.LENGTH_SHORT).show();
+                else
                 Toast.makeText(_context, "Code is not valid.", Toast.LENGTH_SHORT).show();
 
         }
@@ -201,9 +216,9 @@ public class GroupsActivity extends AppCompatActivity {
         TextView tvLastGroupMessage = (TextView) view.findViewById(R.id.tvLastGroupMessage);
         if (img != null) {
             ImageView ivImageGroup = (ImageView) view.findViewById(R.id.ivGroupPic);
-            ivImageGroup.setImageBitmap(img);
+            ivImageGroup.setImageBitmap(Tools.LoadImage( img,96));
         }
-        tvLastGroupMessage.setText("");
+        tvLastGroupMessage.setText(LastMessage);
         View.OnClickListener ClickOpenGroup = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -248,15 +263,19 @@ public class GroupsActivity extends AppCompatActivity {
         dbh.close();
     }
 
-    private static void UpdateGroup(Integer gpID, String Name, String Time, String LastMessage, Bitmap img) {
+    public static void UpdateGroup(Integer gpID, String Name, String Time, String LastMessage, Bitmap img) {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
         ContentValues V = new ContentValues();
         V.put(DatabaseContracts.Groups.COLUMN_NAME_ID, gpID);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_Name, Name);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastTime, Time);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastMessage, LastMessage);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_Image, Tools.getBytesFromBitmap(img));
+        if (Name != null)
+            V.put(DatabaseContracts.Groups.COLUMN_NAME_Name, Name);
+        if (Time != null)
+            V.put(DatabaseContracts.Groups.COLUMN_NAME_LastTime, Time);
+        if (LastMessage != null)
+            V.put(DatabaseContracts.Groups.COLUMN_NAME_LastMessage, LastMessage);
+        if (img != null)
+            V.put(DatabaseContracts.Groups.COLUMN_NAME_Image, Tools.getBytesFromBitmap(img));
         db.update(DatabaseContracts.Groups.TABLE_NAME, V, DatabaseContracts.Groups.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(gpID)});
         db.close();
         dbh.close();
@@ -285,5 +304,12 @@ public class GroupsActivity extends AppCompatActivity {
         if (requestCode == 1)
             if (resultCode == 1)
                 this.finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        lsvGroups.removeAllViewsInLayout();
+        GetGroups();
     }
 }

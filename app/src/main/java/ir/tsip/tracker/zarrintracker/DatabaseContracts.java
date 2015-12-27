@@ -60,11 +60,13 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_Data = "content";
         public static final String COLUMN_NAME_Group = "GroupId";
+        public static final String COLUMN_Person_Id = "PersonId";
         private static final String COMMA_SEP = ",";
         public static final String SQL_CREATE_Table =
                 "CREATE TABLE " + ChatLog.TABLE_NAME + " (" +
                         ChatLog.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
                         ChatLog.COLUMN_NAME_Group + " INTEGER," +
+                        ChatLog.COLUMN_Person_Id + " INTEGER," +
                         ChatLog.COLUMN_NAME_Data + " nvarchar(250) )";
 
         public static final String SQL_DELETE_Table =
@@ -174,10 +176,12 @@ public class DatabaseContracts {
         public static final String TABLE_NAME = "persons";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_name = "name";
+        public static final String COLUMN_is_me = "IsMe";
         public static final String COLUMN_NAME_image = "image";
         public static final String SQL_CREATE_Table =
                 "CREATE TABLE " + Persons.TABLE_NAME + " (" +
                         Persons.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                        Persons.COLUMN_is_me + " INTEGER ," +
                         Persons.COLUMN_NAME_name + " nvarchar(250)," +
                         Persons.COLUMN_NAME_image + " BLOB )";
 
