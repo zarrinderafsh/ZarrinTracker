@@ -8,15 +8,21 @@ import android.content.SharedPreferences;
  */
 public class ShareSettings {
 
-    public static void SetValue(Context mContext, String Name, String Value)
+    public static void SetValue(String Name, String Value)
     {
+        if(MainActivity.Base == null)
+            return;
+        Context mContext = MainActivity.Base;
         SharedPreferences prefs = mContext.getSharedPreferences(
                 "ir.tsip.tracker.zarrintracker", mContext.MODE_PRIVATE);
         prefs.edit().putString(Name, Value).apply();
     }
 
-    public static String getValue(Context mContext, String Name)
+    public static String getValue(String Name)
     {
+        if(MainActivity.Base == null)
+            return "";
+        Context mContext = MainActivity.Base;
         SharedPreferences prefs = mContext.getSharedPreferences(
                 "ir.tsip.tracker.zarrintracker", mContext.MODE_PRIVATE);
         return prefs.getString(Name,"");

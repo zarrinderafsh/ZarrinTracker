@@ -175,7 +175,7 @@ public class ProfileActivity extends ActionBarActivity {
             }
         }
         if (bm != null) {
-            ShareSettings.SetValue(Base, "ProfileImage", "");
+            ShareSettings.SetValue("ProfileImage", "");
             if (SaveBitmap(bm)) {
                 SendImageServer();
             }
@@ -185,7 +185,7 @@ public class ProfileActivity extends ActionBarActivity {
 
     private static Boolean SaveBitmap(Bitmap bm) {
         boolean ret = false;
-        String path = ShareSettings.getValue(MainActivity.Base, "ProfileImage");
+        String path = ShareSettings.getValue("ProfileImage");
         if (path.length() == 0) {
             path = android.os.Environment
                     .getExternalStorageDirectory()
@@ -212,7 +212,7 @@ public class ProfileActivity extends ActionBarActivity {
 
             Bitmap resize = Bitmap.createScaledBitmap(bm, 512, 512, true);
             ret = resize.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-            ShareSettings.SetValue(MainActivity.Base, "ProfileImage", file.getPath());
+            ShareSettings.SetValue("ProfileImage", file.getPath());
             fOut.flush();
             fOut.close();
         } catch (FileNotFoundException e) {
@@ -235,11 +235,11 @@ public class ProfileActivity extends ActionBarActivity {
     }
 
     public static void setProfileImage(ImageView ivPersonImage, int Radious, Context mBase) {
-        String path = ShareSettings.getValue(mBase, "ProfileImage");
+        String path = ShareSettings.getValue("ProfileImage");
         if (path.length() > 0) {
             File file = new File(path);
             if (!file.exists()) {
-                ShareSettings.SetValue(mBase, "ProfileImage", "");
+                ShareSettings.SetValue("ProfileImage", "");
                 return;
             }
             BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
@@ -257,11 +257,11 @@ public class ProfileActivity extends ActionBarActivity {
 
 
     public static Bitmap getProfileImage(int Radious, Context mBase) {
-        String path = ShareSettings.getValue(mBase, "ProfileImage");
+        String path = ShareSettings.getValue("ProfileImage");
         if (path.length() > 0) {
             File file = new File(path);
             if (!file.exists()) {
-                ShareSettings.SetValue(mBase, "ProfileImage", "");
+                ShareSettings.SetValue("ProfileImage", "");
                 return null;
             }
             BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
@@ -277,11 +277,11 @@ public class ProfileActivity extends ActionBarActivity {
 
     public void SendImageServer()
     {
-        String path = ShareSettings.getValue(Base, "ProfileImage");
+        String path = ShareSettings.getValue("ProfileImage");
         if(path.length() > 0) {
             File file = new File(path);
             if(!file.exists()) {
-                ShareSettings.SetValue(Base, "ProfileImage", "");
+                ShareSettings.SetValue("ProfileImage", "");
                 return;
             }
             Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -306,11 +306,11 @@ public class ProfileActivity extends ActionBarActivity {
                 Toast.makeText(_context, "Image uploaded on server.", Toast.LENGTH_SHORT).show();
                 break;
             case 1:// GetProfile
-                ShareSettings.SetValue(_context, "Profile", Tools.GetImei(_context) + ";;;" + Data + ";;;0");
+                ShareSettings.SetValue("Profile", Tools.GetImei(_context) + ";;;" + Data + ";;;0");
                 break;
             case 2:// GetImage
                 try {
-                    byte[] data = Base64.decode(Data, Base64.DEFAULT);//content.getBytes();
+                    byte[] data = Base64.decode(Data, Base64.DEFAULT);
                     Bitmap bitmap = Tools.getBitmapFromByte(data);
                     SaveBitmap(bitmap);
                 } catch (Exception er) {
@@ -330,10 +330,13 @@ public class ProfileActivity extends ActionBarActivity {
 
     public static void GetImageFromServer(Context context)
     {
-        _context=context;
-        WebServices W = new WebServices(context);
-        W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",2,Tools.GetImei(context),"loadimage");
-        W=null;
+        String path = ShareSettings.getValue("ProfileImage");
+        if (path.length() == 0) {
+            _context = context;
+            WebServices W = new WebServices(context);
+            W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity", 2, Tools.GetImei(context), "loadimage");
+            W = null;
+        }
     }
 
     private void ShowEditProfile()

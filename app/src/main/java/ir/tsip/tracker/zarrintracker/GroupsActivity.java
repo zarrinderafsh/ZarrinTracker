@@ -56,7 +56,7 @@ public class GroupsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_groups);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-_context=this;
+        _context = this;
         imgGroupJoin = (ImageView) findViewById(R.id.ivGroup);
         imgGroupJoin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,10 +64,10 @@ _context=this;
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(GroupsActivity.this);
                 builder.setTitle("Join Group");
-                LayoutInflater inflate=GroupsActivity.this.getLayoutInflater();
-                View view=inflate.inflate(R.layout.activity_join_group,null);
+                LayoutInflater inflate = GroupsActivity.this.getLayoutInflater();
+                View view = inflate.inflate(R.layout.activity_join_group, null);
                 builder.setView(view);
-               final EditText txtCode = (EditText) view.findViewById(R.id.txtJoinCode);
+                final EditText txtCode = (EditText) view.findViewById(R.id.txtJoinCode);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -77,8 +77,8 @@ _context=this;
                             params.put("imei", Tools.GetImei(getApplicationContext()));
                             WebServices ws = new WebServices(GroupsActivity.this);
                             ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 1, params, "AddDevice");
-                            ws=null;
-                            } catch (Exception ex) {
+                            ws = null;
+                        } catch (Exception ex) {
 
                         }
 
@@ -96,14 +96,14 @@ _context=this;
             }
         });
 
-        if(GroupList == null)
+        if (GroupList == null)
             GroupList = new ArrayList<Integer>();
         context = this;
         lsvGroups = (LinearLayout) findViewById(R.id.lsvGroups);
         WebServices ws = new WebServices(this);
         GetGroups();
         ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(this), "GroupsList");
-   ws=null;
+        ws = null;
     }
 
     public void GetGroups() {
@@ -128,19 +128,19 @@ _context=this;
                 byte[] Image = c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Image));
                 String Message = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_LastMessage));
                 String Name = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Name));
-                if(GroupList.indexOf(id)<0)
+                if (GroupList.indexOf(id) < 0)
                     GroupList.add(id);
-                Bitmap B = ProfileActivity.getProfileImage(96,context.getApplicationContext());
-                boolean isowner=false;
-                if(Name.length()>2)
-                    isowner=(Name.substring(Name.length()-3).contains(";;;"));
-                Name=Name.replace(";;;","");
-                if(Name=="")
-                    Name="NoName";
-                CreateGroupLayer(id,Name,"","",B,
+                Bitmap B = ProfileActivity.getProfileImage(96, context.getApplicationContext());
+                boolean isowner = false;
+                if (Name.length() > 2)
+                    isowner = (Name.substring(Name.length() - 3).contains(";;;"));
+                Name = Name.replace(";;;", "");
+                if (Name == "")
+                    Name = "NoName";
+                CreateGroupLayer(id, Name, "", "", B,
                         //this condition define if group name contains ;;; . if true it means current device is owner of group
                         isowner);
-           }
+            }
             while (c.moveToNext());
         }
         c.close();
@@ -151,39 +151,38 @@ _context=this;
     public static void backWebServices(int ObjectCode, String Data) {
         if (ObjectCode == 0) {
             String groupname;
-            boolean isowner=false;
+            boolean isowner = false;
             for (String s : Data.split(",")
                     ) {
                 try {
                     if (s.length() > 1) {
 
-                        if(s.split("~").length==1)
-                            s+="NoName";
-                        groupname= s.split("~")[1];
+                        if (s.split("~").length == 1)
+                            s += "NoName";
+                        groupname = s.split("~")[1];
                         Integer gpID = Integer.valueOf(s.split("~")[0]);
                         if (GroupList.indexOf(gpID) >= 0) {
                             //Update group in database
-                            UpdateGroup(gpID,groupname,"","",null);
+                            UpdateGroup(gpID, groupname, "", "", null);
                         } else {
                             GroupList.add(gpID);
-isowner=false;
+                            isowner = false;
                             //this condition define if group name contains ;;; . if true it means current device is owner of group
-                            if(groupname.length()>2)
-                                isowner=(groupname.substring(groupname.length()-3).contains(";;;"));
+                            if (groupname.length() > 2)
+                                isowner = (groupname.substring(groupname.length() - 3).contains(";;;"));
 
-                            InsertGroup(gpID,groupname, "", "", null);
-                            groupname=groupname.replace(";;;","");
-                            if(groupname=="")
-                                groupname="NoName";
-                            CreateGroupLayer(gpID, groupname, "", "", null, isowner );
+                            InsertGroup(gpID, groupname, "", "", null);
+                            groupname = groupname.replace(";;;", "");
+                            if (groupname == "")
+                                groupname = "NoName";
+                            CreateGroupLayer(gpID, groupname, "", "", null, isowner);
                         }
                     }
                 } catch (Exception ex) {
                     ex.toString();
                 }
             }
-        }
-        else if (ObjectCode == 1) {
+        } else if (ObjectCode == 1) {
             if (Data.contains("1")) {
                 Toast.makeText(_context, "Your device registered.", Toast.LENGTH_SHORT).show();
             } else
@@ -192,16 +191,15 @@ isowner=false;
         }
     }
 
-    private static void CreateGroupLayer(Integer gpID,String Name,String Time,String LastMessage,Bitmap img, final Boolean isGroupOwner)
-    {
+    private static void CreateGroupLayer(Integer gpID, String Name, String Time, String LastMessage, Bitmap img, final Boolean isGroupOwner) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.group_list, null);
         view.setId(new Random().nextInt());
         lsvGroups.addView(view);
         TextView tvGroupName = (TextView) view.findViewById(R.id.tvGroupName);
-        tvGroupName.setText(Name + " "+_context.getResources().getString( R.string.GroupLabel));
+        tvGroupName.setText(Name + " " + _context.getResources().getString(R.string.GroupLabel));
         TextView tvLastGroupMessage = (TextView) view.findViewById(R.id.tvLastGroupMessage);
-        if(img!=null) {
+        if (img != null) {
             ImageView ivImageGroup = (ImageView) view.findViewById(R.id.ivGroupPic);
             ivImageGroup.setImageBitmap(img);
         }
@@ -236,35 +234,34 @@ isowner=false;
         llGroupList5.setOnClickListener(ClickOpenGroup);
     }
 
-    private static void InsertGroup(Integer gpID,String Name,String Time,String LastMessage,Bitmap img)
-    {
+    private static void InsertGroup(Integer gpID, String Name, String Time, String LastMessage, Bitmap img) {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
         ContentValues V = new ContentValues();
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_ID,gpID);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_Name,Name);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastTime,Time);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastMessage,LastMessage);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_Image,Tools.getBytesFromBitmap(img));
-        db.insert(DatabaseContracts.Groups.TABLE_NAME,DatabaseContracts.Groups.COLUMN_NAME_ID,V);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_ID, gpID);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_Name, Name);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastTime, Time);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastMessage, LastMessage);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_Image, Tools.getBytesFromBitmap(img));
+        db.insert(DatabaseContracts.Groups.TABLE_NAME, DatabaseContracts.Groups.COLUMN_NAME_ID, V);
         db.close();
         dbh.close();
     }
 
-    private static void UpdateGroup(Integer gpID,String Name,String Time,String LastMessage,Bitmap img)
-    {
+    private static void UpdateGroup(Integer gpID, String Name, String Time, String LastMessage, Bitmap img) {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
         ContentValues V = new ContentValues();
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_ID,gpID);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_Name,Name);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastTime,Time);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastMessage,LastMessage);
-        V.put(DatabaseContracts.Groups.COLUMN_NAME_Image,Tools.getBytesFromBitmap(img));
-        db.update(DatabaseContracts.Groups.TABLE_NAME, V, DatabaseContracts.Groups.COLUMN_NAME_ID+"=?",new String[]{String.valueOf(gpID)});
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_ID, gpID);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_Name, Name);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastTime, Time);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_LastMessage, LastMessage);
+        V.put(DatabaseContracts.Groups.COLUMN_NAME_Image, Tools.getBytesFromBitmap(img));
+        db.update(DatabaseContracts.Groups.TABLE_NAME, V, DatabaseContracts.Groups.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(gpID)});
         db.close();
         dbh.close();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_groups, menu);
@@ -285,8 +282,8 @@ isowner=false;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1)
-            if(resultCode==1)
+        if (requestCode == 1)
+            if (resultCode == 1)
                 this.finish();
     }
 }
