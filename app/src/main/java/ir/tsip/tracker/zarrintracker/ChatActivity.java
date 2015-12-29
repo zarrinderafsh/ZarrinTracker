@@ -36,38 +36,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.cast.CastRemoteDisplayLocalService;
-import com.google.android.gms.games.GameRef;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -211,7 +186,7 @@ IsChatActivityShowing=true;
 
 
     private void sendMessage(String msg) {
-if(msg==null || msg=="" || msg==" ")
+if(msg==null || msg=="" || msg==" " || msg.length()<1)
     return;
         Persons p=new Persons();
         if(!p.FindDeviceOwner()){
@@ -233,6 +208,8 @@ if(msg==null || msg=="" || msg==" ")
     }
 
     public static void backWebServices(int ObjectCode, String Data) {
+        if(!Tools.HasCredit)
+            return;
         if (ObjectCode == 1) {
             if (_this == null || Data == "null")
                 return;
@@ -320,7 +297,6 @@ if(msg==null || msg=="" || msg==" ")
     private void InsertMessages(String[] messages) {
         if (messages == null)
             return;
-        Log.e("msg", "insertmesage begin");
         if (dbh == null)
             dbh = new DatabaseHelper(context);
         if (db == null)
@@ -329,7 +305,6 @@ if(msg==null || msg=="" || msg==" ")
         ContentValues Data;
         Persons p;
         for (String msg : messages) {
-            Log.e("msg", msg);
             p=new Persons();
             p.ID=Integer.valueOf(msg.split("~~~")[0].replace("[\"",""));
             msg=msg.split("~~~")[1];
@@ -337,7 +312,6 @@ if(msg==null || msg=="" || msg==" ")
                 p.name=msg.split("\\[")[2].split(":")[0].replace("]","");
                 p.isme=false;
                 p.Save();
-                p.GetImageFromServer();
             }
             if(p.image==null){
                 p.GetImageFromServer();
@@ -350,11 +324,11 @@ if(msg==null || msg=="" || msg==" ")
                 long id = db.insert(DatabaseContracts.ChatLog.TABLE_NAME, DatabaseContracts.ChatLog.COLUMN_NAME_ID, Data);
                 CreateGroupLayer(new Date(), msg, p.image, 0, (int) id,p.ID);
                 if (!ChatActivity.IsChatActivityShowing)
-                    MessageEvent.InsertMessage(context, "New message from " + ((p.name == null || p.name == "") ? "Someone" : p.name), p.image);
+                    MessageEvent.InsertMessage(context, "New message from " + ((p.name == null || p.name == "") ? "Someone" : p.name), p.image,MessageEvent.NEW_MESSAGE_EVENT);
                 msg=msg.split("\\[")[2].split(":")[1].replace("]","");
                 GroupsActivity.UpdateGroup(Integer.valueOf(gpID),null,new Date().toString(),msg,null);
             } else if (msg.contains("[E]")) {
-                MessageEvent.InsertMessage(context, msg.replace("[E]", ""));
+                MessageEvent.InsertMessage(context, msg.replace("[E]", ""),MessageEvent.NEW_MESSAGE_EVENT);
             } else if (msg.contains("[G]")) {
 //                String[] data = msg.replace("[G]", "").split("~");
 //                LatLng latLng = new LatLng(Double.valueOf(data[0].split(",")[0]), Double.valueOf(data[0].split(",")[1]));

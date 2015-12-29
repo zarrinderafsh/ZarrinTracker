@@ -60,8 +60,6 @@ _context=this;
     @Override
     protected void onResume() {
         super.onResume();
-        lsvPlaces=(ListView)findViewById(R.id.lsvPlaces);
-        GetGeofences();
     }
 
     public void GetGeofences() {
@@ -115,7 +113,7 @@ _context=this;
                             circle.getCenter().longitude,
                             (float)circle.getRadius(),
                             -1,
-                            PendingIntent.getBroadcast(LocationListener.mContext,0, new Intent("ir.tstracker.activity.proximity").putExtra("id",id), 0));
+                            PendingIntent.getBroadcast(LocationListener.mContext,id, new Intent("ir.tstracker.activity.proximity").putExtra("id",id), 0));
                 }
                 catch (Exception er){
 
@@ -137,38 +135,8 @@ _context=this;
 //
 //                }
                 Intent myIntent = new Intent(_context, PurchaseActivity.class);
-                 myIntent.putExtra("msg","You can not create more than "+Data.split(",")[1]+" geofences.");
+                 myIntent.putExtra("msg","You don't have enough credit.");
                _context.startActivity(myIntent);
-            }
-        }
-        else if (ObjectCode == 4) {
-            if (Data.length() > 1) {
-                try {
-                    //add new area to database
-                    ContentValues Val = new ContentValues();
-                    DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
-                    SQLiteDatabase db = dbh.getWritableDatabase();
-
-                    String[] geos = Data.split("\\|");
-                    //                               Name~Points~radius~clientAreaCode|
-                    for (String g : geos) {
-                        Val.clear();
-                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, g.split("~")[0]);
-                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, g.split("~")[1]);
-                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, g.split("~")[2]);
-                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_ID, g.split("~")[3]);
-                        db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
-                        Circle circle=  Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(Data.split("~")[1].split(",")[0]), Double.valueOf(Data.split("~")[1].split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(Data.split("~")[2])));
-
-                    }
-                    db.close();
-                    dbh.close();
-                    db = null;
-                    dbh = null;
-                }
-                catch (Exception er){
-                    String e="";
-                }
             }
         }
     }

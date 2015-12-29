@@ -3,13 +3,13 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 <ImageView
-    android:layout_width="128dp"
-    android:layout_height="128dp"
-    android:id="@+id/imgUserPhoto"
-    android:layout_gravity="center_horizontal"/>
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:id="@+id/imgPhoto"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtName"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:id="@+id/txtName"/>
 </LinearLayout>

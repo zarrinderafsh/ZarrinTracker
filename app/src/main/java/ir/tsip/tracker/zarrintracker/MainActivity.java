@@ -43,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONException;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     LinearLayout llTop;
     LinearLayout llDown;
-    LinearLayout llMain;
+    public static LinearLayout llMain;
     LinearLayout llmapLayout;
     ImageView ivPause;
     ImageView ivHelp;
@@ -74,8 +75,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     TextView tvHelp;
     TextView tvPause;
     MessageEvent MEvent;
-    public static  LinearLayout.LayoutParams lpTop;
-    public static  LinearLayout.LayoutParams lpDown;
+    public  LinearLayout.LayoutParams lpTop;
+    public   LinearLayout.LayoutParams lpDown;
    public static Activity Base;
     // nav drawer title
     private CharSequence mDrawerTitle;
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         Tools.setTitleColor(this);
         checkRegistration();
 
+        GroupsActivity.GetGroups(Base, false);
         ShowMessage();
         StartServices();
         llTop = (LinearLayout) findViewById(R.id.llTop);
@@ -157,9 +159,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                                               llTop.setLayoutParams(lpTop);
                                               llDown.setLayoutParams(lpDown);
                                               llMain.setVisibility(View.VISIBLE);
-                                          }
-
-                                          ;
+                                              if(Tools.locationMarker!=null)
+                                              Tools.locationMarker.remove();
+                                              Tools.locationMarker=null;
+                                          };
                                       }
         );
 
@@ -284,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         });
 
 
-//        IntentFilter filter = new IntentFilter("");
+//        IntentFilter filter = new IntentFilter("ir.tstracker.activity.proximity");
 //        registerReceiver(new ProximityIntentReceiver(), filter);
 initializeInviteButton();
 
@@ -300,7 +303,7 @@ initializeInviteButton();
                 LayoutInflater inflate = getLayoutInflater();
                 View view = inflate.inflate(R.layout.activity_invate, null);
                 ChatActivity.txtGeneratedJoinCode = (TextView) view.findViewById(R.id.txtGeneratedJOinCode);
-             ChatActivity.imgLoading = (ImageView) view.findViewById(R.id.imgLoading);
+                ChatActivity.imgLoading = (ImageView) view.findViewById(R.id.imgLoading);
 
                 WebServices w = new WebServices(MainActivity.this);
                 HashMap<String, String> params = new HashMap<>();
@@ -312,7 +315,7 @@ initializeInviteButton();
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            Tools.ShareText(EditProfileActivity.getName(Base)+" "+ MainActivity.Base.getResources().getString(R.string.InvationMessage) +ChatActivity.txtGeneratedJoinCode.getText().toString(), MainActivity.this);
+                            Tools.ShareText(EditProfileActivity.getName(Base) + " " + MainActivity.Base.getResources().getString(R.string.InvationMessage) + ChatActivity.txtGeneratedJoinCode.getText().toString(), MainActivity.this);
 
                         } catch (Exception ex) {
 
@@ -326,49 +329,62 @@ initializeInviteButton();
                         dialog.cancel();
                     }
                 });
-builder.show();
+                builder.show();
             }
         });
     }
 
-    private void setupGeofences(){
-
-        DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = dbh.getWritableDatabase();
-        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius,DatabaseContracts.Geogences.COLUMN_NAME_center,DatabaseContracts.Geogences.COLUMN_NAME_name};
-        Cursor c;
-        c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
-        c.moveToFirst();
-        String center;
-        String meters;
-        while(true && c.getCount()>0){
-            try {
-                center=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).replace("lat/lng: (","").replace(")","");
-                meters=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
-                googleMap.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]),                        Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf( meters)));
-                LocationListener.locationManager.addProximityAlert(
-                        Double.valueOf(center.split(",")[0]),
-                        Double.valueOf(center.split(",")[1]),
-                        Float.valueOf( meters),
-                        -1,
-                        PendingIntent.getBroadcast(MainActivity.this, 0, new Intent("ir.tsip.tracker.zarrintracker.Main"), 0));
-            }
-            catch (Exception er){
-
-            }
-            if (c.isLast())
-                break;
-            c.moveToNext();
-        }
-        c.close();
-        db.close();
-        dbh.close();
-
-    }
 
     public static void backWebServices(int ObjectCode, String Data) throws JSONException {
         if (ObjectCode == 1) {
                 insertDevice(Data);
+        }
+        else if(ObjectCode==5)//purchasedetails
+        {
+            if(Integer.valueOf(Data)>0) {
+                MessageEvent.InsertMessage(MainActivity.Base, Data + " " + MainActivity.Base.getResources().getString(R.string.DaysToRecharge),MessageEvent.CREADIT_EVENT);
+            Tools.HasCredit=true;
+            }
+            else
+            {
+                MessageEvent.InsertMessage(  MainActivity.Base,MainActivity.Base.getResources().getString(R.string.NoCredit),MessageEvent.CREADIT_EVENT);
+                Tools.HasCredit=false;
+            }
+        }
+        else if (ObjectCode == 4) {
+            if (Data.length() > 1) {
+                try {
+                    //add new area to database
+                    ContentValues Val = new ContentValues();
+                    DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+                    SQLiteDatabase db=dbh.getReadableDatabase();
+                    if(db.query(DatabaseContracts.Geogences.TABLE_NAME,new String[]{DatabaseContracts.Geogences.COLUMN_NAME_ID},"",null,"","","").getCount()>1)
+                    return;
+                    db= dbh.getWritableDatabase();
+
+                    String[] geos = Data.split("\\|");
+                    //                               Name~Points~radius~clientAreaCode|
+                    for (String g : geos) {
+                        Val = new ContentValues();
+                        Val.clear();
+                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, g.split("~")[0]);
+                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, g.split("~")[1]);
+                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, g.split("~")[2]);
+                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_ID, g.split("~")[3]);
+                        if(db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val)>0)
+                        {
+                            g=g+" ";
+                        }
+                 }
+                    db.close();
+                    dbh.close();
+                    db = null;
+                    dbh = null;
+                }
+                catch (Exception er){
+                    String e="";
+                }
+            }
         }
     }
 
@@ -382,7 +398,23 @@ builder.show();
         WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 1, params, "CheckRegistration");
         ProfileActivity.GetImageFromServer(this);
         ProfileActivity.GetProfileFromServer(this);
+        getGeofencesFromServer();
      WS=null;
+    }
+
+    public void getGeofencesFromServer(){
+
+        HashMap<String, String> params;
+        params = new HashMap<>();
+        params.put("imei", Tools.GetImei(getApplicationContext()));
+        params.put("center", "0");
+        params.put("radius","0");
+        params.put("name","0");
+        params.put("clientCode", "0");
+        params.put("operation", "4");
+        WebServices W = new WebServices(getApplicationContext());
+        W.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 4, params, "GeofenceOperations");
+        W = null;
     }
 
     public static void insertDevice(String Data) throws JSONException {
@@ -561,12 +593,26 @@ Boolean isfirst=true;
                 try {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            if(counter==10) {
+                            //every 10 seconds
+                            if(counter % 10==0) {
                                 if (mMapFragment != null)
                                     Tools.setUpMap(mMapFragment.getMap(), getApplicationContext(), isfirst);
                                 if (isfirst)
                                     isfirst = false;
-                            counter=0;
+
+                            }
+                            //every hour
+                            if(counter==0)
+                            {
+                                //Update groups
+                                WebServices ws = new WebServices(MainActivity.this);
+                                ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(MainActivity.this), "GroupsList");
+                                ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.this), "PurhaseDetails");
+                                ws = null;
+                            }
+                            //Counter repeat every one hour
+                            if(counter>=60*60*60){
+                                counter=0;
                             }
                             counter++;
                             String Mes = MessageManager.GetMessage();
@@ -621,7 +667,7 @@ Boolean isfirst=true;
         getMenuInflater().inflate(R.menu.menu_main, menu);
         if (googleMap == null) {
             googleMap = Tools.initGoogleMap(mMapFragment);
-            setupGeofences();
+            //setupGeofences();
         }
         return true;
     }

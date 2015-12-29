@@ -22,19 +22,51 @@
         android:layout_height="fill_parent"
         android:background="#ffffff"
         android:gravity="bottom">
-
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/llMapLoad">
-
+                android:layout_width="match_parent"
+                android:layout_height="70dp">
+<!-- DO NOT DELETE THIS. This will keep map down. -->
             </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/BackColor"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_gravity="top">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAlignment="center"
+                android:text="@string/GoogleMapTitle"
+                android:textColor="#ffffff"
+                android:id="@+id/txtgpsMessage"
+                />
+<LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_weight=".5"></LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ivCloseMap"
+                android:src="@drawable/close_icon"
+                android:layout_marginRight="20dp"
+                android:contentDescription="@string/ivCloseMapString"
+                android:clickable="true" />
+        </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/llMapLoad">
+                </LinearLayout>
 
             <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="70dp"
             android:id="@+id/llDownMap"
             android:background="@color/BackColor"
             android:gravity="center_vertical|center_horizontal|right"
@@ -46,22 +78,14 @@
                 android:src="@drawable/person_white_add"
                 android:clickable="true"
                 android:layout_marginRight="10dp" />
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/gpsIsOff"
-    android:id="@+id/txtgpsMessage"/>
 
-                <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/ivCloseMap"
-                android:src="@drawable/close_icon"
-                android:layout_marginRight="20dp"
-                android:contentDescription="@string/ivCloseMapString"
-                android:clickable="true" />
-            </LinearLayout>
 
+                <ir.tsip.tracker.zarrintracker.HorizontalListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lsvMarkers"/>
+
+        </LinearLayout>
         </LinearLayout>
 
     <LinearLayout

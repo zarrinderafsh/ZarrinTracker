@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.Log;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.sql.Blob;
 import java.sql.Struct;
@@ -39,12 +42,20 @@ public class MessageEvent {
         public float Lon;
     };
 
+
+    public final static  String AREA_EVENT="AREA";
+    public final static String NEW_MESSAGE_EVENT="MESSAGE";
+    public final static   String CREADIT_EVENT="CREDIT";
+    public final static String  SOS_EVENT="SOS";
+    public final static String  GPS_EVENT="GPS";
+    public final static String  Pause_Event="PAUSE";
+
     static Context _Context;
     public  MessageEvent(Context pContext)
     {
         _Context = pContext;
     }
-    public static void InsertMessage(Context context, String Message)
+    public static void InsertMessage(Context context, String Message,String eventType)
     {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
@@ -53,6 +64,8 @@ public class MessageEvent {
         V.put(DatabaseContracts.Events.COLUMN_NAME_Date,new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date()));
         V.put(DatabaseContracts.Events.COLUMN_NAME_Lat,LocationListener.CurrentLat);
         V.put(DatabaseContracts.Events.COLUMN_NAME_Lon,LocationListener.CurrentLon);
+        V.put(DatabaseContracts.Events.COLUMN_type,eventType);
+
 
         Bitmap B = ProfileActivity.getProfileImage(96, _Context);
         if(B!=null) {
@@ -62,7 +75,7 @@ public class MessageEvent {
         db.insert(DatabaseContracts.Events.TABLE_NAME,DatabaseContracts.Events.COLUMN_NAME_ID,V);
         db.close();
         dbh.close();
-    }public static void InsertMessage(Context context, String Message,Bitmap image)
+    }public static void InsertMessage(Context context, String Message,Bitmap image,String eventType)
     {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
@@ -71,7 +84,7 @@ public class MessageEvent {
         V.put(DatabaseContracts.Events.COLUMN_NAME_Date,new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date()));
         V.put(DatabaseContracts.Events.COLUMN_NAME_Lat,LocationListener.CurrentLat);
         V.put(DatabaseContracts.Events.COLUMN_NAME_Lon,LocationListener.CurrentLon);
-
+        V.put(DatabaseContracts.Events.COLUMN_type,eventType);
         if(image!=null) {
             byte[] b = Tools.getBytesFromBitmap(image);
             V.put(DatabaseContracts.Events.COLUMN_NAME_Image, b);
@@ -117,6 +130,8 @@ public class MessageEvent {
             do {
                 String Data = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Data));
 
+                String eventType = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_type));
+
                 Tools.Notificationm(_Context, "TsTracker Events", Data,_Context.getPackageName());
 
                 String DateTime = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Date));
@@ -135,7 +150,9 @@ public class MessageEvent {
                 float Lon = c.getFloat(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Lon));
 
                 LayoutInflater inflater = (LayoutInflater) _Context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view = inflater.inflate(R.layout.event_message, null);
+                View view;
+                view = inflater.inflate(R.layout.event_message, null);
+
                 view.setId(100000 + id);
                 if(date.compareTo(pFirstDate) > 0) {
                     pFirstDate = date;
@@ -163,23 +180,69 @@ public class MessageEvent {
                 View.OnClickListener ClickLocation = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Loc L = (Loc)v.getTag();
-                        if(L.Lon > 0 && L.Lat >0) {
-                            Tools.GoogleMapObj.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(L.Lat, L.Lon), 16.0f));
-                            MainActivity.lpTop.topMargin = -1* MainActivity.lpTop.height;
-                            MainActivity.lpDown.topMargin = Tools.GetDesktopSize(MainActivity.Base).y +MainActivity.lpTop.height / 2;
+                        if (v.getTag().getClass().equals(Loc.class)) {
+                            Loc L = (Loc) v.getTag();
+                            if (L.Lon > 0 && L.Lat > 0) {
+                                Tools.locationMarker = Tools.GoogleMapObj.addMarker(new MarkerOptions().position(new LatLng(L.Lat, L.Lon)));
+                                Tools.GoogleMapObj.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(L.Lat, L.Lon), 16.0f));
 
+                                ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 360, 520, 1));
+                                ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, 548, 906, 1));
+                                ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 548, 906, 1));
+                            }
+                        }
+                        else if (v.getTag().getClass().equals(Integer.class)){
+                            Integer i=(Integer)v.getTag();
+                            if(i==0){
+                                Intent myIntent = new Intent(MainActivity.Base, GroupsActivity.class);
+                                MainActivity.Base.startActivity(myIntent);
+                            }
+                            else if(i==1){
+                                Intent myIntent = new Intent(MainActivity.Base, PurchaseActivity.class);
+                                myIntent.putExtra("msg","Recharge your account.");
+                                MainActivity.Base.startActivity(myIntent);
+                            }
                         }
                     }
                 };
 
+
                 ((TextView) view.findViewById(R.id.tvDeleteEvent)).setTag(id);
                 ((TextView) view.findViewById(R.id.tvDeleteEvent)).setOnClickListener(ClickDelete);
-
-                Loc L = new Loc();
-                L.Lat = Lat;
-                L.Lon = Lon;
-                ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
+                switch (eventType){
+                    case NEW_MESSAGE_EVENT:
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(0);
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setText("Open Chat");
+                    break;
+                    case SOS_EVENT:
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setVisibility(View.INVISIBLE);
+                        ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
+                        view.setBackgroundColor(Color.parseColor("#550000"));
+                        break;
+                    case AREA_EVENT:
+                        Loc L = new Loc();
+                        L.Lat = Lat;
+                        L.Lon = Lon;
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
+                        ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
+                        view.setBackgroundColor(Color.parseColor("#4D658D"));
+                        break;
+                    case CREADIT_EVENT:
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(1);
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setText("Charge");
+                        view.setBackgroundColor(Color.parseColor("#D9D372"));
+                        break;
+                    case Pause_Event:
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(2);
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setVisibility(View.INVISIBLE);
+                        break;
+                    case GPS_EVENT:
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(3);
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setVisibility(View.INVISIBLE);
+                        break;
+                    default:
+                        break;
+                }
                 ((TextView) view.findViewById(R.id.tvLocationEvent)).setOnClickListener(ClickLocation);
 
                 if(Image != null && Image.length > 10)

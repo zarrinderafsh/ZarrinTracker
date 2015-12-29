@@ -1,29 +1,20 @@
 package ir.tsip.tracker.zarrintracker;
 
-import android.app.PendingIntent;
+
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.SystemClock;
-import android.support.v7.internal.app.ToolbarActionBar;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -241,12 +232,7 @@ public class LocationListener  extends Service implements android.location.Locat
 
     @Override
     public void onGpsStatusChanged(int p) {
-        try {
-            ((TextView) MainActivity.Base.findViewById(R.id.txtgpsMessage)).setVisibility(View.INVISIBLE);
-        }
-        catch (Exception er){
-            er.getMessage();
-        }
+
             switch (p) {
             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                 break;
@@ -254,10 +240,13 @@ public class LocationListener  extends Service implements android.location.Locat
                 break;
             case GpsStatus.GPS_EVENT_STOPPED:
                 String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
-                (new EventManager(mContext)).AddEvevnt(" GPS turned off." + SDate, "-3");
-                ((TextView)MainActivity.Base.findViewById(R.id.txtgpsMessage)).setVisibility(View.VISIBLE);
+                (new EventManager(mContext)).AddEvevnt(" GPS turned off." + SDate, "-3",MessageEvent.GPS_EVENT);
+                if(MainActivity.Base!=null)
+                ((TextView)MainActivity.Base.findViewById(R.id.txtgpsMessage)).setText(MainActivity.Base.getResources().getString(R.string.gpsIsOff));
                 break;
             case GpsStatus.GPS_EVENT_STARTED:
+                if(MainActivity.Base!=null)
+                    ((TextView)MainActivity.Base.findViewById(R.id.txtgpsMessage)).setText(MainActivity.Base.getResources().getString(R.string.GoogleMapTitle));
                 break;
         }
         int count = 0;
@@ -343,7 +332,7 @@ public class LocationListener  extends Service implements android.location.Locat
         PauseDate = new Date();
         PauseDate.setTime(PauseDate.getTime() + hour * 3600 * 1000);
         if(hour > 0)
-            (new EventManager(mContext)).AddEvevnt("Puase for " + hour + " hour.", "-3");
+            (new EventManager(mContext)).AddEvevnt("Puase for " + hour + " hour.", "-3",MessageEvent.Pause_Event);
     }
 
     public static Location getLastLocation() {
@@ -393,7 +382,6 @@ public class LocationListener  extends Service implements android.location.Locat
         StartServices();
         WebServices W = new WebServices(mContext);
         W.RunSend();
-
         return START_STICKY;
     }
 
@@ -412,7 +400,7 @@ public class LocationListener  extends Service implements android.location.Locat
                     params2.put("gpID", "0");
                     WebServices W = new WebServices(getApplicationContext());
                     W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage");
-                    Log.e("getmessage","raised");
+                   W=null;
                 } catch (Exception ex) {
                     ex.toString();
                 }

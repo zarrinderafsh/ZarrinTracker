@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -94,6 +95,10 @@ String name="Default";
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
+                            if(!Tools.isOnline(MapPlacesActivity.this)) {
+                                Toast.makeText(MapPlacesActivity.this, MapPlacesActivity.this.getResources().getString(R.string.internetConnectivityError), Toast.LENGTH_LONG).show();
+                                return;
+                            }
 
                             DatabaseHelper dbh = new DatabaseHelper(MapPlacesActivity.this);
                             SQLiteDatabase db = dbh.getWritableDatabase();

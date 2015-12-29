@@ -1,8 +1,6 @@
 package ir.tsip.tracker.zarrintracker;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +23,14 @@ public class ProximityIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
          entering = intent.getBooleanExtra(key, false);
-        int id = intent.getIntExtra("id",0);
+        int id =Integer.valueOf(intent.getExtras().getInt("id"));
+        if(id==0) {
+            try {
+                id = Integer.valueOf(intent.getStringExtra("id"));
+            } catch (Exception er) {
+
+            }
+        }
         if(id!=0){
             DatabaseHelper dbh=new DatabaseHelper(context);
             SQLiteDatabase db = dbh.getReadableDatabase();
@@ -46,16 +51,9 @@ public class ProximityIntentReceiver extends BroadcastReceiver {
         }else {
             state="Exited "+state;
         }
-        HashMap<String, String> params;
-        params = new HashMap<>();
-        params.put("message", state);
-        params.put("imei", Tools.GetImei(context));
-        params.put("gpID", "-1");
-        WebServices W = new WebServices(context);
-        W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 4, params, "SetMessage");
-        W=null;
-        (new EventManager(context)).AddEvevnt(state, "-1");
+        if(!Tools.HasCredit)
+            return;
+        (new EventManager(context)).AddEvevnt(state, "-1", MessageEvent.AREA_EVENT);
         Toast.makeText(context, state, Toast.LENGTH_SHORT).show();
-        Log.d(getClass().getSimpleName(),state);
     }
 }

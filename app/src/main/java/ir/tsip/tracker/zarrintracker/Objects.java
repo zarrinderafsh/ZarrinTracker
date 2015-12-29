@@ -1,5 +1,10 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.graphics.Bitmap;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+
 /**
  * Created by ali on 11/15/15.
  */
@@ -30,4 +35,19 @@ public class Objects {
             this.radius=radius;
         }
     }
+    public class MarkerItem{
+        int _id;
+        Bitmap _image;
+        String _name;
+        String _lastmessage;
+        LatLng _lastLocation;
+        public MarkerItem(int id,Bitmap image,String name,String lastmessage,LatLng lastLocation){
+            _id=id;
+            _image=image;
+            _name=name;
+            _lastLocation=lastLocation;
+            _lastmessage=lastmessage;
+        }
+    }
+
 }

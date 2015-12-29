@@ -1,8 +1,5 @@
 package ir.tsip.tracker.zarrintracker;
 
-import android.content.res.Resources;
-
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**

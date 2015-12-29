@@ -33,12 +33,15 @@ import android.service.media.MediaBrowserService;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewParent;
 import android.view.Window;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -81,6 +84,8 @@ import java.util.Map;
  * Created by Administrator on 11/1/2015.
  */
 public class Tools {
+
+public static  Boolean HasCredit=true;
 
 
     public static boolean isOnline(Context context) {
@@ -183,6 +188,7 @@ public class Tools {
 
 
     public static GoogleMap GoogleMapObj;
+    public static Marker locationMarker;
 
 static boolean IsFirst=true;
     public static void setUpMap(GoogleMap googleMap, Context context,boolean isfirst) {
@@ -199,7 +205,9 @@ static boolean IsFirst=true;
         }
         if (isfirst || IsFirst) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
-setupGeofences(context);
+
+            if (!Tools.proximityCreated)
+                Tools.setupGeofences(MainActivity.Base);
             GoogleMapObj.setMyLocationEnabled(true);
             IsFirst=false;
         }
@@ -235,8 +243,10 @@ setupGeofences(context);
         dbh.close();
     }
 
+    public static boolean proximityCreated=false;
     public static void setupGeofences(Context context){
-        if(Tools.GoogleMapObj== null)
+
+        if(Tools.GoogleMapObj== null || proximityCreated)
             return;
         Tools.GoogleMapObj.clear();
 
@@ -248,24 +258,27 @@ setupGeofences(context);
         c.moveToFirst();
         String center;
         String meters;
+        int id=0;
         while(true && c.getCount()>0) {
             try {
                 center = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).replace("lat/lng: (", "").replace(")", "");
                 meters = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
                 Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]), Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(meters)));
-                LocationListener.locationManager.addProximityAlert(
-                        Double.valueOf(center.split(",")[0]),
-                        Double.valueOf(center.split(",")[1]),
-                        Float.valueOf(meters),
-                        -1,
-                        PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity").putExtra("id",c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID))), 0));
+                id=Integer.valueOf(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID)));
+                        LocationListener.locationManager.addProximityAlert(
+                                Double.valueOf(center.split(",")[0]),
+                                Double.valueOf(center.split(",")[1]),
+                                Float.valueOf(meters),
+                                -1,
+                                PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id), 0));
             } catch (Exception er) {
-
+Log.e("Tools.GeofenceSetup",er.getMessage());
             }
             if (c.isLast())
                 break;
             c.moveToNext();
         }
+        proximityCreated=true;
         c.close();
         db.close();
         dbh.close();
@@ -274,32 +287,65 @@ setupGeofences(context);
     //    private static RequestQueue queue;
     public static Map<Integer, Marker> markers;
     private static WebServices WS;
+    private static HorizontalListView lsvMarkers;
+    private static ImageListAdapter imgAdapter;
 
     public static void backWebServices(int ObjectCode, String Data) {
+        if(!Tools.HasCredit)
+        return;
         if (ObjectCode == 0) {//Markers
             try {
+                if(MainActivity.Base==null)
+                    return;;
+                if(imgAdapter==null)
+                    imgAdapter=new ImageListAdapter(MainActivity.Base);
+                if(markers.size()==0)
+                    imgAdapter.Clear();
                 JSONObject jo = new JSONObject(Data);
                 Marker m;
                 String lat, lng;
                 JSONArray ja = jo.getJSONArray("ChangingMarkers");
                 for (int i = 0; i < ja.length(); i++) {
-                    m = markers.get(Integer.valueOf(ja.getJSONObject(i).getString("ID")));
+                    final int id=Integer.valueOf(ja.getJSONObject(i).getString("ID").toString());
+                   //load marker if already exists
+                    m = markers.get(id);
                     lat = ja.getJSONObject(i).getJSONObject("Location").getString("X");
                     lng = ja.getJSONObject(i).getJSONObject("Location").getString("Y");
+                  //load person from database
                     Persons p=new Persons();
-                            p.GetData(Integer.valueOf(ja.getJSONObject(i).getString("PCode")));
+                    if(!p.GetData(Integer.valueOf(ja.getJSONObject(i).getString("PCode")))){
+                        p.ID=Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
+                        p.name=ja.getJSONObject(i).getString("Title");
+                        p.isme=false;
+                        p.Save();
+                    }
+                    if(p.image==null)
+                        p.GetImageFromServer();
+                    if(lsvMarkers==null)
+                        lsvMarkers=(HorizontalListView)MainActivity.Base.findViewById(R.id.lsvMarkers);
+
                     if (m == null) {
-                        markers.put(Integer.valueOf(ja.getJSONObject(i).getString("ID").toString()),
+                        markers.put(id,
                                 GoogleMapObj.addMarker(new MarkerOptions().position(
-                                        new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title")).icon(BitmapDescriptorFactory.fromBitmap( LoadImage(p.image, 96 )))));
+                                        new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title")).icon(BitmapDescriptorFactory.fromBitmap(LoadImage(p.image, 96)))));
+
+                  //Add icon for each marker at bottom of map, and when click on it, go to marker location
+                       imgAdapter.AddMarker(new Objects().new MarkerItem(id,
+                               Tools.LoadImage(p.image, 96),
+                               ja.getJSONObject(i).getString("Title"),
+                               "",
+                               null));
+                        lsvMarkers.setAdapter(imgAdapter);
                     } else {
                         m.setPosition(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
                         m.setTitle(ja.getJSONObject(i).getString("Title"));
-                        m.setIcon(BitmapDescriptorFactory.fromBitmap( LoadImage(p.image, 96)));
-                    }
+                        m.setIcon(BitmapDescriptorFactory.fromBitmap(LoadImage(p.image, 96)));
+                         imgAdapter.GetItemByID(id)._image=LoadImage( p.image,96);
+                        imgAdapter.notifyDataSetChanged();
+                        }
                 }
             } catch (Exception er) {
-
+er.getMessage();
             }
         }
     }

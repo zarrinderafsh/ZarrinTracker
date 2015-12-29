@@ -193,6 +193,12 @@ Double price=new Double(0);
     }
 
 
+    public static void backWebServices(int ObjectCode, String Data) throws JSONException {
+        if (ObjectCode == 0) {
+            if(Data.startsWith("1"))
+                Tools.HasCredit=true;
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

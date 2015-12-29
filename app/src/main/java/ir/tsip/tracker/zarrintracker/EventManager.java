@@ -23,7 +23,7 @@ public class EventManager {
         Base = context;
     }
 
-    public void AddEvevnt(String S,String gpID)
+    public void AddEvevnt(String S,String gpID,String eventType)
     {
         params = new HashMap<>();
         params.put("message", S);
@@ -31,12 +31,12 @@ public class EventManager {
         params.put("gpID", gpID);
         if(WS == null)
             WS = new WebServices(Base);
-        WS.addQueue("ir.tsip.tracker.zarrintracker.EventManager",0,params,"SendEvent");
-        MessageEvent.InsertMessage(Base, S);
+        WS.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity",0,params,"SetMessage");
+        MessageEvent.InsertMessage(Base, S,eventType);
     }
 
     public void SendSOS() {
-        AddEvevnt("Please contact me ASAP.I may need your help", "-2");
+        AddEvevnt("Please contact me ASAP.I may need your help", "-2",MessageEvent.SOS_EVENT);
         WebServices W;
         HashMap<String, String> params;
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);

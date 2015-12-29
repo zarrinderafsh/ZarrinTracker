@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/imgGroupPhoto"
             android:src="@drawable/sample_user"
-            android:layout_gravity="left" />
+            android:layout_gravity="center_vertical|left" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,14 +27,22 @@
             android:text="Group Name"
             android:textColor="@color/common_signin_btn_dark_text_pressed"
             android:layout_gravity="center_vertical|left"
-            android:layout_marginRight="35dp"/>
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3"
+            android:layout_weight="0.7" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/InviteBuddies"
             android:id="@+id/txtInvitetoGroup"
             android:textColor="@color/common_signin_btn_dark_text_pressed"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:textSize="10dp" />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
