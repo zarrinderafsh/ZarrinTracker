@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,15 +19,16 @@ import java.util.ArrayList;
 /**
  * Created by ali on 12/28/15.
  */
-public class ImageListAdapter extends BaseAdapter {
+public class ImageListAdapter extends ArrayAdapter<Objects.MarkerItem> {
 
     ArrayList<Objects.MarkerItem> items;
     Activity _activity;
     LayoutInflater inflater;
 
-    public ImageListAdapter(Activity activity ){
+    public ImageListAdapter(Activity activity , ArrayList<Objects.MarkerItem> mitems){
+        super(activity, R.layout.marker_item_layout , mitems);
         _activity=activity;
-        items=new ArrayList<Objects.MarkerItem>();
+        items=mitems;
     }
     @Override
     public int getCount() {
@@ -40,7 +42,6 @@ public class ImageListAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.marker_item_layout, null);
 
-        final  Objects.MarkerItem item=(Objects.MarkerItem)this.getItem(position);
         TextView txtname=(TextView)convertView.findViewById(R.id.txtName);
         ImageView imgphoto=(ImageView)convertView.findViewById(R.id.imgPhoto);
         final Objects.MarkerItem marker=(Objects.MarkerItem)getItem(position);
@@ -81,7 +82,7 @@ public class ImageListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public Objects.MarkerItem getItem(int position) {
         return items.get(position);
     }
 }

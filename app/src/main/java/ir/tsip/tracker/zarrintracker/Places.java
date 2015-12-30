@@ -76,7 +76,8 @@ _context=this;
                         c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID)),
                         Double.valueOf(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).split(",")[0].replace("lat/lng: (","")),
                         Double.valueOf(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).split(",")[1].replace(")","")),
-                        c.getDouble(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius)));
+                        c.getDouble(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius)),
+                        (c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_isOwner))>0)?true:false);
                 if(  geo.name==null || geo.name=="" || geo.name==" ")
                     geo.name="Unnamed";
                 geos.add(geo);
@@ -104,6 +105,7 @@ _context=this;
                 Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, Data.split("~")[0]);
                 Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, circle.getCenter().toString().replace("lat/lng: (", "").replace(")", ""));
                 Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, circle.getRadius());
+                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_isOwner, 1);
               int id=(int) db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
 
                 //Add proximity alert to location manager

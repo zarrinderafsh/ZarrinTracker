@@ -128,6 +128,7 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_Name = "Name";
         public static final String COLUMN_NAME_Image = "Image";
         public static final String COLUMN_NAME_LastMessage = "LastMessage";
+        public static final String COLUMN_NAME_Members = "members";
         public static final String COLUMN_NAME_LastTime = "LastTime";
         public static final String SQL_CREATE_Table =
                 "CREATE TABLE " + Groups.TABLE_NAME + " (" +
@@ -135,6 +136,7 @@ public class DatabaseContracts {
                         Groups.COLUMN_NAME_Name + " nvarchar(250)," +
                         Groups.COLUMN_NAME_Image + " BLOB,"+
                         Groups.COLUMN_NAME_LastMessage + "  nvarchar(250),"+
+                        Groups.COLUMN_NAME_Members + "  nvarchar(3000),"+
                         Groups.COLUMN_NAME_LastTime + " Date )";
 
         public static final String SQL_DELETE_Table =
@@ -163,11 +165,13 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_radius = "radius";
         public static final String COLUMN_NAME_name = "name";
         public static final String COLUMN_NAME_center = "center";
+        public static final String COLUMN_NAME_isOwner = "isOwner";
         public static final String SQL_CREATE_Table =
                 "CREATE TABLE " + Geogences.TABLE_NAME + " (" +
                         Geogences.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
                         Geogences.COLUMN_NAME_name + " nvarchar(250)," +
                         Geogences.COLUMN_NAME_center + " nvarchar(250)," +
+                        Geogences.COLUMN_NAME_isOwner + " int," +
                         Geogences.COLUMN_NAME_radius + " INTEGER )";
 
         public static final String SQL_DELETE_Table =

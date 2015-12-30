@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.renderscript.Sampler;
 import android.service.media.MediaBrowserService;
@@ -186,6 +187,21 @@ public static  Boolean HasCredit=true;
         return googleMap;
     }
 
+    public static  int MyPersonId=0;
+    public static int FindMyPersonID(){
+        MyPersonId=0;
+        WebServices W;
+        HashMap<String, String> params;
+        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        Cursor c;
+        c = db.query(DatabaseContracts.Persons.TABLE_NAME,new String[]{ DatabaseContracts.Persons.COLUMN_NAME_ID},DatabaseContracts.Persons.COLUMN_is_me +"=1", null, "", "", "", "");
+        if (c.moveToFirst()) {
+            MyPersonId=Integer.valueOf(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID)));
+        }
+        return  MyPersonId;
+    }
+
 
     public static GoogleMap GoogleMapObj;
     public static Marker locationMarker;
@@ -206,8 +222,8 @@ static boolean IsFirst=true;
         if (isfirst || IsFirst) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
 
-            if (!Tools.proximityCreated)
                 Tools.setupGeofences(MainActivity.Base);
+            Tools.DrawCircles(MainActivity.Base);
             GoogleMapObj.setMyLocationEnabled(true);
             IsFirst=false;
         }
@@ -284,12 +300,15 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
         dbh.close();
 
     }
+
+
+
     //    private static RequestQueue queue;
     public static Map<Integer, Marker> markers;
     private static WebServices WS;
-    private static HorizontalListView lsvMarkers;
+    public static HorizontalListView lsvMarkers;
     private static ImageListAdapter imgAdapter;
-
+    private  static ArrayList<Objects.MarkerItem> mlist;
     public static void backWebServices(int ObjectCode, String Data) {
         if(!Tools.HasCredit)
         return;
@@ -297,53 +316,58 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
             try {
                 if(MainActivity.Base==null)
                     return;;
-                if(imgAdapter==null)
-                    imgAdapter=new ImageListAdapter(MainActivity.Base);
-                if(markers.size()==0)
-                    imgAdapter.Clear();
+                mlist=new ArrayList<>();
+
                 JSONObject jo = new JSONObject(Data);
                 Marker m;
                 String lat, lng;
                 JSONArray ja = jo.getJSONArray("ChangingMarkers");
                 for (int i = 0; i < ja.length(); i++) {
-                    final int id=Integer.valueOf(ja.getJSONObject(i).getString("ID").toString());
-                   //load marker if already exists
+                    final int id = Integer.valueOf(ja.getJSONObject(i).getString("ID").toString());
+                    //load marker if already exists
                     m = markers.get(id);
                     lat = ja.getJSONObject(i).getJSONObject("Location").getString("X");
                     lng = ja.getJSONObject(i).getJSONObject("Location").getString("Y");
-                  //load person from database
-                    Persons p=new Persons();
-                    if(!p.GetData(Integer.valueOf(ja.getJSONObject(i).getString("PCode")))){
-                        p.ID=Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
-                        p.name=ja.getJSONObject(i).getString("Title");
-                        p.isme=false;
+                    //load person from database
+                    Persons p = new Persons();
+                    if (!p.GetData(Integer.valueOf(ja.getJSONObject(i).getString("PCode")))) {
+                        p.ID = Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
+                        p.name = ja.getJSONObject(i).getString("Title");
+                        p.isme = false;
                         p.Save();
+                    } else {
+                        p.ID = Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
+                        p.name = ja.getJSONObject(i).getString("Title");
+                        p.isme = false;
+                        p.update();
                     }
-                    if(p.image==null)
+                    if (p.image == null)
                         p.GetImageFromServer();
-                    if(lsvMarkers==null)
-                        lsvMarkers=(HorizontalListView)MainActivity.Base.findViewById(R.id.lsvMarkers);
+                    if (lsvMarkers == null)
+                        lsvMarkers = (HorizontalListView) MainActivity.Base.findViewById(R.id.lsvMarkers);
 
                     if (m == null) {
                         markers.put(id,
                                 GoogleMapObj.addMarker(new MarkerOptions().position(
                                         new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title")).icon(BitmapDescriptorFactory.fromBitmap(LoadImage(p.image, 96)))));
 
-                  //Add icon for each marker at bottom of map, and when click on it, go to marker location
-                       imgAdapter.AddMarker(new Objects().new MarkerItem(id,
-                               Tools.LoadImage(p.image, 96),
-                               ja.getJSONObject(i).getString("Title"),
-                               "",
-                               null));
-                        lsvMarkers.setAdapter(imgAdapter);
+
                     } else {
                         m.setPosition(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
                         m.setTitle(ja.getJSONObject(i).getString("Title"));
                         m.setIcon(BitmapDescriptorFactory.fromBitmap(LoadImage(p.image, 96)));
-                         imgAdapter.GetItemByID(id)._image=LoadImage( p.image,96);
-                        imgAdapter.notifyDataSetChanged();
-                        }
+//                         imgAdapter.GetItemByID(id)._image=LoadImage(p.image, 96);
+//                        imgAdapter.GetItemByID(id)._name=p.name;
+                    }//Add icon for each marker at bottom of map, and when click on it, go to marker location
+                    mlist.add(new Objects().new MarkerItem(id,
+                            LoadImage(p.image, 96),
+                            ja.getJSONObject(i).getString("Title"),
+                            "",
+                            null));
                 }
+                imgAdapter = new ImageListAdapter(MainActivity.Base,mlist);
+                lsvMarkers.setAdapter(imgAdapter);
+//                imgAdapter.notifyDataSetChanged();
             } catch (Exception er) {
 er.getMessage();
             }

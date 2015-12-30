@@ -162,6 +162,7 @@ public boolean isme=false;
         return false;
     }
 
+
     public void GetImageFromServer() {
         WebServices W = new WebServices();
         W.addQueue("ir.tsip.tracker.zarrintracker.Persons", 1, String.valueOf(ID), "LoadImageById");
@@ -198,6 +199,29 @@ public boolean isme=false;
                     p.update();
                 }
             }
+        }
+    }
+
+    public static void UpdateImages(){
+        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        try {
+            Persons p=new Persons();
+            Cursor c = db.query(DatabaseContracts.Persons.TABLE_NAME,
+                    null,
+                    "",
+                    null,
+                    null,
+                    null,
+                    null);
+            if (c.moveToFirst()) {
+                p.ID= c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID));
+               p.GetImageFromServer();
+            }
+        } catch (Exception e) {
+        } finally {
+            db.close();
+            dbh.close();
         }
     }
 

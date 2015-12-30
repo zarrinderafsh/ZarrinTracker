@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -21,6 +22,8 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +39,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -183,7 +187,81 @@ IsChatActivityShowing=true;
         txtMessage.clearFocus();
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
+ListView lsvMembers;
+    DrawerLayout mDrawerLayout;
+    ActionBarDrawerToggle mDrawerToggle;
+    private void initializeDrawer(String[] members){
+         lsvMembers= (ListView) findViewById(R.id.lsvPersons);
+        lsvMembers.setAdapter(new ArrayAdapter<String>(this,R.layout.drawerlistlayout,members));
 
+        mDrawerLayout = (android.support.v4.widget.DrawerLayout) findViewById(R.id.mDrawerLayout);
+        // enabling action bar app icon and behaving it as toggle button
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.string.app_name, // nav drawer open - description for accessibility
+                R.string.app_name // nav drawer close - description for accessibility
+        ) {
+
+            boolean isclose=true;
+            public void onDrawerClosed(View view) {
+                isclose=false;
+                //getSupportActionBar().setTitle(mTitle);
+                // calling onPrepareOptionsMenu() to show action bar icons
+                invalidateOptionsMenu();
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                isclose=true;
+                // getSupportActionBar().setTitle(mDrawerTitle);
+                // calling onPrepareOptionsMenu() to hide action bar icons
+                invalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+
+    }
+    /********************************************************************DrawerLayout Methods*/
+    /**
+     * Called when invalidateOptionsMenu() is triggered
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // if nav drawer is opened, hide the action items
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(lsvMembers);
+        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+
+    public void setTitle(CharSequence title) {
+//        mTitle = title;
+//        getSupportActionBar().setTitle(mTitle);
+    }
+
+
+    /**
+     * When using the ActionBarDrawerToggle, you must call it during
+     * onPostCreate() and onConfigurationChanged()...
+     */
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
 
     private void sendMessage(String msg) {
 if(msg==null || msg=="" || msg==" " || msg.length()<1)
@@ -193,13 +271,14 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
             p.ID=-1;
         }
         //[C||E||G](date) [from] : message
-        String message=p.ID+"~~~~~ME~~[C]("+ new Date().toString()+") ["+EditProfileActivity.getName(_this)+"] : "+msg;
+        String message=p.ID+"~~~~~ME~~[C]!"+gpID +"!("+ new Date().toString()+") ["+EditProfileActivity.getName(_this)+"] : "+msg;
         InsertMessages(new String[]{message});
         HashMap<String, String> params;
         params = new HashMap<>();
         params.put("message", msg);
         params.put("imei", Tools.GetImei(getApplicationContext()));
         params.put("gpID", gpID);
+        params.put("msgtype", "1");
         WebServices W = new WebServices(getApplicationContext());
         W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", -1, params, "SetMessage");
         // InsertMessages(txtMessage.getText().toString().split(String.valueOf((char) 26)));
@@ -270,7 +349,7 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
         if (readabledb1 == null)
             readabledb1 = dbh1.getReadableDatabase();
 
-        String[] columns = {DatabaseContracts.Groups.COLUMN_NAME_ID, DatabaseContracts.Groups.COLUMN_NAME_Image, DatabaseContracts.Groups.COLUMN_NAME_Name};
+        String[] columns = {DatabaseContracts.Groups.COLUMN_NAME_ID, DatabaseContracts.Groups.COLUMN_NAME_Image, DatabaseContracts.Groups.COLUMN_NAME_Name, DatabaseContracts.Groups.COLUMN_NAME_Members};
         Cursor c = readabledb1.query(DatabaseContracts.Groups.TABLE_NAME, columns, DatabaseContracts.Groups.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(gpID)}, "", "", "");
         if (c.getCount() > 0) {
             c.moveToFirst();
@@ -281,6 +360,7 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
                 } catch (Exception er) {
                     Toast.makeText(ChatActivity.this, "Image didn't load.", Toast.LENGTH_SHORT).show();
                 }
+                initializeDrawer(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Members)).split("!-!+"));
                 if (c.isLast())
                     break;
                 c.moveToNext();
@@ -313,10 +393,17 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
                 p.isme=false;
                 p.Save();
             }
+            else{
+                p.name=msg.split("\\[")[2].split(":")[0].replace("]","");
+                p.isme=false;
+                p.update();
+            }
             if(p.image==null){
                 p.GetImageFromServer();
             }
             Data = new ContentValues();
+            gpID=msg.split("!")[1];
+            msg=msg.replace("!"+String.valueOf(gpID)+"!","");
             if (msg.contains("[C]")) {
                 Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Data, msg.replace("[C]", ""));
                 Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Group, gpID);
@@ -326,9 +413,22 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
                 if (!ChatActivity.IsChatActivityShowing)
                     MessageEvent.InsertMessage(context, "New message from " + ((p.name == null || p.name == "") ? "Someone" : p.name), p.image,MessageEvent.NEW_MESSAGE_EVENT);
                 msg=msg.split("\\[")[2].split(":")[1].replace("]","");
-                GroupsActivity.UpdateGroup(Integer.valueOf(gpID),null,new Date().toString(),msg,null);
-            } else if (msg.contains("[E]")) {
-                MessageEvent.InsertMessage(context, msg.replace("[E]", ""),MessageEvent.NEW_MESSAGE_EVENT);
+                GroupsActivity.UpdateGroup(Integer.valueOf(gpID),null,new Date().toString(),msg,null,null);
+            } else if (msg.contains("[E-area]"))
+            {
+                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-area]", "").split(":")[3].replace("\"", ""), p.image, MessageEvent.AREA_EVENT);
+            }
+            else if (msg.contains("[E-sos]")){
+                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-sos]", "").split(":")[3].replace("\"", ""), p.image, MessageEvent.SOS_EVENT);
+            }
+            else if (msg.contains("[E-pause]")){
+                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-pause]", "").split(":")[3].replace("\"", ""), p.image, MessageEvent.Pause_Event);
+            }
+            else if (msg.contains("[E-gps]")){
+                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-gps]", "").split(":")[3].replace("\"", ""), p.image, MessageEvent.GPS_EVENT);
+            }
+            else if (msg.contains("[E]")) {
+                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E]", "").split(":")[3].replace("\"", ""), p.image, MessageEvent.NEW_MESSAGE_EVENT);
             } else if (msg.contains("[G]")) {
 //                String[] data = msg.replace("[G]", "").split("~");
 //                LatLng latLng = new LatLng(Double.valueOf(data[0].split(",")[0]), Double.valueOf(data[0].split(",")[1]));
@@ -520,6 +620,11 @@ private static   void ScrollListTOEnd(){
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 

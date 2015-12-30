@@ -45,6 +45,7 @@
     <string name="InvationMessage"> invited you to join his/her group  in TsTracker. If you don\'t have TsTracker, you can download it from here http://www.site.com. Your code is : </string>
 <string name="DontTranslate1">chatIDTag</string>
     <string name="DontTranslate2">personIDTag</string>
+    <string name="SwipeToRight">Swipe to right to see menu</string>
     <string name="DaysToRecharge">Days left to ran out your credit.</string>
     <string name="NoCredit">You have no credit. Please recharge to use application.</string>
     <string name="internetConnectivityError">No Internet Connection. Please check your internet connection.</string>

@@ -26,13 +26,15 @@ public class Objects {
         double latitude=0;
         double longitude=0;
         double radius=0;
+        Boolean isOwner=false;
 
-        public GeofenceItem(String Name,int id,double latitude,double longitude,double radius){
+        public GeofenceItem(String Name,int id,double latitude,double longitude,double radius,Boolean isOwner){
             this.name=Name;
             this.id=id;
             this.latitude=latitude;
             this.longitude=longitude;
             this.radius=radius;
+            this.isOwner=isOwner;
         }
     }
     public class MarkerItem{
@@ -48,6 +50,12 @@ public class Objects {
             _lastLocation=lastLocation;
             _lastmessage=lastmessage;
         }
+    }
+
+    public class MenuItem{
+        public int id;
+        public Bitmap image;
+        public String text;
     }
 
 }

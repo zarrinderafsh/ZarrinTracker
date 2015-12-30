@@ -132,7 +132,7 @@ public class MessageEvent {
 
                 String eventType = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_type));
 
-                Tools.Notificationm(_Context, "TsTracker Events", Data,_Context.getPackageName());
+                Tools.Notificationm(_Context, "TsTracker Events", Data,_Context.getPackageName()+"2");
 
                 String DateTime = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Date));
                 DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -206,7 +206,7 @@ public class MessageEvent {
                     }
                 };
 
-
+                Loc L;
                 ((TextView) view.findViewById(R.id.tvDeleteEvent)).setTag(id);
                 ((TextView) view.findViewById(R.id.tvDeleteEvent)).setOnClickListener(ClickDelete);
                 switch (eventType){
@@ -215,12 +215,15 @@ public class MessageEvent {
                         ((TextView) view.findViewById(R.id.tvLocationEvent)).setText("Open Chat");
                     break;
                     case SOS_EVENT:
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setVisibility(View.INVISIBLE);
+                         L = new Loc();
+                        L.Lat = Lat;
+                        L.Lon = Lon;
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
                         ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
                         view.setBackgroundColor(Color.parseColor("#550000"));
                         break;
                     case AREA_EVENT:
-                        Loc L = new Loc();
+                         L = new Loc();
                         L.Lat = Lat;
                         L.Lon = Lon;
                         ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
@@ -233,12 +236,11 @@ public class MessageEvent {
                         view.setBackgroundColor(Color.parseColor("#D9D372"));
                         break;
                     case Pause_Event:
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(2);
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setVisibility(View.INVISIBLE);
-                        break;
                     case GPS_EVENT:
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(3);
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setVisibility(View.INVISIBLE);
+                        L = new Loc();
+                        L.Lat = Lat;
+                        L.Lon = Lon;
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
                         break;
                     default:
                         break;

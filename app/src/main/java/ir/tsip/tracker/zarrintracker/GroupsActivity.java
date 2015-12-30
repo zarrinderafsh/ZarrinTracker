@@ -98,8 +98,11 @@ public class GroupsActivity extends AppCompatActivity {
             }
         });
 
+        WebServices ws = new WebServices(this);
+        ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(this), "GroupsList");
+        ws=null;
         lsvGroups = (LinearLayout) findViewById(R.id.lsvGroups);
-        GetGroups(context,true);
+        GetGroups(context, true);
     }
 
     public static void GetGroups(Context _context,Boolean createLayers) {
@@ -166,7 +169,7 @@ public class GroupsActivity extends AppCompatActivity {
                         if (GroupList.indexOf(gpID) >= 0) {
 
                             //Update group in database
-                            UpdateGroup(gpID, groupname,null, null,p.image);
+                            UpdateGroup(gpID, groupname,null, null,p.image,s.split("~")[3]);
                         } else {
                             GroupList.add(gpID);
                             isowner = false;
@@ -176,12 +179,12 @@ public class GroupsActivity extends AppCompatActivity {
                             if(isowner && p.image==null)
                             {
                                 p.ID=p.ID;
-                                p.image=ProfileActivity.getProfileImage(96,MainActivity.Base);
+                                p.image=ProfileActivity.getProfileImage(0,MainActivity.Base);
                                 p.name=EditProfileActivity.getName(MainActivity.Base);
                                 p.isme=true;
                                 p.Save();
                             }
-                             InsertGroup(gpID, groupname, "", "", p.image);
+                             InsertGroup(gpID, groupname, "", "", p.image,s.split("~")[3]);
 
                             groupname = groupname.replace(";;;", "");
                             if (groupname == "")
@@ -194,11 +197,15 @@ public class GroupsActivity extends AppCompatActivity {
                 }
             }
         } else if (ObjectCode == 1) {
-            if (Data.length()>2) {
+            if (Data.equals("1")) {
+
+                WebServices ws = new WebServices(context);
+                ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(context), "GroupsList");
+                ws=null;
                 Toast.makeText(context, "Your device registered.", Toast.LENGTH_SHORT).show();
-            } else if(Data=="-1")
+            } else if (Data.equals( "-1"))
                 Toast.makeText(context, "You are registered in group already.", Toast.LENGTH_SHORT).show();
-                else
+            else
                 Toast.makeText(context, "Code is not valid.", Toast.LENGTH_SHORT).show();
 
         }
@@ -215,7 +222,7 @@ public class GroupsActivity extends AppCompatActivity {
         TextView tvLastGroupMessage = (TextView) view.findViewById(R.id.tvLastGroupMessage);
         if (img != null) {
             ImageView ivImageGroup = (ImageView) view.findViewById(R.id.ivGroupPic);
-            ivImageGroup.setImageBitmap(Tools.LoadImage( img,96));
+            ivImageGroup.setImageBitmap(img);
         }
         tvLastGroupMessage.setText(LastMessage);
         View.OnClickListener ClickOpenGroup = new View.OnClickListener() {
@@ -248,7 +255,7 @@ public class GroupsActivity extends AppCompatActivity {
         llGroupList5.setOnClickListener(ClickOpenGroup);
     }
 
-    private static void InsertGroup(Integer gpID, String Name, String Time, String LastMessage, Bitmap img) {
+    private static void InsertGroup(Integer gpID, String Name, String Time, String LastMessage, Bitmap img,String Members) {
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
         SQLiteDatabase db = dbh.getReadableDatabase();
         ContentValues V = new ContentValues();
@@ -257,12 +264,14 @@ public class GroupsActivity extends AppCompatActivity {
         V.put(DatabaseContracts.Groups.COLUMN_NAME_LastTime, Time);
         V.put(DatabaseContracts.Groups.COLUMN_NAME_LastMessage, LastMessage);
         V.put(DatabaseContracts.Groups.COLUMN_NAME_Image, Tools.getBytesFromBitmap(img));
+        if(Members!=null)
+            V.put(DatabaseContracts.Groups.COLUMN_NAME_Members,Members);
         db.insert(DatabaseContracts.Groups.TABLE_NAME, DatabaseContracts.Groups.COLUMN_NAME_ID, V);
         db.close();
         dbh.close();
     }
 
-    public static void UpdateGroup(Integer gpID, String Name, String Time, String LastMessage, Bitmap img) {
+    public static void UpdateGroup(Integer gpID, String Name, String Time, String LastMessage, Bitmap img,String Members) {
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
         SQLiteDatabase db = dbh.getReadableDatabase();
         ContentValues V = new ContentValues();
@@ -275,6 +284,8 @@ public class GroupsActivity extends AppCompatActivity {
             V.put(DatabaseContracts.Groups.COLUMN_NAME_LastMessage, LastMessage);
         if (img != null)
             V.put(DatabaseContracts.Groups.COLUMN_NAME_Image, Tools.getBytesFromBitmap(img));
+        if(Members!=null)
+            V.put(DatabaseContracts.Groups.COLUMN_NAME_Members,Members);
         db.update(DatabaseContracts.Groups.TABLE_NAME, V, DatabaseContracts.Groups.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(gpID)});
         db.close();
         dbh.close();

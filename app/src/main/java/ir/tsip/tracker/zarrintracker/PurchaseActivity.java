@@ -35,7 +35,7 @@ public class PurchaseActivity extends AppCompatActivity {
     TextView txtMessage;
     RadioButton rdb5,rdb10;
 HashMap<String,String> products=new HashMap<>();
-     com.android.vending.billing.IInAppBillingService mService;
+   static  com.android.vending.billing.IInAppBillingService mService;
      ServiceConnection mServiceConn = new ServiceConnection() {
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -66,8 +66,10 @@ HashMap<String,String> products=new HashMap<>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_purchase);
 
+
         rdb5=(RadioButton)findViewById(R.id.rdb5);
         rdb10=(RadioButton)findViewById(R.id.rdb10);
+        rdb10.setChecked(true);
 
         rdb5.setOnClickListener(rdbClick);
         rdb10.setOnClickListener(rdbClick);
@@ -135,6 +137,8 @@ HashMap<String,String> products=new HashMap<>();
                         plan = "family2";
                         code=1001;
                     }
+//                    plan="test";
+//                    code=1003;
                     Bundle bundle = mService.getBuyIntent(3,   PurchaseActivity.this.getPackageName(), plan, "inapp", "developerPayload");
 
                     PendingIntent pendingIntent = bundle.getParcelable("BUY_INTENT");
@@ -171,19 +175,22 @@ Double price=new Double(0);
                 price=new Double(91743);
 
             }
+//            if(requestCode==1003){
+//                price=new Double(70);
+//            }
             HashMap<String, String> params = new HashMap<>();
             try {
                 jo = new JSONObject(purchaseData);
                 //  String sku = jo.getString("productId");
                 params.put("gateway", "bazar");
-                params.put("price",String.valueOf( price) );
+                params.put("price", String.valueOf(price));
                 params.put("Data", purchaseData);
                 params.put("imei", Tools.GetImei(this));
 
                 WebServices w = new WebServices(this);
                 w.addQueue("ir.tsip.tracker.zarrintracker.PurchaseActivity", 0, params, "Purchase");
                 w = null;
-
+token=jo.getString("purchaseToken");
                 Toast.makeText(PurchaseActivity.this, "You have bought the \" + sku + \". Excellent choice, adventurer!", Toast.LENGTH_SHORT).show();
             } catch (JSONException e) {
                 Toast.makeText(PurchaseActivity.this, "Failed to parse purchase data.", Toast.LENGTH_SHORT).show();
@@ -191,12 +198,19 @@ Double price=new Double(0);
             }
         }
     }
-
+static String token="";
 
     public static void backWebServices(int ObjectCode, String Data) throws JSONException {
         if (ObjectCode == 0) {
-            if(Data.startsWith("1"))
-                Tools.HasCredit=true;
+            if(Data.startsWith("1")) {
+                try {
+                    int response = mService.consumePurchase(3, MainActivity.Base.getPackageName(), token);
+                }
+                catch (Exception er){
+
+                }
+                Tools.HasCredit = true;
+            }
         }
     }
     @Override

@@ -49,7 +49,10 @@ ImageButton ibtnEdit,ibtnDelete;
        txtGEoName= ((TextView)convertView.findViewById(R.id.txtGeofenceName));
         ibtnDelete=(ImageButton)convertView.findViewById(R.id.ibtnDeletegeofence);
         ibtnEdit=(ImageButton)convertView.findViewById(R.id.ibtnEditGeofence);
-
+if(!((Objects.GeofenceItem)getItem(position)).isOwner){
+    ibtnDelete.setVisibility(View.INVISIBLE);
+    ibtnEdit.setVisibility(View.INVISIBLE);
+}
         txtGEoName.setText(item.name);
         ibtnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,13 +89,14 @@ ImageButton ibtnEdit,ibtnDelete;
                 db=null;
                 dbh=null;
                 try {
-                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity").putExtra("id",String.valueOf(items.get(position).id)), 0));
+                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext,items.get(position).id , new Intent("ir.tstracker.activity.proximity").putExtra("id",items.get(position).id), 0));
                 }
                 catch (Exception er){
 
                  }
                 items.remove(position);
                 GeofenceItemAdapter.this.notifyDataSetChanged();
+                Tools.setupGeofences(GeofenceItemAdapter.this.activity);
             }
         });
         return  convertView;

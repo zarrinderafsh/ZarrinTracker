@@ -13,8 +13,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -43,11 +45,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
@@ -96,6 +101,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setContentView(R.layout.activity_main);
         Base = this;
+
+        if(Tools.markers!=null) {
+            Tools.markers.clear();
+        }
+        if(ChatActivity._this==null) {
+            ChatActivity._this = new ChatActivity();
+            ChatActivity.context = getApplicationContext();
+        }
+        Tools.lsvMarkers = (HorizontalListView) MainActivity.Base.findViewById(R.id.lsvMarkers);
 
         Tools.setTitleColor(this);
         checkRegistration();
@@ -159,10 +173,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                                               llTop.setLayoutParams(lpTop);
                                               llDown.setLayoutParams(lpDown);
                                               llMain.setVisibility(View.VISIBLE);
-                                              if(Tools.locationMarker!=null)
-                                              Tools.locationMarker.remove();
-                                              Tools.locationMarker=null;
-                                          };
+                                              if (Tools.locationMarker != null)
+                                                  Tools.locationMarker.remove();
+                                              Tools.locationMarker = null;
+                                          }
+
+                                          ;
                                       }
         );
 
@@ -220,12 +236,46 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 Base.startActivity(myIntent);
             }
         });
+initializeDrawer();
+
+//        IntentFilter filter = new IntentFilter("ir.tstracker.activity.proximity");
+//        registerReceiver(new ProximityIntentReceiver(), filter);
+initializeInviteButton();
+
+    }
+
+    private void initializeDrawer(){
 
         /**********************************************************Set DrawLayout*/
         lsvtest = (ListView) findViewById(R.id.lsvtest);
+        MenuItemsAdapter adapter=new MenuItemsAdapter(this);
+        Objects.MenuItem m1= new Objects().new MenuItem();
+        m1.id=1;
+        m1.text="Map";
+        m1.image=BitmapFactory.decodeResource(getResources(), R.drawable.map);
+        adapter.AddItem(m1);
+        Objects.MenuItem m2= new Objects().new MenuItem();
+        m2.id=2;
+        m2.text="Chat";
+        m2.image= BitmapFactory.decodeResource(getResources(), R.drawable.groups);
+        adapter.AddItem(m2);
+        Objects.MenuItem m3= new Objects().new MenuItem();
+        m3.id=3;
+        m3.text="Places";
+        m3.image=BitmapFactory.decodeResource(getResources(), R.drawable.places);
+        adapter.AddItem(m3);
+        Objects.MenuItem m4= new Objects().new MenuItem();
+        m4.id=4;
+        m4.text="Charge";
+        m4.image=BitmapFactory.decodeResource(getResources(),R.drawable.about);
+        adapter.AddItem(m4);
+        Objects.MenuItem m5= new Objects().new MenuItem();
+        m5.id=5;
+        m5.text="About";
+        m5.image=BitmapFactory.decodeResource(getResources(),R.drawable.about);
+        adapter.AddItem(m5);
 
-        lsvtest.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawerlistlayout, new String[]{"Map", "Chat","Add Place", "About"}));
+        lsvtest.setAdapter(adapter);
 
 
         mTitle = mDrawerTitle = getTitle();
@@ -250,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
             public void onDrawerOpened(View drawerView) {
                 isclose=true;
-               // getSupportActionBar().setTitle(mDrawerTitle);
+                // getSupportActionBar().setTitle(mDrawerTitle);
                 // calling onPrepareOptionsMenu() to hide action bar icons
                 invalidateOptionsMenu();
             }
@@ -278,6 +328,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                         Base.startActivity(myIntent);
                         break;
                     case 3:
+                        myIntent = new Intent(Base, PurchaseActivity.class);
+                        myIntent.putExtra("msg","Charge Account");
+                        Base.startActivity(myIntent);
+                        break;
+                    case 4:
                         myIntent = new Intent(Base, about.class);
                         Base.startActivity(myIntent);
                         break;
@@ -285,11 +340,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
             }
         });
-
-
-//        IntentFilter filter = new IntentFilter("ir.tstracker.activity.proximity");
-//        registerReceiver(new ProximityIntentReceiver(), filter);
-initializeInviteButton();
+        ((ImageView)findViewById(R.id.imgSwipetoright)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerToggle.onDrawerOpened(mDrawerLayout);
+            }
+        });
 
     }
 
@@ -358,12 +414,12 @@ initializeInviteButton();
                     ContentValues Val = new ContentValues();
                     DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
                     SQLiteDatabase db=dbh.getReadableDatabase();
-                    if(db.query(DatabaseContracts.Geogences.TABLE_NAME,new String[]{DatabaseContracts.Geogences.COLUMN_NAME_ID},"",null,"","","").getCount()>1)
+                    if(db.query(DatabaseContracts.Geogences.TABLE_NAME,new String[]{DatabaseContracts.Geogences.COLUMN_NAME_ID},"",null,"","","").getCount()>0)
                     return;
                     db= dbh.getWritableDatabase();
 
                     String[] geos = Data.split("\\|");
-                    //                               Name~Points~radius~clientAreaCode|
+                    //                               Name~Points~radius~clientAreaCode~0 Or 1|
                     for (String g : geos) {
                         Val = new ContentValues();
                         Val.clear();
@@ -371,9 +427,19 @@ initializeInviteButton();
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, g.split("~")[1]);
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, g.split("~")[2]);
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_ID, g.split("~")[3]);
+                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_isOwner,Integer.valueOf( g.split("~")[4]));
                         if(db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val)>0)
                         {
-                            g=g+" ";
+//                            Circle circle=  Tools.GoogleMapObj.addCircle(new CircleOptions().center(
+//                                    new LatLng(Double.valueOf(g.split("~")[1].split(",")[0]),
+//                                            Double.valueOf(g.split("~")[1].split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(g.split("~")[2])));
+//                            LocationListener.locationManager.addProximityAlert(
+//                                    circle.getCenter().latitude,
+//                                    circle.getCenter().longitude,
+//                                    (float)circle.getRadius(),
+//                                    -1,
+//                                    PendingIntent.getBroadcast(LocationListener.mContext,Integer.valueOf(g.split("~")[3]), new Intent("ir.tstracker.activity.proximity").putExtra("id",Integer.valueOf(g.split("~")[3])), 0));
+
                         }
                  }
                     db.close();
@@ -594,7 +660,9 @@ Boolean isfirst=true;
                     runOnUiThread(new Runnable() {
                         public void run() {
                             //every 10 seconds
-                            if(counter % 10==0) {
+                            //plus 1 because avoid running at first time and save time
+                            //to get geofences
+                            if((counter+1) % 10==0) {
                                 if (mMapFragment != null)
                                     Tools.setUpMap(mMapFragment.getMap(), getApplicationContext(), isfirst);
                                 if (isfirst)
@@ -606,9 +674,10 @@ Boolean isfirst=true;
                             {
                                 //Update groups
                                 WebServices ws = new WebServices(MainActivity.this);
-                                ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(MainActivity.this), "GroupsList");
                                 ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.this), "PurhaseDetails");
                                 ws = null;
+                                //Update persons images
+                                Persons.UpdateImages();
                             }
                             //Counter repeat every one hour
                             if(counter>=60*60*60){
@@ -712,9 +781,6 @@ Boolean isfirst=true;
 
             @Override
             public void run() {
-                if(Tools.markers!=null) {
-                    Tools.markers.clear();
-                }
                 doubleBackToExitPressedOnce = false;
             }
         }, 2000);
@@ -769,6 +835,7 @@ Boolean isfirst=true;
                     int id = RG.getCheckedRadioButtonId();
                     int hour = (int) ((RadioButton) RG.findViewById(id)).getTag();
                     LocationListener.StartPause(hour);
+                    (new EventManager(MainActivity.Base)).AddEvevnt(" Paused tracking", "-4", MessageEvent.Pause_Event);
                 } catch (Exception ex) {
 
                 }
