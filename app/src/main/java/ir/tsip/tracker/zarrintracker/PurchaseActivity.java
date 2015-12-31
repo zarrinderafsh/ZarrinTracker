@@ -163,11 +163,11 @@ int vs=0;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
-        String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
-        String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
-Double price=new Double(0);
         if (resultCode == RESULT_OK) {
+            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
+            String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
+            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
+            Double price=new Double(0);
             if (requestCode == 1001) {
                 price=new Double(45871);
             }

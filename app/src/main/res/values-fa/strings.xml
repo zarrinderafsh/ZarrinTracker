@@ -68,6 +68,7 @@
     <string name="takephoto">گرفتن عکس</string>
     <string name="title_activity_chat"></string>
     <string name="userProfile">پروفایل کاربر</string>
-    <string name="txtPurchaseMessage"></string>
+    <string name="txtPurchaseMessage">اکانت خودرا برای استفاده از امکانات نرم افزار برای مدت بیشتر شارژ کنید.</string>
     <string name="charge">شارژ</string>
+    <string name="openChat">چت</string>
 </resources>

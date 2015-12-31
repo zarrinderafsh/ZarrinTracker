@@ -413,10 +413,11 @@ initializeInviteButton();
         else if(ObjectCode==5)//purchasedetails
         {
             if(Float.valueOf(Data.split(",")[0])>0) {
-                MessageEvent.InsertMessage(MainActivity.Base,
+                String msg=
                         MainActivity.Base.getResources().getString(R.string.creditAmount)+" " + Data.split(",")[2] + "\n" +
-                                Data.split(",")[1]+" " + MainActivity.Base.getResources().getString(R.string.groupCOunts) + "\n" +
-                                Data.split(",")[0] + " " + MainActivity.Base.getResources().getString(R.string.DaysToRecharge), MessageEvent.CREADIT_EVENT);
+                                Data.split(",")[1]+" " + MainActivity.Base.getResources().getString(R.string.groupCOunts) + "\n" ;
+                     msg+=           (Data.split(",")[0].equals("Infinity"))? "":" " + MainActivity.Base.getResources().getString(R.string.DaysToRecharge);
+                MessageEvent.InsertMessage(MainActivity.Base,msg, MessageEvent.CREADIT_EVENT);
                 Tools.HasCredit = true;
             }
             else

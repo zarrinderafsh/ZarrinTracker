@@ -212,7 +212,7 @@ public class MessageEvent {
                 switch (eventType){
                     case NEW_MESSAGE_EVENT:
                         ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(0);
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setText("Open Chat");
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setText(view.getResources().getString(R.string.openChat));
                     break;
                     case SOS_EVENT:
                          L = new Loc();
@@ -232,7 +232,7 @@ public class MessageEvent {
                         break;
                     case CREADIT_EVENT:
                         ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(1);
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setText("Charge");
+                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setText(view.getResources().getString(R.string.charge));
                         view.setBackgroundColor(Color.parseColor("#D9D372"));
                         break;
                     case Pause_Event:

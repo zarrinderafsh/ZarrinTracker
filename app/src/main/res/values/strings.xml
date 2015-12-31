@@ -36,7 +36,6 @@
     <string name="InviteBuddies">Invite Others to your group.</string>
     <string name="LeaveGroupMessage">Are you sure you want to leave this group!? All the messages will be deleted.</string>
     <string name="title_activity_purchase" translatable="false">PurchaseActivity</string>
-    <string name="txtPurchaseMessage" translatable="false">You are purchasing for one month to get more. Upgrade to family version for features: \n - Invite 4 more person \n - 5 more geofences \n - chat to others \n - Check out your group \n - Be informed when others enter or exit geofences \n - Send rate decreased for faster location updates \n PURCHASE NOW FOR ONE MONTH WITH ONLY 3$</string>
     <string name="btnPurchase">Purchase</string>
     <string name="btnPurchaseWaitMessage">We are getting plans and items.Please wait!!!</string>
     <string name="gpsIsOff">GPS is off. Turn it on to locate you.</string>
@@ -92,4 +91,6 @@
     <string name="add">Add</string>
     <string name="location">Location</string>
     <string name="charge">Charge</string>
+    <string name="openChat">Open Chat</string>
+    <string name="txtPurchaseMessage">Purchase to use unique application features longer.</string>
 </resources>
