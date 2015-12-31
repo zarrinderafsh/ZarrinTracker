@@ -1,8 +1,10 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,9 +41,16 @@ public class MenuItemsAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.menu_item, null);
 
-        final  Objects.MenuItem item=(Objects.MenuItem)this.getItem(position);
         TextView txtText=(TextView)convertView.findViewById(R.id.txtText);
         ImageView imgphoto=(ImageView)convertView.findViewById(R.id.imgPhoto);
+        final  Objects.MenuItem item=(Objects.MenuItem)this.getItem(position);
+        if(item.id==-1){
+            convertView.setBackgroundColor(Color.parseColor("#ff0a86cd"));
+            ViewGroup.LayoutParams layoutParams=imgphoto.getLayoutParams();
+            layoutParams.height=64;
+            layoutParams.width=64;
+            imgphoto.setLayoutParams(layoutParams);
+        }
         if(item.image==null)
             item.image= BitmapFactory.decodeResource(_activity.getResources(), R.drawable.sample_user);
         imgphoto.setImageBitmap(item.image);

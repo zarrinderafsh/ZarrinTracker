@@ -123,19 +123,6 @@ _context=this;
 
             }
             else if(Data.startsWith("-1")){
-//                DatabaseHelper dbh = new DatabaseHelper(_context);
-//                SQLiteDatabase db = dbh.getWritableDatabase();
-//                db.delete(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(Data.split("~")[3])});
-//                db.close();
-//                dbh.close();
-//                db=null;
-//                dbh=null;
-//                try {
-//                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity").putExtra("id",String.valueOf(Data.split("~")[3])), 0));
-//                }
-//                catch (Exception er){
-//
-//                }
                 Intent myIntent = new Intent(_context, PurchaseActivity.class);
                  myIntent.putExtra("msg","You don't have enough credit.");
                _context.startActivity(myIntent);

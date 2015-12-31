@@ -65,12 +65,12 @@ public class GroupsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(GroupsActivity.this);
-                builder.setTitle("Join Group");
+                builder.setTitle(getResources().getString(R.string.joinGroups));
                 LayoutInflater inflate = GroupsActivity.this.getLayoutInflater();
                 View view = inflate.inflate(R.layout.activity_join_group, null);
                 builder.setView(view);
                 final EditText txtCode = (EditText) view.findViewById(R.id.txtJoinCode);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -86,7 +86,7 @@ public class GroupsActivity extends AppCompatActivity {
 
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -179,7 +179,7 @@ public class GroupsActivity extends AppCompatActivity {
                             if(isowner && p.image==null)
                             {
                                 p.ID=p.ID;
-                                p.image=ProfileActivity.getProfileImage(0,MainActivity.Base);
+                                p.image=ProfileActivity.getProfileImage(96,MainActivity.Base);
                                 p.name=EditProfileActivity.getName(MainActivity.Base);
                                 p.isme=true;
                                 p.Save();
@@ -189,7 +189,8 @@ public class GroupsActivity extends AppCompatActivity {
                             groupname = groupname.replace(";;;", "");
                             if (groupname == "")
                                 groupname = "NoName";
-                           // CreateGroupLayer(gpID, groupname, "", "", p.image, isowner);
+
+                            CreateGroupLayer(gpID, groupname, "", "", p.image, isowner);
                         }
                     }
                 } catch (Exception ex) {
@@ -202,11 +203,11 @@ public class GroupsActivity extends AppCompatActivity {
                 WebServices ws = new WebServices(context);
                 ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(context), "GroupsList");
                 ws=null;
-                Toast.makeText(context, "Your device registered.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.deviceREgistered), Toast.LENGTH_SHORT).show();
             } else if (Data.equals( "-1"))
-                Toast.makeText(context, "You are registered in group already.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.devicesAlreadyRegistered), Toast.LENGTH_SHORT).show();
             else
-                Toast.makeText(context, "Code is not valid.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,context.getResources().getString(R.string.InvalidCOde), Toast.LENGTH_SHORT).show();
 
         }
     }

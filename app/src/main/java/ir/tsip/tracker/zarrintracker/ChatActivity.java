@@ -95,7 +95,7 @@ IsChatActivityShowing=true;
                     w.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "GenerateJoinKey");
                     w = null;
                     builder.setView(view);
-                    builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(getResources().getString(R.string.send), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             try {
@@ -106,7 +106,7 @@ IsChatActivityShowing=true;
                             }
                         }
                     });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -192,7 +192,25 @@ ListView lsvMembers;
     ActionBarDrawerToggle mDrawerToggle;
     private void initializeDrawer(String[] members){
          lsvMembers= (ListView) findViewById(R.id.lsvPersons);
-        lsvMembers.setAdapter(new ArrayAdapter<String>(this,R.layout.drawerlistlayout,members));
+        MenuItemsAdapter adapter=new MenuItemsAdapter(this);
+        Objects.MenuItem m;
+        int indexer=-1;
+        m=new Objects().new MenuItem();
+        m.id=indexer;
+        m.image=((BitmapDrawable)imgGroupPhoto.getDrawable()).getBitmap();
+        m.text=txtGpName.getText().toString();
+        adapter.AddItem(m);
+        indexer++;
+        for (String s:members             ) {
+            if(s.equals("+"))
+                continue;
+            m=new Objects().new MenuItem();
+            m.id=indexer;
+                m.text=s;
+            adapter.AddItem(m);
+            indexer++;
+        }
+        lsvMembers.setAdapter(adapter);
 
         mDrawerLayout = (android.support.v4.widget.DrawerLayout) findViewById(R.id.mDrawerLayout);
         // enabling action bar app icon and behaving it as toggle button
@@ -222,6 +240,12 @@ ListView lsvMembers;
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        ((ImageView)findViewById(R.id.imgSwipetoright)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(Gravity.RIGHT);
+            }
+        });
 
     }
     /********************************************************************DrawerLayout Methods*/
@@ -292,7 +316,6 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
         if (ObjectCode == 1) {
             if (_this == null || Data == "null")
                 return;
-            Log.e("msg", "backwebservice");
             _this.InsertMessages(Data.split(","));
         } else if (ObjectCode == 0) {
             if (Data != ("0")) {
@@ -335,7 +358,7 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
                 _this.setResult(1);//1 means group activity will be finished.
                 _this.finish();
             } else
-                Toast.makeText(_this, "Something wrong happened.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_this,_this.getResources().getString(R.string.somethingWrong) , Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -358,7 +381,7 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
                 try {
                     imgGroupPhoto.setImageBitmap(Tools.LoadImage(c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Image)), 96));
                 } catch (Exception er) {
-                    Toast.makeText(ChatActivity.this, "Image didn't load.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this,getResources().getString(R.string.imageDidntLoad), Toast.LENGTH_SHORT).show();
                 }
                 initializeDrawer(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Members)).split("!-!+"));
                 if (c.isLast())
@@ -411,47 +434,25 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
                 long id = db.insert(DatabaseContracts.ChatLog.TABLE_NAME, DatabaseContracts.ChatLog.COLUMN_NAME_ID, Data);
                 CreateGroupLayer(new Date(), msg, p.image, 0, (int) id,p.ID);
                 if (!ChatActivity.IsChatActivityShowing)
-                    MessageEvent.InsertMessage(context, "New message from " + ((p.name == null || p.name == "") ? "Someone" : p.name), p.image,MessageEvent.NEW_MESSAGE_EVENT);
+                    MessageEvent.InsertMessage(context, getResources().getString(R.string.NewMessage)+" "+ ((p.name == null || p.name == "") ? getResources().getString(R.string.someone) : p.name), p.image,MessageEvent.NEW_MESSAGE_EVENT);
                 msg=msg.split("\\[")[2].split(":")[1].replace("]","");
                 GroupsActivity.UpdateGroup(Integer.valueOf(gpID),null,new Date().toString(),msg,null,null);
             } else if (msg.contains("[E-area]"))
             {
-                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-area]", "").split(":")[3].replace("\"", ""), p.image, MessageEvent.AREA_EVENT);
+                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-area]", "").split(":")[3].replace("\"", "").replace("]", ""), p.image, MessageEvent.AREA_EVENT);
             }
             else if (msg.contains("[E-sos]")){
-                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-sos]", "").split(":")[3].replace("\"", ""), p.image, MessageEvent.SOS_EVENT);
+                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-sos]", "").split(":")[3].replace("\"", "").replace("]",""), p.image, MessageEvent.SOS_EVENT);
             }
             else if (msg.contains("[E-pause]")){
-                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-pause]", "").split(":")[3].replace("\"", ""), p.image, MessageEvent.Pause_Event);
+                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-pause]", "").split(":")[3].replace("\"", "").replace("]", ""), p.image, MessageEvent.Pause_Event);
             }
             else if (msg.contains("[E-gps]")){
-                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-gps]", "").split(":")[3].replace("\"", ""), p.image, MessageEvent.GPS_EVENT);
+                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-gps]", "").split(":")[3].replace("\"", "").replace("]", ""), p.image, MessageEvent.GPS_EVENT);
             }
             else if (msg.contains("[E]")) {
-                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E]", "").split(":")[3].replace("\"", ""), p.image, MessageEvent.NEW_MESSAGE_EVENT);
+                MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E]", "").split(":")[3].replace("\"", "").replace("]",""), p.image, MessageEvent.NEW_MESSAGE_EVENT);
             } else if (msg.contains("[G]")) {
-//                String[] data = msg.replace("[G]", "").split("~");
-//                LatLng latLng = new LatLng(Double.valueOf(data[0].split(",")[0]), Double.valueOf(data[0].split(",")[1]));
-//                Circle circle = Tools.GoogleMapObj.addCircle(new CircleOptions().center(latLng).fillColor(Color.RED).strokeColor(Color.RED).strokeWidth(1).radius(Integer.valueOf(data[1])));
-//                try {
-//                    LocationListener.locationManager.addProximityAlert(circle.getCenter().latitude, circle.getCenter().longitude, (float) circle.getRadius(), -1,   PendingIntent.getBroadcast(LocationListener.mContext, 0, new Intent("ir.tstracker.activity.proximity"), 0));
-//                } catch (SecurityException er) {
-//
-//                }
-//
-//                ContentValues Val = new ContentValues();
-//                DatabaseHelper dbh = new DatabaseHelper(ChatActivity.this);
-//                SQLiteDatabase db = dbh.getWritableDatabase();
-//                try {
-//                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, latLng.toString());
-//                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, data[2]);
-//                    Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, data[1]);
-//                    db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
-//                } catch (Exception er) {
-//
-//                }
-//                db.close();
-//                dbh.close();
             }
             Data = null;
         }
@@ -530,7 +531,11 @@ String[] msgs=Message.replace("[", "").replace("]", "").split(" : ");
             ivChatPic.setImageBitmap(ProfileActivity.getProfileImage(96,_this));
         }
         view.setOnLongClickListener(new View.OnLongClickListener() {
-            final CharSequence[] items = {"Details","Delete", "Copy", "Cancel"};
+            final CharSequence[] items = {
+                    _this.getResources().getString(R.string.details),
+                    _this.getResources().getString(R.string.delete),
+                    _this.getResources().getString(R.string.copy),
+                    _this.getResources().getString(R.string.cancel)};
 
             @Override
             public boolean onLongClick(final View v) {
@@ -541,19 +546,19 @@ String[] msgs=Message.replace("[", "").replace("]", "").split(" : ");
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
-                        if (items[item].equals("Delete")) {
+                        if (items[item].equals(_this.getResources().getString(R.string.delete))) {
                             lsvChat.removeView(v);
                             _this.deleteMessage(Integer.valueOf(v.getTag(R.string.DontTranslate1).toString()));
-                        } else if (items[item].equals("Copy")) {
+                        } else if (items[item].equals(_this.getResources().getString(R.string.copy))) {
                             ClipboardManager clipboard = (ClipboardManager) _this.getSystemService(CLIPBOARD_SERVICE);
                             ClipData clip = ClipData.newPlainText("Message", ((TextView) v.findViewById(R.id.tvLastChatMessage)).getText());
                             clipboard.setPrimaryClip(clip);
 
-                        } else if (items[item].equals("Cancel")) {
+                        } else if (items[item].equals(_this.getResources().getString(R.string.cancel))) {
                             dialog.dismiss();
-                        }else if (items[item].equals("Details")) {
+                        }else if (items[item].equals(_this.getResources().getString(R.string.details))) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(_this);
-                            builder.setTitle("User Profile");
+                            builder.setTitle(_this.getResources().getString(R.string.userProfile));
                             LayoutInflater inflate = _this.getLayoutInflater();
                             View view = inflate.inflate(R.layout.person_details, null);
                             Persons p=new Persons();
@@ -561,7 +566,7 @@ String[] msgs=Message.replace("[", "").replace("]", "").split(" : ");
                             ((ImageView) view.findViewById(R.id.imgUserPhoto)).setImageBitmap(p.image);
                             ((TextView) view.findViewById(R.id.txtName)).setText(p.name);
                             builder.setView(view);
-                            builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                            builder.setNegativeButton(_this.getResources().getString(R.string.close), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 

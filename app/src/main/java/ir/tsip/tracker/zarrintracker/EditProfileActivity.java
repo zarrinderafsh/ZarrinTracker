@@ -118,7 +118,7 @@ public class EditProfileActivity extends ActionBarActivity {
     public static void backWebServices (int ObjectCode, String Data)
     {
         try {
-            Toast.makeText(mContext, "Send save success.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, mContext.getResources().getString(R.string.successful), Toast.LENGTH_SHORT).show();
         }
         catch (Exception ex)
         {

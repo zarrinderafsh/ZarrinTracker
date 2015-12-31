@@ -25,10 +25,10 @@ public class ImageListAdapter extends ArrayAdapter<Objects.MarkerItem> {
     Activity _activity;
     LayoutInflater inflater;
 
-    public ImageListAdapter(Activity activity , ArrayList<Objects.MarkerItem> mitems){
-        super(activity, R.layout.marker_item_layout , mitems);
+    public ImageListAdapter(Activity activity ){
+        super(activity, R.layout.marker_item_layout );
         _activity=activity;
-        items=mitems;
+        items=new ArrayList<>();
     }
     @Override
     public int getCount() {

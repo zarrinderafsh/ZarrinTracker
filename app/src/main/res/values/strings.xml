@@ -2,51 +2,94 @@
 <resources>
 
     <string name="app_name">tsTracker</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world" translatable="false">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_splash">SplashActivity</string>
-    <string name="title_activity_splash_activity">splash_activity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_splash" translatable="false">SplashActivity</string>
+    <string name="title_activity_splash_activity" translatable="false">splash_activity</string>
+    <string name="dummy_button" translatable="false">Dummy Button</string>
+    <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
+    <string name="title_activity_map" translatable="false">MapActivity</string>
     <string name="ivGPS">Location</string>
-    <string name="tvGPS">GPS</string>
-    <string name="ivWiFi">WiFi</string>
-    <string name="ivArrowDown">Arrow Down</string>
-    <string name="tvNetwork">Network</string>
-    <string name="tvWifi">Wi-Fi</string>
+    <string name="tvGPS" translatable="false">GPS</string>
+    <string name="ivWiFi" translatable="false">WiFi</string>
+    <string name="ivArrowDown" translatable="false">Arrow Down</string>
+    <string name="tvNetwork" translatable="false">Network</string>
+    <string name="tvWifi" translatable="false">Wi-Fi</string>
     <string name="ivNetLocation">Network Location</string>
-    <string name="ivWiFiDesc">Network Location</string>
-    <string name="title_activity_invate">Invate</string>
+    <string name="ivWiFiDesc" translatable="false">Network Location</string>
+    <string name="title_activity_invate" translatable="false">Invate</string>
     <string name="InvetionDescription">Share the generated code with others to join your group.</string>
-    <string name="tvzTrackerText">zTRACKER</string>
-    <string name="ivCloseMapString">CloseMap</string>
-    <string name="title_activity_profile">ProfileActivity</string>
-    <string name="title_activity_join_group">JoinGroupActivity</string>
-    <string name="title_activity_chat">ChatActivity</string>
+    <string name="tvzTrackerText" translatable="false">TsTracker</string>
+    <string name="ivCloseMapString" translatable="false">CloseMap</string>
+    <string name="title_activity_profile" translatable="false">ProfileActivity</string>
+    <string name="title_activity_join_group" translatable="false">JoinGroupActivity</string>
+    <string name="title_activity_chat" translatable="false">ChatActivity</string>
     <string name="personname">Your name</string>
-    <string name="PersonImage">PersonImage</string>
-    <string name="title_activity_groups">GroupsActivity</string>
-    <string name="title_activity_about">about</string>
-    <string name="title_activity_places">Places</string>
-    <string name="title_activity_map_places">Map</string>
+    <string name="PersonImage" translatable="false">PersonImage</string>
+    <string name="title_activity_groups" translatable="false">GroupsActivity</string>
+    <string name="title_activity_about" translatable="false">about</string>
+    <string name="title_activity_places" translatable="false">Places</string>
+    <string name="title_activity_map_places" translatable="false">Map</string>
     <string name="GroupLabel">Group</string>
     <string name="JoinGroup">Join Group</string>
     <string name="EnterJoinCode">ENTER CODE HERE!</string>
     <string name="InviteBuddies">Invite Others to your group.</string>
     <string name="LeaveGroupMessage">Are you sure you want to leave this group!? All the messages will be deleted.</string>
-    <string name="title_activity_purchase">PurchaseActivity</string>
-    <string name="txtPurchaseMessage">You are purchasing for one month to get more. Upgrade to family version for features: \n - Invite 4 more person \n - 5 more geofences \n - chat to others \n - Check out your group \n - Be informed when others enter or exit geofences \n - Send rate decreased for faster location updates \n PURCHASE NOW FOR ONE MONTH WITH ONLY 3$</string>
+    <string name="title_activity_purchase" translatable="false">PurchaseActivity</string>
+    <string name="txtPurchaseMessage" translatable="false">You are purchasing for one month to get more. Upgrade to family version for features: \n - Invite 4 more person \n - 5 more geofences \n - chat to others \n - Check out your group \n - Be informed when others enter or exit geofences \n - Send rate decreased for faster location updates \n PURCHASE NOW FOR ONE MONTH WITH ONLY 3$</string>
     <string name="btnPurchase">Purchase</string>
     <string name="btnPurchaseWaitMessage">We are getting plans and items.Please wait!!!</string>
     <string name="gpsIsOff">GPS is off. Turn it on to locate you.</string>
-    <string name="GoogleMapTitle">TsTracker</string>
+    <string name="GoogleMapTitle" translatable="false">TsTracker</string>
     <string name="haveNoLocationData">Currently have no location data;Still trying to get.</string>
     <string name="InvationMessage"> invited you to join his/her group  in TsTracker. If you don\'t have TsTracker, you can download it from here http://www.site.com. Your code is : </string>
-<string name="DontTranslate1">chatIDTag</string>
-    <string name="DontTranslate2">personIDTag</string>
+<string name="DontTranslate1" translatable="false">chatIDTag</string>
+    <string name="DontTranslate2" translatable="false">personIDTag</string>
     <string name="SwipeToRight">Swipe to right to see menu</string>
     <string name="DaysToRecharge">Days left to ran out your credit.</string>
+    <string name="creditAmount"> Your credit is </string>
+    <string name="groupCOunts"> person(s) are in your group.</string>
+    <string name="NewMessage">New message from </string>
+    <string name="imageDidntLoad">Image didn\'t load. </string>
+    <string name="somethingWrong">Something wrong happened.</string>
+    <string name="send">Send</string>
+    <string name="joinGroups">Join Group</string>
+    <string name="cancel">Cancel</string>
+    <string name="someone">Someone</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
+    <string name="details">Details</string>
+    <string name="close">Close</string>
+    <string name="successful">Successful</string>
+    <string name="ok" translatable="false">Okay</string>
+    <string name="userProfile">User Profile</string>
     <string name="NoCredit">You have no credit. Please recharge to use application.</string>
     <string name="internetConnectivityError">No Internet Connection. Please check your internet connection.</string>
+    <string name="deviceREgistered">Device Registered</string>
+    <string name="devicesAlreadyRegistered">Devices Already Registered</string>
+    <string name="InvalidCOde">Invalid Code</string>
+    <string name="appShortDescribe">Track your family, employees, cars, phones, patients and enjoy chat.</string>
+    <string name="map">Map</string>
+    <string name="groupsToChat">Groups To Chat</string>
+    <string name="chargeMyAccount">Charge My Account</string>
+    <string name="placesAndAreas">Places And Areas</string>
+    <string name="about">About TsTracker</string>
+    <string name="pause">Pause</string>
+    <string name="clickBackAgain"> Please Click Back Again To Exit</string>
+    <string name="hour">Hour</string>
+    <string name="chooseName">Choose A Name</string>
+    <string name="takephoto"> Take a photo</string>
+    <string name="chooseFromLibrary">Choose from library</string>
+    <string name="imageUploaded">Image uploaded on server.</string>
+    <string name="madeBy"> Made By \n Ali Heidari \n Morteza Zarrin Derafsh </string>
+    <string name="name">Name</string>
+    <string name="phone">Phone</string>
+    <string name="email">Email</string>
+    <string name="save">Save</string>
+    <string name="codeDuration">Your generated key is valid for 15 minutes.</string>
+    <string name="joinGroupsUnlimited">You can join groups unlimited.</string>
+    <string name="groups">Groups</string>
+    <string name="add">Add</string>
+    <string name="location">Location</string>
+    <string name="charge">Charge</string>
 </resources>

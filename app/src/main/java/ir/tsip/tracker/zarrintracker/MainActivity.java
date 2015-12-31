@@ -26,6 +26,7 @@ import android.os.Vibrator;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -249,29 +250,39 @@ initializeInviteButton();
         /**********************************************************Set DrawLayout*/
         lsvtest = (ListView) findViewById(R.id.lsvtest);
         MenuItemsAdapter adapter=new MenuItemsAdapter(this);
+        Objects.MenuItem menuTitle= new Objects().new MenuItem();
+        menuTitle.id=-1;
+        menuTitle.text=getResources().getString(R.string.appShortDescribe);
+        menuTitle.image=BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+        adapter.AddItem(menuTitle);
+        Objects.MenuItem m0= new Objects().new MenuItem();
+        m0.id=0;
+        m0.text=EditProfileActivity.getName(this);
+        m0.image=ProfileActivity.getProfileImage(96,this);
+        adapter.AddItem(m0);
         Objects.MenuItem m1= new Objects().new MenuItem();
         m1.id=1;
-        m1.text="Map";
+        m1.text=getResources().getString(R.string.map);
         m1.image=BitmapFactory.decodeResource(getResources(), R.drawable.map);
         adapter.AddItem(m1);
         Objects.MenuItem m2= new Objects().new MenuItem();
         m2.id=2;
-        m2.text="Chat";
+        m2.text=getResources().getString(R.string.groupsToChat);
         m2.image= BitmapFactory.decodeResource(getResources(), R.drawable.groups);
         adapter.AddItem(m2);
         Objects.MenuItem m3= new Objects().new MenuItem();
         m3.id=3;
-        m3.text="Places";
+        m3.text=getResources().getString(R.string.placesAndAreas);
         m3.image=BitmapFactory.decodeResource(getResources(), R.drawable.places);
         adapter.AddItem(m3);
         Objects.MenuItem m4= new Objects().new MenuItem();
         m4.id=4;
-        m4.text="Charge";
-        m4.image=BitmapFactory.decodeResource(getResources(),R.drawable.about);
+        m4.text=getResources().getString(R.string.chargeMyAccount);
+        m4.image=BitmapFactory.decodeResource(getResources(),R.drawable.money);
         adapter.AddItem(m4);
         Objects.MenuItem m5= new Objects().new MenuItem();
         m5.id=5;
-        m5.text="About";
+        m5.text=getResources().getString(R.string.about);
         m5.image=BitmapFactory.decodeResource(getResources(),R.drawable.about);
         adapter.AddItem(m5);
 
@@ -314,25 +325,29 @@ initializeInviteButton();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 Intent myIntent;
                 switch (position) {
-                    case 0:
+                    case 1:
+                        myIntent = new Intent(Base, ProfileActivity.class);
+                        Base.startActivity(myIntent);
+                        break;
+                    case 2:
                         onTouch(lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 360, 520, 1));
                         onTouch(lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, 548, 906, 1));
                         onTouch(lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 548, 906, 1));
                         break;
-                    case 1:
+                    case 3:
                         myIntent = new Intent(Base, GroupsActivity.class);
                         Base.startActivity(myIntent);
                         break;
-                    case 2:
+                    case 4:
                         myIntent = new Intent(Base, Places.class);
                         Base.startActivity(myIntent);
                         break;
-                    case 3:
+                    case 5:
                         myIntent = new Intent(Base, PurchaseActivity.class);
                         myIntent.putExtra("msg","Charge Account");
                         Base.startActivity(myIntent);
                         break;
-                    case 4:
+                    case 6:
                         myIntent = new Intent(Base, about.class);
                         Base.startActivity(myIntent);
                         break;
@@ -343,7 +358,7 @@ initializeInviteButton();
         ((ImageView)findViewById(R.id.imgSwipetoright)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDrawerToggle.onDrawerOpened(mDrawerLayout);
+                mDrawerLayout.openDrawer(Gravity.LEFT);
             }
         });
 
@@ -355,7 +370,7 @@ initializeInviteButton();
         inInvite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Invite Others");
+                builder.setTitle(getResources().getString(R.string.InviteBuddies));
                 LayoutInflater inflate = getLayoutInflater();
                 View view = inflate.inflate(R.layout.activity_invate, null);
                 ChatActivity.txtGeneratedJoinCode = (TextView) view.findViewById(R.id.txtGeneratedJOinCode);
@@ -367,7 +382,7 @@ initializeInviteButton();
                 w.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "GenerateJoinKey");
                 w = null;
                 builder.setView(view);
-                builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getResources().getString(R.string.send), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -378,7 +393,7 @@ initializeInviteButton();
                         }
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -397,9 +412,12 @@ initializeInviteButton();
         }
         else if(ObjectCode==5)//purchasedetails
         {
-            if(Integer.valueOf(Data)>0) {
-                MessageEvent.InsertMessage(MainActivity.Base, Data + " " + MainActivity.Base.getResources().getString(R.string.DaysToRecharge),MessageEvent.CREADIT_EVENT);
-            Tools.HasCredit=true;
+            if(Float.valueOf(Data.split(",")[0])>0) {
+                MessageEvent.InsertMessage(MainActivity.Base,
+                        MainActivity.Base.getResources().getString(R.string.creditAmount)+" " + Data.split(",")[2] + "\n" +
+                                Data.split(",")[1]+" " + MainActivity.Base.getResources().getString(R.string.groupCOunts) + "\n" +
+                                Data.split(",")[0] + " " + MainActivity.Base.getResources().getString(R.string.DaysToRecharge), MessageEvent.CREADIT_EVENT);
+                Tools.HasCredit = true;
             }
             else
             {
@@ -414,8 +432,7 @@ initializeInviteButton();
                     ContentValues Val = new ContentValues();
                     DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
                     SQLiteDatabase db=dbh.getReadableDatabase();
-                    if(db.query(DatabaseContracts.Geogences.TABLE_NAME,new String[]{DatabaseContracts.Geogences.COLUMN_NAME_ID},"",null,"","","").getCount()>0)
-                    return;
+
                     db= dbh.getWritableDatabase();
 
                     String[] geos = Data.split("\\|");
@@ -430,18 +447,10 @@ initializeInviteButton();
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_isOwner,Integer.valueOf( g.split("~")[4]));
                         if(db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val)>0)
                         {
-//                            Circle circle=  Tools.GoogleMapObj.addCircle(new CircleOptions().center(
-//                                    new LatLng(Double.valueOf(g.split("~")[1].split(",")[0]),
-//                                            Double.valueOf(g.split("~")[1].split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(g.split("~")[2])));
-//                            LocationListener.locationManager.addProximityAlert(
-//                                    circle.getCenter().latitude,
-//                                    circle.getCenter().longitude,
-//                                    (float)circle.getRadius(),
-//                                    -1,
-//                                    PendingIntent.getBroadcast(LocationListener.mContext,Integer.valueOf(g.split("~")[3]), new Intent("ir.tstracker.activity.proximity").putExtra("id",Integer.valueOf(g.split("~")[3])), 0));
 
                         }
                  }
+                    Tools.setupGeofences(Base);
                     db.close();
                     dbh.close();
                     db = null;
@@ -659,15 +668,17 @@ Boolean isfirst=true;
                 try {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            //every 10 seconds
-                            //plus 1 because avoid running at first time and save time
-                            //to get geofences
                             if((counter+1) % 10==0) {
                                 if (mMapFragment != null)
                                     Tools.setUpMap(mMapFragment.getMap(), getApplicationContext(), isfirst);
                                 if (isfirst)
                                     isfirst = false;
 
+                            }
+                            //every 30 minutes
+                            if(counter==30*60){
+                                //get geofences
+                                getGeofencesFromServer();
                             }
                             //every hour
                             if(counter==0)
@@ -697,7 +708,7 @@ Boolean isfirst=true;
                                         (Second % 3600) / 60 + ":" + (Second % 3600) % 60;
                                 TV.setText(S);
                             } else {
-                                TV.setText("Pause");
+                                TV.setText(getResources().getString(R.string.pause));
                             }
                             date = null;
 
@@ -775,7 +786,7 @@ Boolean isfirst=true;
         }
 
         this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,getResources().getString(R.string.clickBackAgain), Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(new Runnable() {
 
@@ -812,13 +823,13 @@ Boolean isfirst=true;
         final RadioButton R6 = new RadioButton(this);
         final RadioButton R12 = new RadioButton(this);
 
-        R1.setText("1 hour");
+        R1.setText("1 "+getResources().getString(R.string.hour));
         R1.setTag(1);
-        R3.setText("3 hour");
+        R3.setText("3 "+getResources().getString(R.string.hour));
         R3.setTag(3);
-        R6.setText("6 hour");
+        R6.setText("6 "+getResources().getString(R.string.hour));
         R6.setTag(6);
-        R12.setText("12 hour");
+        R12.setText("12 "+getResources().getString(R.string.hour));
         R12.setTag(12);
 
         RG.addView(R1);
@@ -828,7 +839,7 @@ Boolean isfirst=true;
 
         builder.setView(RG);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
@@ -842,7 +853,7 @@ Boolean isfirst=true;
 
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 LocationListener.StartPause(0);

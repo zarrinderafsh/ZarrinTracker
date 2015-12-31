@@ -101,21 +101,23 @@ public class ProfileActivity extends ActionBarActivity {
     }
 
     private void selectImage() {
-        final CharSequence[] items = {"Take Photo", "Choose from Library",
-                "Cancel"};
+        final CharSequence[] items = {
+                getResources().getString(R.string.takephoto),
+                getResources().getString(R.string.chooseFromLibrary),
+               getResources().getString(R.string.cancel)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                if (items[item].equals("Take Photo")) {
+                if (items[item].equals(getResources().getString(R.string.takephoto))) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     File f = new File(android.os.Environment
                             .getExternalStorageDirectory(), "temp.jpg");
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                     startActivityForResult(intent, 0);
-                } else if (items[item].equals("Choose from Library")) {
+                } else if (items[item].equals(getResources().getString(R.string.chooseFromLibrary))) {
                     Intent intent = new Intent(
                             Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -123,7 +125,7 @@ public class ProfileActivity extends ActionBarActivity {
                     startActivityForResult(
                             Intent.createChooser(intent, "Select File"),
                             1);
-                } else if (items[item].equals("Cancel")) {
+                } else if (items[item].equals(getResources().getString(R.string.cancel))) {
                     dialog.dismiss();
                 }
             }
@@ -293,7 +295,7 @@ public class ProfileActivity extends ActionBarActivity {
     public static void backWebServices (int ObjectCode, String Data) {
         switch (ObjectCode) {
             case 0:// SaveImage
-                Toast.makeText(_context, "Image uploaded on server.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context,_context.getResources().getString(R.string.imageUploaded), Toast.LENGTH_SHORT).show();
                 break;
             case 1:// GetProfile
                 ShareSettings.SetValue("Profile", Tools.GetImei(_context) + ";;;" + Data + ";;;0");
@@ -303,6 +305,7 @@ public class ProfileActivity extends ActionBarActivity {
                     byte[] data = Base64.decode(Data, Base64.DEFAULT);
                     Bitmap bitmap = Tools.getBitmapFromByte(data);
                     SaveBitmap(bitmap);
+
                 } catch (Exception er) {
                 }
                 break;

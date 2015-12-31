@@ -221,9 +221,7 @@ static boolean IsFirst=true;
         }
         if (isfirst || IsFirst) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
-
-                Tools.setupGeofences(MainActivity.Base);
-            Tools.DrawCircles(MainActivity.Base);
+DrawCircles(context);
             GoogleMapObj.setMyLocationEnabled(true);
             IsFirst=false;
         }
@@ -248,7 +246,7 @@ static boolean IsFirst=true;
                 meters = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
                 Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]), Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(meters)));
           } catch (Exception er) {
-
+er.getMessage();
             }
             if (c.isLast())
                 break;
@@ -259,12 +257,11 @@ static boolean IsFirst=true;
         dbh.close();
     }
 
-    public static boolean proximityCreated=false;
+    private static  ArrayList<Integer> proximities=new ArrayList<>();
     public static void setupGeofences(Context context){
 
-        if(Tools.GoogleMapObj== null || proximityCreated)
+        if(Tools.GoogleMapObj== null )
             return;
-        Tools.GoogleMapObj.clear();
 
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getWritableDatabase();
@@ -281,12 +278,15 @@ static boolean IsFirst=true;
                 meters = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
                 Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]), Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(meters)));
                 id=Integer.valueOf(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID)));
-                        LocationListener.locationManager.addProximityAlert(
-                                Double.valueOf(center.split(",")[0]),
-                                Double.valueOf(center.split(",")[1]),
-                                Float.valueOf(meters),
-                                -1,
-                                PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id), 0));
+                if(!proximities.contains(id)) {
+                    LocationListener.locationManager.addProximityAlert(
+                            Double.valueOf(center.split(",")[0]),
+                            Double.valueOf(center.split(",")[1]),
+                            Float.valueOf(meters),
+                            -1,
+                            PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id), 0));
+              proximities.add(id);
+                }
             } catch (Exception er) {
 Log.e("Tools.GeofenceSetup",er.getMessage());
             }
@@ -294,7 +294,7 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
                 break;
             c.moveToNext();
         }
-        proximityCreated=true;
+        DrawCircles(context);
         c.close();
         db.close();
         dbh.close();
@@ -308,7 +308,6 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
     private static WebServices WS;
     public static HorizontalListView lsvMarkers;
     private static ImageListAdapter imgAdapter;
-    private  static ArrayList<Objects.MarkerItem> mlist;
     public static void backWebServices(int ObjectCode, String Data) {
         if(!Tools.HasCredit)
         return;
@@ -316,8 +315,9 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
             try {
                 if(MainActivity.Base==null)
                     return;;
-                mlist=new ArrayList<>();
-
+                if(imgAdapter==null) {
+                    imgAdapter = new ImageListAdapter(MainActivity.Base);
+                }
                 JSONObject jo = new JSONObject(Data);
                 Marker m;
                 String lat, lng;
@@ -336,10 +336,10 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
                         p.isme = false;
                         p.Save();
                     } else {
-                        p.ID = Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
-                        p.name = ja.getJSONObject(i).getString("Title");
-                        p.isme = false;
-                        p.update();
+//                        p.ID = Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
+//                        p.name = ja.getJSONObject(i).getString("Title");
+//                        p.isme = false;
+                       // p.update();
                     }
                     if (p.image == null)
                         p.GetImageFromServer();
@@ -350,22 +350,21 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
                         markers.put(id,
                                 GoogleMapObj.addMarker(new MarkerOptions().position(
                                         new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title")).icon(BitmapDescriptorFactory.fromBitmap(LoadImage(p.image, 96)))));
-
+                        imgAdapter.AddMarker(new Objects().new MarkerItem(id,
+                                LoadImage(p.image, 96),
+                                ja.getJSONObject(i).getString("Title"),
+                                "",
+                                null));
 
                     } else {
                         m.setPosition(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
                         m.setTitle(ja.getJSONObject(i).getString("Title"));
                         m.setIcon(BitmapDescriptorFactory.fromBitmap(LoadImage(p.image, 96)));
-//                         imgAdapter.GetItemByID(id)._image=LoadImage(p.image, 96);
-//                        imgAdapter.GetItemByID(id)._name=p.name;
+                         imgAdapter.GetItemByID(id)._image=LoadImage(p.image, 96);
+                        imgAdapter.GetItemByID(id)._name=p.name;
                     }//Add icon for each marker at bottom of map, and when click on it, go to marker location
-                    mlist.add(new Objects().new MarkerItem(id,
-                            LoadImage(p.image, 96),
-                            ja.getJSONObject(i).getString("Title"),
-                            "",
-                            null));
+
                 }
-                imgAdapter = new ImageListAdapter(MainActivity.Base,mlist);
                 lsvMarkers.setAdapter(imgAdapter);
 //                imgAdapter.notifyDataSetChanged();
             } catch (Exception er) {
@@ -449,7 +448,8 @@ er.getMessage();
         options.inInputShareable = true;
         options.inTempStorage = new byte[1024 * 32];
 if (Radious > 0)
-            b = CircleImage.getRoundedRectBitmap(b, Radious);
+            b = CircleImage.getRoundedRectBitmap(
+                    Bitmap.createScaledBitmap(b,Radious,Radious,true), Radious);
         return  b;
     }
     public static void LoadImage(ImageView iv, byte[] imageAsBytes, int Radious) {
@@ -461,7 +461,7 @@ if (Radious > 0)
 
         Bitmap bm = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length, options);
         if (Radious > 0)
-            bm = CircleImage.getRoundedRectBitmap(bm, Radious);
+            bm = CircleImage.getRoundedRectBitmap(Bitmap.createScaledBitmap(bm,Radious,Radious,true), Radious);
         iv.setImageBitmap(bm);
     }
 
@@ -476,7 +476,7 @@ if (Radious > 0)
 
         Bitmap bm = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length, options);
         if (Radious > 0)
-            bm = CircleImage.getRoundedRectBitmap(bm, Radious);
+            bm = CircleImage.getRoundedRectBitmap(Bitmap.createScaledBitmap(bm,Radious,Radious,true), Radious);
         return bm;
     }
 

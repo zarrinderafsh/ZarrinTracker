@@ -59,6 +59,12 @@
             android:clickable="true"
             android:layout_gravity="end"
             android:visibility="gone"/>
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/menu_icon"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/imgSwipetoright"/>
     </LinearLayout>
     <LinearLayout
         android:orientation="vertical"
@@ -94,7 +100,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="send"
+                android:text="@string/send"
                 android:id="@+id/btnSendMessage" />
 
 

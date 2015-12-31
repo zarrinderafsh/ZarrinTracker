@@ -68,7 +68,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Location"
+            android:text="@string/location"
             android:id="@+id/tvLocationEvent"
             android:textSize="18dp"
             android:layout_marginRight="20dp"
@@ -77,7 +77,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete"
+            android:text="@string/delete"
             android:id="@+id/tvDeleteEvent"
             android:textSize="18dp"
             android:layout_marginRight="20dp"

@@ -9,7 +9,7 @@
         android:layout_gravity="center_horizontal"/>
 
     <TextView
-        android:text="Your generated key is valid for 15 minutes."
+        android:text="@string/codeDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView2"

@@ -96,7 +96,6 @@ if(!((Objects.GeofenceItem)getItem(position)).isOwner){
                  }
                 items.remove(position);
                 GeofenceItemAdapter.this.notifyDataSetChanged();
-                Tools.setupGeofences(GeofenceItemAdapter.this.activity);
             }
         });
         return  convertView;

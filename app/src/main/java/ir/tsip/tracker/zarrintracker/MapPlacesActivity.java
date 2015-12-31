@@ -85,13 +85,13 @@ String name="Default";
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MapPlacesActivity.this);
-                builder.setTitle("Choose a name!");
+                builder.setTitle(getResources().getString(R.string.chooseName));
                 LayoutInflater inflate = MapPlacesActivity.this.getLayoutInflater();
                 View view = inflate.inflate(R.layout.name_of_circle, null);
                 txtCirleName = (EditText) view.findViewById(R.id.txtCircleName);
                 txtCirleName.setText(name);
                 builder.setView(view);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -160,7 +160,7 @@ String name="Default";
                 }
             });
 
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 

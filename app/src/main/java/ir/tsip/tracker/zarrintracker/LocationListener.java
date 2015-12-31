@@ -382,6 +382,7 @@ public class LocationListener  extends Service implements android.location.Locat
         StartServices();
         WebServices W = new WebServices(mContext);
         W.RunSend();
+        Tools.setupGeofences(mContext);
         return START_STICKY;
     }
 
