@@ -74,8 +74,7 @@ String name="Default";
                 try {
                     circle.remove();
                     circle = mMap.addCircle(new CircleOptions().center(latLng).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(radius));
-                }
-                catch (Exception er){
+                } catch (Exception er) {
 
                 }
             }
@@ -95,7 +94,7 @@ String name="Default";
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            if(!Tools.isOnline(MapPlacesActivity.this)) {
+                            if (!Tools.isOnline(MapPlacesActivity.this)) {
                                 Toast.makeText(MapPlacesActivity.this, MapPlacesActivity.this.getResources().getString(R.string.internetConnectivityError), Toast.LENGTH_LONG).show();
                                 return;
                             }
@@ -117,48 +116,46 @@ String name="Default";
                                 c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
                                 c.moveToLast();
                                 while (true && c.getCount() > 0) {
-                                    id=c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID));
+                                    id = c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID));
                                     break;
                                 }
 
-                            //add new
-                            params.put("clientCode", String.valueOf(id+1));
-                            params.put("operation", "1");
-                            objectcode = 0;
+                                //add new
+                                params.put("clientCode", String.valueOf(id + 1));
+                                params.put("operation", "1");
+                                objectcode = 0;
 
-                        }else{
-                            ContentValues Val = new ContentValues();
-                            Val.clear();
-                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, txtCirleName.getText().toString());
-                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, circle.getCenter().toString().replace("lat/lng: (", "").replace(")", ""));
-                            Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, circle.getRadius());
+                            } else {
+                                ContentValues Val = new ContentValues();
+                                Val.clear();
+                                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, txtCirleName.getText().toString());
+                                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, circle.getCenter().toString().replace("lat/lng: (", "").replace(")", ""));
+                                Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, circle.getRadius());
 
-                            db.update(DatabaseContracts.Geogences.TABLE_NAME, Val, DatabaseContracts.Geogences.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(id)});
-                            //edit
-                            params.put("clientCode", String.valueOf(id));
-                            params.put("operation", "2");
-                            objectcode = 1;
+                                db.update(DatabaseContracts.Geogences.TABLE_NAME, Val, DatabaseContracts.Geogences.COLUMN_NAME_ID + "=?", new String[]{String.valueOf(id)});
+                                //edit
+                                params.put("clientCode", String.valueOf(id));
+                                params.put("operation", "2");
+                                objectcode = 1;
                                 Tools.DrawCircles(MapPlacesActivity.this);
+                            }
+                            WebServices W = new WebServices(getApplicationContext());
+                            W.addQueue("ir.tsip.tracker.zarrintracker.Places", objectcode, params, "GeofenceOperations");
+                            db.close();
+                            dbh.close();
+                            db = null;
+                            dbh = null;
+                            W = null;
+                            MapPlacesActivity.this.finish();
+                        } catch (
+                                Exception er
+                                )
+
+                        {
+
                         }
-                        WebServices W = new WebServices(getApplicationContext());
-                        W.addQueue("ir.tsip.tracker.zarrintracker.Places", objectcode, params, "GeofenceOperations");
-                        db.close();
-                        dbh.close();
-                        db = null;
-                        dbh = null;
-                        W = null;
-                        MapPlacesActivity.this.finish();
                     }
-
-                    catch(
-                    Exception er
-                    )
-
-                    {
-
-                    }
-                }
-            });
+                });
 
                 builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override

@@ -388,6 +388,12 @@ public class LocationListener  extends Service implements android.location.Locat
 
     private void StartServices() {
 
+
+        if(ChatActivity._this==null) {
+            ChatActivity._this = new ChatActivity();
+            ChatActivity.context = getApplicationContext();
+        }
+
         Timer msgTimer = new Timer(true);
         msgTimer.schedule(new TimerTask() {
             @Override
@@ -420,7 +426,7 @@ public class LocationListener  extends Service implements android.location.Locat
                     SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
                 }
                 if (isGPSEnabled || isNetworkEnabled)
-                    Tools.Notificationm(mContext, "TsTracker", "Last Get Location:" + SDate, "");
+                    Tools.Notificationm(mContext, "TsTracker", "Last Get Location:" + SDate, "",0);
                 else
                     Tools.HideNotificationm();
             }

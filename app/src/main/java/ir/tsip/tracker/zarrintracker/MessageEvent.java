@@ -132,7 +132,7 @@ public class MessageEvent {
 
                 String eventType = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_type));
 
-                Tools.Notificationm(_Context, "TsTracker Events", Data,_Context.getPackageName()+"2");
+                Tools.Notificationm(_Context, "TsTracker Events", Data,_Context.getPackageName(),1);
 
                 String DateTime = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Date));
                 DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

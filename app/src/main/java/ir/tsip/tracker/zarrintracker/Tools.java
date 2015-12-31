@@ -109,7 +109,7 @@ public static  Boolean HasCredit=true;
     public static PendingIntent resultPendingIntent;
     public static NotificationManager mNotificationManager;
 
-    public static void Notificationm(Context context, String Title, String Details, String packge) {
+    public static void Notificationm(Context context, String Title, String Details, String packge,int notifyNumber) {
         if (mBuilder == null) {
             mBuilder =
                     new NotificationCompat.Builder(context)
@@ -141,7 +141,7 @@ public static  Boolean HasCredit=true;
             mNotificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         }
-        mNotificationManager.notify(0, mBuilder.build());
+        mNotificationManager.notify(notifyNumber, mBuilder.build());
     }
 
     public static void HideNotificationm() {
@@ -318,6 +318,8 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
                 if(imgAdapter==null) {
                     imgAdapter = new ImageListAdapter(MainActivity.Base);
                 }
+                if(markers.size()==0)
+                    imgAdapter.Clear();
                 JSONObject jo = new JSONObject(Data);
                 Marker m;
                 String lat, lng;

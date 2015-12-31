@@ -416,7 +416,7 @@ initializeInviteButton();
                 String msg=
                         MainActivity.Base.getResources().getString(R.string.creditAmount)+" " + Data.split(",")[2] + "\n" +
                                 Data.split(",")[1]+" " + MainActivity.Base.getResources().getString(R.string.groupCOunts) + "\n" ;
-                     msg+=           (Data.split(",")[0].equals("Infinity"))? "":" " + MainActivity.Base.getResources().getString(R.string.DaysToRecharge);
+                     msg+=           (Data.split(",")[0].equals("Infinity"))? "":Data.split(",")[0]+" " + MainActivity.Base.getResources().getString(R.string.DaysToRecharge);
                 MessageEvent.InsertMessage(MainActivity.Base,msg, MessageEvent.CREADIT_EVENT);
                 Tools.HasCredit = true;
             }

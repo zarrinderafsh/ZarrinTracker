@@ -60,7 +60,7 @@
     <string name="details">Details</string>
     <string name="close">Close</string>
     <string name="successful">Successful</string>
-    <string name="ok" translatable="false">Okay</string>
+    <string name="ok">Okay</string>
     <string name="userProfile">User Profile</string>
     <string name="NoCredit">You have no credit. Please recharge to use application.</string>
     <string name="internetConnectivityError">No Internet Connection. Please check your internet connection.</string>
@@ -80,7 +80,7 @@
     <string name="takephoto"> Take a photo</string>
     <string name="chooseFromLibrary">Choose from library</string>
     <string name="imageUploaded">Image uploaded on server.</string>
-    <string name="madeBy"> Made By \n Ali Heidari \n Morteza Zarrin Derafsh </string>
+    <string name="madeBy"> Made By  \n Morteza Zarrin Derafsh\n Ali Heidari </string>
     <string name="name">Name</string>
     <string name="phone">Phone</string>
     <string name="email">Email</string>
