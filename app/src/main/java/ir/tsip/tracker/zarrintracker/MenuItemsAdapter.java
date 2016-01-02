@@ -44,6 +44,7 @@ public class MenuItemsAdapter extends BaseAdapter {
         TextView txtText=(TextView)convertView.findViewById(R.id.txtText);
         ImageView imgphoto=(ImageView)convertView.findViewById(R.id.imgPhoto);
         final  Objects.MenuItem item=(Objects.MenuItem)this.getItem(position);
+        //item=-1 means item is title of menu
         if(item.id==-1){
             convertView.setBackgroundColor(Color.parseColor("#ff0a86cd"));
             ViewGroup.LayoutParams layoutParams=imgphoto.getLayoutParams();

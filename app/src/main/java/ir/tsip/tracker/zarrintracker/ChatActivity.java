@@ -54,7 +54,7 @@ public class ChatActivity extends AppCompatActivity {
     EditText txtMessage;
     static Handler scrollHandler=new Handler();
     static Context context;
-    String gpID;
+    static String gpID;
     TextView txtGpName;
     ImageView imgGroupPhoto;
     static LinearLayout lsvChat;
@@ -404,7 +404,7 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
             dbh = new DatabaseHelper(context);
         if (db == null)
             db = dbh.getWritableDatabase();
-
+String gpCode;
         ContentValues Data;
         Persons p;
         for (String msg : messages) {
@@ -425,18 +425,21 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
                 p.GetImageFromServer();
             }
             Data = new ContentValues();
-            gpID=msg.split("!")[1];
-            msg=msg.replace("!"+String.valueOf(gpID)+"!","");
+
+            gpCode=msg.split("!")[1];
+            msg=msg.replace("!"+String.valueOf(gpCode)+"!","");
             if (msg.contains("[C]")) {
                 Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Data, msg.replace("[C]", ""));
-                Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Group, gpID);
+                Data.put(DatabaseContracts.ChatLog.COLUMN_NAME_Group, gpCode);
                 Data.put(DatabaseContracts.ChatLog.COLUMN_Person_Id, p.ID);
                 long id = db.insert(DatabaseContracts.ChatLog.TABLE_NAME, DatabaseContracts.ChatLog.COLUMN_NAME_ID, Data);
-                CreateGroupLayer(new Date(), msg, p.image, 0, (int) id,p.ID);
-                if (!ChatActivity.IsChatActivityShowing)
-                    MessageEvent.InsertMessage(context, getResources().getString(R.string.NewMessage)+" "+ ((p.name == null || p.name == "") ? getResources().getString(R.string.someone) : p.name), p.image,MessageEvent.NEW_MESSAGE_EVENT);
+
+                if ( gpID==null || !gpID.equals(gpCode))
+                    MessageEvent.InsertMessage(context, context.getResources().getString(R.string.NewMessage)+" "+ ((p.name == null || p.name == "") ? getResources().getString(R.string.someone) : p.name), p.image,MessageEvent.NEW_MESSAGE_EVENT);
+                else if(gpID.equals(gpCode))
+                    CreateGroupLayer(new Date(), msg, p.image, 0, (int) id,p.ID);
                 msg=msg.split("\\[")[2].split(":")[1].replace("]","");
-                GroupsActivity.UpdateGroup(Integer.valueOf(gpID),null,new Date().toString(),msg,null,null);
+                GroupsActivity.UpdateGroup(Integer.valueOf(gpCode),null,new Date().toString(),msg,null,null);
             } else if (msg.contains("[E-area]"))
             {
                 MessageEvent.InsertMessage(context,p.name+": "+ msg.replace("[E-area]", "").split(":")[3].replace("\"", "").replace("]", ""), p.image, MessageEvent.AREA_EVENT);

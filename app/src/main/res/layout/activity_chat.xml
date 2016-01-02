@@ -57,7 +57,7 @@
             android:id="@+id/imgLeaveGroup"
             android:src="@drawable/leavegroup"
             android:clickable="true"
-            android:layout_gravity="end"
+            android:layout_gravity="center_vertical"
             android:visibility="gone"/>
         <ImageView
             android:layout_width="24dp"

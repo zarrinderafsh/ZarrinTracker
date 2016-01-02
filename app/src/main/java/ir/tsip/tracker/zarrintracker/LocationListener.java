@@ -15,6 +15,8 @@ import android.os.IBinder;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -385,34 +387,22 @@ public class LocationListener  extends Service implements android.location.Locat
         Tools.setupGeofences(mContext);
         return START_STICKY;
     }
-
+    MessageEvent me;
+    Calendar c;
+    //Get Messages
+    HashMap<String, String> params2;
+    WebServices W;
     private void StartServices() {
 
 
         if(ChatActivity._this==null) {
             ChatActivity._this = new ChatActivity();
-            ChatActivity.context = getApplicationContext();
+            ChatActivity.context = mContext;
         }
+        if(me==null)
+      me=new MessageEvent(mContext);
 
-        Timer msgTimer = new Timer(true);
-        msgTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
 
-                try {
-
-                    HashMap<String, String> params2;
-                    params2 = new HashMap<>();
-                    params2.put("imei", Tools.GetImei(getApplicationContext()));
-                    params2.put("gpID", "0");
-                    WebServices W = new WebServices(getApplicationContext());
-                    W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage");
-                   W=null;
-                } catch (Exception ex) {
-                    ex.toString();
-                }
-            }
-        }, 0, 5000);
 
         Timer _Timer = new Timer(true);
         _Timer.schedule(new TimerTask() {
@@ -429,6 +419,20 @@ public class LocationListener  extends Service implements android.location.Locat
                     Tools.Notificationm(mContext, "TsTracker", "Last Get Location:" + SDate, "",0);
                 else
                     Tools.HideNotificationm();
+
+                params2 = new HashMap<>();
+                params2.put("imei", Tools.GetImei(mContext));
+                params2.put("gpID", "0");
+                W= new WebServices(mContext);
+                W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage");
+                W=null;
+                //Show Latest Notification
+                if(MainActivity.Base==null || MainActivity.IsPaused) {
+                    c = Calendar.getInstance();
+                    c.set(Calendar.SECOND, c.get(Calendar.SECOND) - 10);
+                    me.ShowMessage(null, c.getTime(), Calendar.getInstance().getTime(), true);
+                }
+
             }
 
         }, 0, 10000);

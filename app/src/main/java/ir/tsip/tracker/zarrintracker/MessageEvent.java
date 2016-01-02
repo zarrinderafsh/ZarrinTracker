@@ -104,8 +104,9 @@ public class MessageEvent {
     }
 
     public Date FirstDate,Lastdate;
-    public void ShowMessage(final LinearLayout scroll , Date pFirstDate, Date pLastDate)
+    public void ShowMessage(final LinearLayout scroll , Date pFirstDate, Date pLastDate,Boolean isFromServer)
     {
+
         Date date;
         if(pFirstDate == null)
         {
@@ -118,142 +119,148 @@ public class MessageEvent {
         DatabaseHelper dbh = new DatabaseHelper(_Context);
         SQLiteDatabase db = dbh.getReadableDatabase();
         Cursor c;
+        String Data="";
+        String conditionOperator="OR";
+        //if service wants newest notification
+        if(isFromServer)
+            conditionOperator="AND";
         c = db.query(DatabaseContracts.Events.TABLE_NAME, null,
-                DatabaseContracts.Events.COLUMN_NAME_Date + " > '"+ new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(pFirstDate)+"' OR "+
+                DatabaseContracts.Events.COLUMN_NAME_Date + " > '"+ new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(pFirstDate)+"'  "+conditionOperator+" "+
                 DatabaseContracts.Events.COLUMN_NAME_Date + " < '"+ new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(pLastDate)+"'"
                 ,
                 null, "","", DatabaseContracts.Events.COLUMN_NAME_Date+" DESC" , "");
         if(c.moveToFirst())
         {
             Tools.PlayAlert(_Context);
+
             int id;
             do {
-                String Data = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Data));
+                Data = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Data));
+//when from server we do not need to show event, just a simple notification;
+                if(!isFromServer) {
+                    String eventType = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_type));
 
-                String eventType = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_type));
 
-                Tools.Notificationm(_Context, "TsTracker Events", Data,_Context.getPackageName(),1);
-
-                String DateTime = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Date));
-                DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                try {
-                    date = iso8601Format.parse(DateTime);
-                } catch (ParseException e) {
-                    e.toString();
-                    date=null;
-                }
-                byte[] Image = c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Image));
-
-                id = c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_ID));
-
-                float Lat = c.getFloat(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Lat));
-                float Lon = c.getFloat(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Lon));
-
-                LayoutInflater inflater = (LayoutInflater) _Context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view;
-                view = inflater.inflate(R.layout.event_message, null);
-
-                view.setId(100000 + id);
-                if(date.compareTo(pFirstDate) > 0) {
-                    pFirstDate = date;
-                    scroll.addView(view,0);
-                }
-                if(date.compareTo(pLastDate) < 0 ) {
-                    pLastDate = date;
-                    scroll.addView(view);
-                }
-
-                if(date!=null) {
-                    String d = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
-                    ((TextView) view.findViewById(R.id.tvDateEvent)).setText(d);
-                }
-                ((TextView) view.findViewById(R.id.tvMessageEvent)).setText(Data);
-
-                View.OnClickListener ClickDelete = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        MessageEvent.DeleteMessage(_Context,(int)v.getTag());
-                        DeleteLayout(scroll,100000 + (int)v.getTag());
+                    String DateTime = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Date));
+                    DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    try {
+                        date = iso8601Format.parse(DateTime);
+                    } catch (ParseException e) {
+                        e.toString();
+                        date = null;
                     }
-                };
+                    byte[] Image = c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Image));
 
-                View.OnClickListener ClickLocation = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (v.getTag().getClass().equals(Loc.class)) {
-                            Loc L = (Loc) v.getTag();
-                            if (L.Lon > 0 && L.Lat > 0) {
-                                Tools.locationMarker = Tools.GoogleMapObj.addMarker(new MarkerOptions().position(new LatLng(L.Lat, L.Lon)));
-                                Tools.GoogleMapObj.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(L.Lat, L.Lon), 16.0f));
+                    id = c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_ID));
 
-                                ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 360, 520, 1));
-                                ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, 548, 906, 1));
-                                ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 548, 906, 1));
+                    float Lat = c.getFloat(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Lat));
+                    float Lon = c.getFloat(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Lon));
+
+                    LayoutInflater inflater = (LayoutInflater) _Context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View view;
+                    view = inflater.inflate(R.layout.event_message, null);
+
+                    view.setId(100000 + id);
+                    if (date.compareTo(pFirstDate) > 0) {
+                        pFirstDate = date;
+                        scroll.addView(view, 0);
+                    }
+                    if (date.compareTo(pLastDate) < 0) {
+                        pLastDate = date;
+                        scroll.addView(view);
+                    }
+
+                    if (date != null) {
+                        String d = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
+                        ((TextView) view.findViewById(R.id.tvDateEvent)).setText(d);
+                    }
+                    ((TextView) view.findViewById(R.id.tvMessageEvent)).setText(Data);
+
+                    View.OnClickListener ClickDelete = new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            MessageEvent.DeleteMessage(_Context, (int) v.getTag());
+                            DeleteLayout(scroll, 100000 + (int) v.getTag());
+                        }
+                    };
+
+                    View.OnClickListener ClickLocation = new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (v.getTag().getClass().equals(Loc.class)) {
+                                Loc L = (Loc) v.getTag();
+                                if (L.Lon > 0 && L.Lat > 0) {
+                                    Tools.locationMarker = Tools.GoogleMapObj.addMarker(new MarkerOptions().position(new LatLng(L.Lat, L.Lon)));
+                                    Tools.GoogleMapObj.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(L.Lat, L.Lon), 16.0f));
+
+                                    ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 360, 520, 1));
+                                    ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, 548, 906, 1));
+                                    ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 548, 906, 1));
+                                }
+                            } else if (v.getTag().getClass().equals(Integer.class)) {
+                                Integer i = (Integer) v.getTag();
+                                if (i == 0) {
+                                    Intent myIntent = new Intent(MainActivity.Base, GroupsActivity.class);
+                                    MainActivity.Base.startActivity(myIntent);
+                                } else if (i == 1) {
+                                    Intent myIntent = new Intent(MainActivity.Base, PurchaseActivity.class);
+                                    myIntent.putExtra("msg", "Recharge your account.");
+                                    MainActivity.Base.startActivity(myIntent);
+                                }
                             }
                         }
-                        else if (v.getTag().getClass().equals(Integer.class)){
-                            Integer i=(Integer)v.getTag();
-                            if(i==0){
-                                Intent myIntent = new Intent(MainActivity.Base, GroupsActivity.class);
-                                MainActivity.Base.startActivity(myIntent);
-                            }
-                            else if(i==1){
-                                Intent myIntent = new Intent(MainActivity.Base, PurchaseActivity.class);
-                                myIntent.putExtra("msg","Recharge your account.");
-                                MainActivity.Base.startActivity(myIntent);
-                            }
-                        }
+                    };
+
+                    Loc L;
+                    ((TextView) view.findViewById(R.id.tvDeleteEvent)).setTag(id);
+                    ((TextView) view.findViewById(R.id.tvDeleteEvent)).setOnClickListener(ClickDelete);
+                    switch (eventType) {
+                        case NEW_MESSAGE_EVENT:
+                            ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(0);
+                            ((TextView) view.findViewById(R.id.tvLocationEvent)).setText(view.getResources().getString(R.string.openChat));
+                            break;
+                        case SOS_EVENT:
+                            L = new Loc();
+                            L.Lat = Lat;
+                            L.Lon = Lon;
+                            ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
+                            ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
+                            view.setBackgroundColor(Color.parseColor("#550000"));
+                            break;
+                        case AREA_EVENT:
+                            L = new Loc();
+                            L.Lat = Lat;
+                            L.Lon = Lon;
+                            ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
+                            ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
+                            view.setBackgroundColor(Color.parseColor("#4D658D"));
+                            break;
+                        case CREADIT_EVENT:
+                            ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(1);
+                            ((TextView) view.findViewById(R.id.tvLocationEvent)).setText(view.getResources().getString(R.string.charge));
+                            view.setBackgroundColor(Color.parseColor("#D9D372"));
+                            break;
+                        case Pause_Event:
+                        case GPS_EVENT:
+                            L = new Loc();
+                            L.Lat = Lat;
+                            L.Lon = Lon;
+                            ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
+                            break;
+                        default:
+                            break;
                     }
-                };
+                    ((TextView) view.findViewById(R.id.tvLocationEvent)).setOnClickListener(ClickLocation);
 
-                Loc L;
-                ((TextView) view.findViewById(R.id.tvDeleteEvent)).setTag(id);
-                ((TextView) view.findViewById(R.id.tvDeleteEvent)).setOnClickListener(ClickDelete);
-                switch (eventType){
-                    case NEW_MESSAGE_EVENT:
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(0);
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setText(view.getResources().getString(R.string.openChat));
-                    break;
-                    case SOS_EVENT:
-                         L = new Loc();
-                        L.Lat = Lat;
-                        L.Lon = Lon;
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
-                        ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
-                        view.setBackgroundColor(Color.parseColor("#550000"));
-                        break;
-                    case AREA_EVENT:
-                         L = new Loc();
-                        L.Lat = Lat;
-                        L.Lon = Lon;
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
-                        ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
-                        view.setBackgroundColor(Color.parseColor("#4D658D"));
-                        break;
-                    case CREADIT_EVENT:
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(1);
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setText(view.getResources().getString(R.string.charge));
-                        view.setBackgroundColor(Color.parseColor("#D9D372"));
-                        break;
-                    case Pause_Event:
-                    case GPS_EVENT:
-                        L = new Loc();
-                        L.Lat = Lat;
-                        L.Lon = Lon;
-                        ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
-                        break;
-                    default:
-                        break;
-                }
-                ((TextView) view.findViewById(R.id.tvLocationEvent)).setOnClickListener(ClickLocation);
-
-                if(Image != null && Image.length > 10)
-                {
-                    Tools.LoadImage((ImageView)view.findViewById(R.id.ivImageEvent),Image,96);
+                    if (Image != null && Image.length > 10) {
+                        Tools.LoadImage((ImageView) view.findViewById(R.id.ivImageEvent), Image, 96);
+                    }
                 }
             }
             while(c.moveToNext());
         }
+        if(Data.length()>1)
+        Tools.Notificationm(_Context, "TsTracker Events", Data,_Context.getPackageName(),1);
         c.close();
         db.close();
         dbh.close();

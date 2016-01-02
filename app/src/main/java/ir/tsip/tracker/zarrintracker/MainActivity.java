@@ -732,7 +732,7 @@ Boolean isfirst=true;
                             }
 
                             LinearLayout SV = (LinearLayout) findViewById(R.id.llinSroll);
-                            MEvent.ShowMessage(SV, MEvent.FirstDate, MEvent.Lastdate);
+                            MEvent.ShowMessage(SV, MEvent.FirstDate, MEvent.Lastdate,false);
                         }
                     });
                 } catch (Exception ex) {
@@ -796,6 +796,13 @@ Boolean isfirst=true;
                 doubleBackToExitPressedOnce = false;
             }
         }, 2000);
+    }
+
+    public static Boolean IsPaused=false;
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        IsPaused=!hasFocus;
     }
 
     @Override
