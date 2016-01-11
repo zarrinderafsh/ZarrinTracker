@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -120,7 +121,7 @@ _context=this;
                 catch (Exception er){
 
                 }
-
+                Toast.makeText(LocationListener.mContext, LocationListener.mContext.getResources().getString(R.string.geofenceadded), Toast.LENGTH_SHORT).show();
             }
             else if(Data.startsWith("-1")){
                 Intent myIntent = new Intent(_context, PurchaseActivity.class);

@@ -104,7 +104,7 @@ public class MessageEvent {
     }
 
     public Date FirstDate,Lastdate;
-    public void ShowMessage(final LinearLayout scroll , Date pFirstDate, Date pLastDate,Boolean isFromServer)
+    public void ShowMessage(final LinearLayout scroll , Date pFirstDate, Date pLastDate,Boolean isFromService)
     {
 
         Date date;
@@ -122,7 +122,7 @@ public class MessageEvent {
         String Data="";
         String conditionOperator="OR";
         //if service wants newest notification
-        if(isFromServer)
+        if(isFromService)
             conditionOperator="AND";
         c = db.query(DatabaseContracts.Events.TABLE_NAME, null,
                 DatabaseContracts.Events.COLUMN_NAME_Date + " > '"+ new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(pFirstDate)+"'  "+conditionOperator+" "+
@@ -137,7 +137,7 @@ public class MessageEvent {
             do {
                 Data = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_NAME_Data));
 //when from server we do not need to show event, just a simple notification;
-                if(!isFromServer) {
+                if(!isFromService) {
                     String eventType = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Events.COLUMN_type));
 
 

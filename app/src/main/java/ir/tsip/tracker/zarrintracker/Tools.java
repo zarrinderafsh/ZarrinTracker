@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
@@ -309,11 +310,10 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
     public static HorizontalListView lsvMarkers;
     private static ImageListAdapter imgAdapter;
     public static void backWebServices(int ObjectCode, String Data) {
-        if(!Tools.HasCredit)
-        return;
+
         if (ObjectCode == 0) {//Markers
             try {
-                if(MainActivity.Base==null)
+                if(MainActivity.Base==null )
                     return;;
                 if(imgAdapter==null) {
                     imgAdapter = new ImageListAdapter(MainActivity.Base);
@@ -443,6 +443,15 @@ er.getMessage();
             e.printStackTrace();
         }
     }
+
+    public static Bitmap BorderImage(Bitmap Image,int Weight,int BorderColor){
+        Bitmap bmpWithBorder = Bitmap.createBitmap(Image.getWidth() + Weight * 2, Image.getHeight() + Weight * 2, Image.getConfig());
+        Canvas canvas = new Canvas(bmpWithBorder);
+        canvas.drawColor(BorderColor);
+        canvas.drawBitmap(Image, Weight, Weight, null);
+        return bmpWithBorder;
+    }
+
     public static Bitmap LoadImage(Bitmap b, int Radious) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDither = false;

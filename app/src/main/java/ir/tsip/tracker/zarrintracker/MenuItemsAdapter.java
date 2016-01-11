@@ -44,6 +44,9 @@ public class MenuItemsAdapter extends BaseAdapter {
         TextView txtText=(TextView)convertView.findViewById(R.id.txtText);
         ImageView imgphoto=(ImageView)convertView.findViewById(R.id.imgPhoto);
         final  Objects.MenuItem item=(Objects.MenuItem)this.getItem(position);
+
+        if(item.customTag!=null)
+        convertView.setTag(R.string.DontTranslate2, item.customTag);
         //item=-1 means item is title of menu
         if(item.id==-1){
             convertView.setBackgroundColor(Color.parseColor("#ff0a86cd"));
@@ -63,6 +66,12 @@ public class MenuItemsAdapter extends BaseAdapter {
 
     public void AddItem(Objects.MenuItem markerItem){
         this.items.add(markerItem);
+    }
+
+    public void RemoveItem(int position)
+    {
+        this.items.remove(position);
+        notifyDataSetChanged();
     }
 
     public Objects.MenuItem GetItemByID(int id){

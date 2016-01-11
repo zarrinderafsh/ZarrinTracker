@@ -47,7 +47,7 @@ public class GroupsActivity extends AppCompatActivity {
     ImageView imgGroupJoin;
     static LinearLayout lsvGroups;
     static Activity context;
-    static List<Integer> GroupList= new ArrayList<Integer>();
+    static ArrayList<Integer> GroupList= new ArrayList<Integer>();
     //static Context _context;
 
     @Override
@@ -150,11 +150,31 @@ public class GroupsActivity extends AppCompatActivity {
     }
 
     public static void backWebServices(int ObjectCode, String Data) {
-        if(!Tools.HasCredit)
-        return;
+
         if (ObjectCode == 0) {
             String groupname;
             boolean isowner = false;
+            //this condition is true if user left a group
+            if(GroupList.size()>Data.split(",").length) {
+                ArrayList<Integer> newList=new ArrayList<Integer>() ;
+                for (Integer i : GroupList) {
+                    if (!Data.contains(i + "~")) {
+                        DatabaseHelper dh = new DatabaseHelper(MainActivity.Base);
+                        SQLiteDatabase db = dh.getReadableDatabase();
+                        //Delete item from database
+                        if (db.delete(DatabaseContracts.Groups.TABLE_NAME, DatabaseContracts.Groups.COLUMN_NAME_ID + " in (" + String.valueOf(i) + ")", null) > 0) {
+                        }
+                        //Delete all the messages of the group
+                        if (db.delete(DatabaseContracts.ChatLog.TABLE_NAME, DatabaseContracts.ChatLog.COLUMN_NAME_Group + " in (" +String.valueOf(i)+ ")", null) > 0) {
+                        }
+                        db.close();
+                        dh.close();
+                        dh = null;
+                    } else
+                        newList.add(i);
+                }
+                GroupList=newList;
+            }
             for (String s : Data.split(",")) {
                 try {
                     if (s.length() > 1) {
@@ -190,7 +210,7 @@ public class GroupsActivity extends AppCompatActivity {
                             if (groupname == "")
                                 groupname = "NoName";
 
-                            CreateGroupLayer(gpID, groupname, "", "", p.image, isowner);
+                            CreateGroupLayer(gpID, groupname, "", "",Tools.LoadImage( p.image,96), isowner);
                         }
                     }
                 } catch (Exception ex) {

@@ -56,6 +56,7 @@ public class Objects {
         public int id;
         public Bitmap image;
         public String text;
+        public String customTag;
     }
 
 }

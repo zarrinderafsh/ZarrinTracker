@@ -1,6 +1,7 @@
 package ir.tsip.tracker.zarrintracker;
 
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +47,15 @@ public class ProximityIntentReceiver extends BroadcastReceiver {
             db.close();
             dbh.close();
         }
-        if (entering) {
+        else {
+            try {
+                LocationListener.locationManager.removeProximityAlert(PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id), 0));
+            } catch (Exception exx) {
+
+
+            }
+        }
+            if (entering) {
             state="Entered "+state;
         }else {
             state="Exited "+state;

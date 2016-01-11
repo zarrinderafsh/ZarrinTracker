@@ -15,7 +15,7 @@
     <string name="NoCredit">شارژ‌شما صفر است</string>
     <string name="PersonImage"></string>
     <string name="SwipeToRight">به راست لمس کنید تا منو را ببینید</string>
-    <string name="about">درباره ی tstracker</string>
+    <string name="abou">راهنما</string>
     <string name="action_settings">تنظیمات</string>
     <string name="add">اضافه کردن</string>
     <string name="appShortDescribe">دوستان,خانواده,کارمندان, بیماران, ماشین ها و گوشی خودرا ردیابی کنید و از چت کردن لذت ببرید.</string>
@@ -71,4 +71,9 @@
     <string name="txtPurchaseMessage">اکانت خودرا برای استفاده از امکانات نرم افزار برای مدت بیشتر شارژ کنید.</string>
     <string name="charge">شارژ</string>
     <string name="openChat">چت</string>
+    <string name="KickUser">آیا شما مطمئنید که می خواهید کاربر را از گروه حذف کنید؟</string>
+    <string name="dontusesymbol">از ~!#$%^*()? استفاده نکنید.</string>
+    <string name="wait">لطفا صبرکنید!</string>
+    <string name="geofenceadded">ناحیه جدید اضافه شد</string>
+    <string name="help">شما</string>
 </resources>

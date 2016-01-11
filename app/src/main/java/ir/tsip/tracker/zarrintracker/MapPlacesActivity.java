@@ -146,7 +146,6 @@ String name="Default";
                             db = null;
                             dbh = null;
                             W = null;
-                            MapPlacesActivity.this.finish();
                         } catch (
                                 Exception er
                                 )

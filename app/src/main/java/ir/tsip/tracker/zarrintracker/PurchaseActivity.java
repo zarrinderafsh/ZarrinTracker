@@ -205,6 +205,11 @@ static String token="";
             if(Data.startsWith("1")) {
                 try {
                     int response = mService.consumePurchase(3, MainActivity.Base.getPackageName(), token);
+
+                    //Update credit
+                    WebServices ws = new WebServices(MainActivity.Base);
+                    ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.Base), "PurhaseDetails");
+                    ws = null;
                 }
                 catch (Exception er){
 

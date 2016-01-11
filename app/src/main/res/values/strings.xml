@@ -72,7 +72,7 @@
     <string name="groupsToChat">Groups To Chat</string>
     <string name="chargeMyAccount">Charge My Account</string>
     <string name="placesAndAreas">Places And Areas</string>
-    <string name="about">About TsTracker</string>
+    <string name="about">Help And About</string>
     <string name="pause">Pause</string>
     <string name="clickBackAgain"> Please Click Back Again To Exit</string>
     <string name="hour">Hour</string>
@@ -93,4 +93,11 @@
     <string name="charge">Charge</string>
     <string name="openChat">Open Chat</string>
     <string name="txtPurchaseMessage">Purchase to use unique application features longer.</string>
+    <string name="KickUser">Are you sure you want remove user from your group?</string>
+    <string name="dontusesymbol">Do not use ! , ~ # $ % ^ * ( )</string>
+    <string name="wait">Please Wait!</string>
+    <string name="geofenceadded">New Area Added</string>
+    <string name="help">Every phone has a group and owner should pay for group members. You can charge your account.To join a group, owner should create a code using chat activity(In his/her group) with + button and share it using any social application. Then by entering code in group activity by + button (Note the generated code is valid for 15 min). \n You can see yourself and others on map(Note group memebers should be connected to internet). Here every marker shows latest user location sent to our servers. \n You can define an area by going Menu>Area And Geofences and click on add. In map you click on center of your desired location then specify circle radius by tapping on + and - buttons. By clicking Save you will asked for a name. By defining an area if your group members enter or leave area you will be informed.
+        \n You can chat in groups.
+    \n Its all free for geofence(entering and leaving area), and see user location(speed,curse,latitude,longitude and accuracy). </string>
 </resources>

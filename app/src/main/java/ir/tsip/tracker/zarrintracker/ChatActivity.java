@@ -34,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,6 +44,9 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -65,6 +69,7 @@ public class ChatActivity extends AppCompatActivity {
     ImageView inInvite;
     static ScrollView svChatView;
     static Boolean IsChatActivityShowing=false;
+    boolean _isOwner=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +82,8 @@ IsChatActivityShowing=true;
         svChatView = (ScrollView) _this.findViewById(R.id.svChatView);
         context = getApplicationContext();
         inInvite = (ImageView) findViewById(R.id.ivInvite);
-
-        if (getIntent().getBooleanExtra("myGroup", false)) {
+_isOwner=getIntent().getBooleanExtra("myGroup", false);
+        if (_isOwner) {
 
             inInvite.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -130,7 +135,7 @@ IsChatActivityShowing=true;
                     AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
                     builder.setTitle("Leave group");
                     builder.setMessage(R.string.LeaveGroupMessage);
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(getApplicationContext().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             try {
@@ -146,7 +151,7 @@ IsChatActivityShowing=true;
                             }
                         }
                     });
-                    builder.setNegativeButton("Oh. No!", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(getApplicationContext().getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -192,7 +197,7 @@ ListView lsvMembers;
     ActionBarDrawerToggle mDrawerToggle;
     private void initializeDrawer(String[] members){
          lsvMembers= (ListView) findViewById(R.id.lsvPersons);
-        MenuItemsAdapter adapter=new MenuItemsAdapter(this);
+        final MenuItemsAdapter adapter=new MenuItemsAdapter(this);
         Objects.MenuItem m;
         int indexer=-1;
         m=new Objects().new MenuItem();
@@ -204,13 +209,68 @@ ListView lsvMembers;
         for (String s:members             ) {
             if(s.equals("+"))
                 continue;
+            if(!s.contains("-"))
+                continue;
             m=new Objects().new MenuItem();
             m.id=indexer;
-                m.text=s;
+                m.text=s.replace("+","").split("-")[1];
+            m.customTag=s.split("-")[0];
             adapter.AddItem(m);
             indexer++;
         }
         lsvMembers.setAdapter(adapter);
+
+        lsvMembers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            final CharSequence[] items = { _this.getResources().getString(R.string.delete),
+                    _this.getResources().getString(R.string.cancel)};
+            @Override
+            public void onItemClick(AdapterView<?> parent,final View v, final int position, long id)
+            { if (!_isOwner)
+                return;
+                final AlertDialog.Builder builder = new AlertDialog.Builder(_this);
+                builder.setTitle("");
+
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+
+                        if (items[item].equals(_this.getResources().getString(R.string.delete))) {
+
+
+                            Persons p = new Persons();
+                            p.GetData(Integer.valueOf(v.getTag(R.string.DontTranslate2).toString()));
+                            AlertDialog.Builder builder = new AlertDialog.Builder(_this);
+                            builder.setTitle("");
+                            builder.setMessage(_this.getResources().getString(R.string.KickUser));
+                            builder.setPositiveButton(_this.getResources().getString(R.string.delete), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    WebServices w = new WebServices(_this);
+                                    w.addQueue("", 0, v.getTag(R.string.DontTranslate2).toString() + "," + gpID, "KickUser");
+                                    w = null;
+                                    GroupsActivity.GetGroups(_this, false);
+                                    Toast.makeText(ChatActivity.this, _this.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
+adapter.RemoveItem(position);
+                                    dialog.cancel();
+                                }
+                            });
+                            builder.setNegativeButton(_this.getResources().getString(R.string.close), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                            builder.show();
+                        } else if (items[item].equals(_this.getResources().getString(R.string.cancel))) {
+                            dialog.dismiss();
+                        }
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+        });
 
         mDrawerLayout = (android.support.v4.widget.DrawerLayout) findViewById(R.id.mDrawerLayout);
         // enabling action bar app icon and behaving it as toggle button
@@ -311,11 +371,11 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
     }
 
     public static void backWebServices(int ObjectCode, String Data) {
-        if(!Tools.HasCredit)
-            return;
+
         if (ObjectCode == 1) {
             if (_this == null || Data == "null")
                 return;
+            //if(Tools.HasCredit)
             _this.InsertMessages(Data.split(","));
         } else if (ObjectCode == 0) {
             if (Data != ("0")) {
@@ -383,7 +443,7 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
                 } catch (Exception er) {
                     Toast.makeText(ChatActivity.this,getResources().getString(R.string.imageDidntLoad), Toast.LENGTH_SHORT).show();
                 }
-                initializeDrawer(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Members)).split("!-!+"));
+                initializeDrawer(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Members)).split(";"));
                 if (c.isLast())
                     break;
                 c.moveToNext();
@@ -434,7 +494,7 @@ String gpCode;
                 Data.put(DatabaseContracts.ChatLog.COLUMN_Person_Id, p.ID);
                 long id = db.insert(DatabaseContracts.ChatLog.TABLE_NAME, DatabaseContracts.ChatLog.COLUMN_NAME_ID, Data);
 
-                if ( gpID==null || !gpID.equals(gpCode))
+                if ( gpID==null || (!gpID.equals(gpCode)&& IsChatActivityShowing) || !IsChatActivityShowing)
                     MessageEvent.InsertMessage(context, context.getResources().getString(R.string.NewMessage)+" "+ ((p.name == null || p.name == "") ? getResources().getString(R.string.someone) : p.name), p.image,MessageEvent.NEW_MESSAGE_EVENT);
                 else if(gpID.equals(gpCode))
                     CreateGroupLayer(new Date(), msg, p.image, 0, (int) id,p.ID);
@@ -477,16 +537,24 @@ String gpCode;
             Cursor c = readabledb.query(DatabaseContracts.ChatLog.TABLE_NAME, columns, DatabaseContracts.ChatLog.COLUMN_NAME_Group + "=?", new String[]{String.valueOf(gpID)}, "", "", DatabaseContracts.ChatLog.COLUMN_NAME_ID);
             if (c.getCount() > 0) {
                 c.moveToFirst();
+                String data;
+                DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
                 while (true) {
                     Persons p = new Persons();
+                  data=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_Data));
                     p.GetData(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_Person_Id)));
-                    CreateGroupLayer(new Date(),
-                            c.getString(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_Data)),
-                            p.image,
-                            0,
-                            c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_ID)),
-                            p.ID);
+                    try {
+                        CreateGroupLayer(iso8601Format.parse(data.substring(data.indexOf("("), data.indexOf(")") - data.indexOf("(")).replace("(","").replace("\\/","-")),
+                                data,
+                                p.image,
+                                0,
+                                c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_ID)),
+                                p.ID);
+                    }
+                    catch(Exception er){
 
+                    }
                     if (c.isLast())
                         break;
                     c.moveToNext();

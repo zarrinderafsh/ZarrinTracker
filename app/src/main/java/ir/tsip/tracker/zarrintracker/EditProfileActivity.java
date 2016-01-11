@@ -93,6 +93,17 @@ public class EditProfileActivity extends ActionBarActivity {
         EditText tvEmail = (EditText) findViewById(R.id.etEmail);
         EditText tvActiveCode = (EditText) findViewById(R.id.etActiveCode);
 
+        if(tvName.getText().toString().contains(",") ||
+                tvName.getText().toString().contains("|")||
+                tvName.getText().toString().contains("!")||
+                tvName.getText().toString().contains("~")||
+                tvName.getText().toString().contains("#"))
+        {
+            Toast.makeText(EditProfileActivity.this,mContext.getResources().getString(R.string.dontusesymbol) , Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         String Data =
                 Tools.GetImei(mContext)+";;;"+
                 tvName.getText()+";;;"+

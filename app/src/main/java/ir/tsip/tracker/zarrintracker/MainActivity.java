@@ -433,7 +433,7 @@ initializeInviteButton();
                     ContentValues Val = new ContentValues();
                     DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
                     SQLiteDatabase db=dbh.getReadableDatabase();
-
+db.delete(DatabaseContracts.Geogences.TABLE_NAME,"",null);
                     db= dbh.getWritableDatabase();
 
                     String[] geos = Data.split("\\|");
@@ -684,7 +684,7 @@ Boolean isfirst=true;
                             //every hour
                             if(counter==0)
                             {
-                                //Update groups
+                                //Update credit
                                 WebServices ws = new WebServices(MainActivity.this);
                                 ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.this), "PurhaseDetails");
                                 ws = null;
