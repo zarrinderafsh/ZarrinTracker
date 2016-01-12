@@ -76,4 +76,9 @@
     <string name="wait">لطفا صبرکنید!</string>
     <string name="geofenceadded">ناحیه جدید اضافه شد</string>
     <string name="help">شما</string>
+    <string name="routes">مسیریابی</string>
+    <string name="cantaddmoremarkers">نمی توانید مارکر بیشتری اضافه کنید.</string>
+    <string name="findroute">یافتن مسیر</string>
+    <string name="clearmarkers">پاک کردن مارکرها</string>
+    <string name="nomarker">حداقل می بایست دو مارکر انتخاب کنید.</string>
 </resources>

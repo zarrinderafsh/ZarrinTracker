@@ -113,6 +113,7 @@ public class EditProfileActivity extends ActionBarActivity {
 
         ShareSettings.SetValue("Profile", Data);
         SendData(Data);
+        this.finish();
     }
 
     private void SendData(String Data)
