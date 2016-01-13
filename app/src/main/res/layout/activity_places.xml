@@ -12,7 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/add"
-        android:id="@+id/btnAddNewPlace" />
+        android:id="@+id/btnAddNewPlace"
+        android:background="#085dad"
+        android:textColor="#ffffff" />
 
     <ListView
         android:layout_width="match_parent"

@@ -106,4 +106,13 @@
     <string name="findroute">Find Route</string>
     <string name="clearmarkers">Clear Markers</string>
     <string name="nomarker">Atleast you should choose 2 markers.</string>
+    <string name="chats">Chats</string>
+    <string name="places">Places</string>
+    <string name="upArrow">Up Arrow</string>
+    <string name="downArrow">Down Arrow</string>
+    <string name="clearAll">Clear All</string>
+    <string name="mute">Mute</string>
+    <string name="unmute">Unmute</string>
+    <string name="gpsState">GPS state</string>
+    <string name="pausetracking">Tracking Paused </string>
 </resources>

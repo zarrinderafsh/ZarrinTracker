@@ -243,12 +243,8 @@ public class LocationListener  extends Service implements android.location.Locat
             case GpsStatus.GPS_EVENT_STOPPED:
                 String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
                 (new EventManager(mContext)).AddEvevnt(" GPS turned off." + SDate, "-3",MessageEvent.GPS_EVENT);
-                if(MainActivity.Base!=null)
-                ((TextView)MainActivity.Base.findViewById(R.id.txtgpsMessage)).setText(MainActivity.Base.getResources().getString(R.string.gpsIsOff));
                 break;
             case GpsStatus.GPS_EVENT_STARTED:
-                if(MainActivity.Base!=null)
-                    ((TextView)MainActivity.Base.findViewById(R.id.txtgpsMessage)).setText(MainActivity.Base.getResources().getString(R.string.GoogleMapTitle));
                 break;
         }
         int count = 0;

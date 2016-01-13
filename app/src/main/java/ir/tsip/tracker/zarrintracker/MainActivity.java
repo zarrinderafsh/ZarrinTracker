@@ -1,23 +1,19 @@
 package ir.tsip.tracker.zarrintracker;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
-import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +22,7 @@ import android.os.Vibrator;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,7 +31,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -42,48 +38,37 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
+public class MainActivity extends AppCompatActivity  {
 
-    LinearLayout llTop;
-    LinearLayout llDown;
-    public static LinearLayout llMain;
-    LinearLayout llmapLayout;
     ImageView ivPause;
-    ImageView ivHelp;
+    ImageView ivHelp,ivGps;
     ImageView ivPersonImage;
-    ImageView ivGPS;
-    ImageView ivNetLocation;
-    ImageView ivBattery;
-    ImageView ivArrowDown;
     GoogleMap googleMap;
-    ImageView ivCloseMap;
-    ImageButton ibtnChat;
+    ImageButton ibtnChat,ibtnRoutes,ibtnUp,ibtnDown,ibtnGeofences;
     TextView tvPersonName;
     Timer _TimerMain;
-    TextView tvHelp;
+    int height;
     TextView tvPause;
+    Button btnClearAll,btnMute;
     MessageEvent MEvent;
-    public  LinearLayout.LayoutParams lpTop;
-    public   LinearLayout.LayoutParams lpDown;
-   public static Activity Base;
+    LinearLayout lytEventsAndProfile,lytProfile,lytHeaderTop;
+    RelativeLayout.LayoutParams lytEventsAndProfileparams;
+   public static MainActivity Base;
     // nav drawer title
     private CharSequence mDrawerTitle;
     ListView lsvtest;
@@ -92,8 +77,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     android.support.v4.widget.DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle mDrawerToggle;
     MapFragment mMapFragment;
-    int StartTouchX = 0;
-    int StartTouchY = 0;
     private HashMap params;
 
     @Override
@@ -110,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             ChatActivity._this = new ChatActivity();
             ChatActivity.context = getApplicationContext();
         }
-        Tools.lsvMarkers = (HorizontalListView) MainActivity.Base.findViewById(R.id.lsvMarkers);
+        Tools.lsvMarkers = (ListView) MainActivity.Base.findViewById(R.id.lsvMarkers);
 
         Tools.setTitleColor(this);
         checkRegistration();
@@ -118,16 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         GroupsActivity.GetGroups(Base, false);
         ShowMessage();
         StartServices();
-        llTop = (LinearLayout) findViewById(R.id.llTop);
-        llDown = (LinearLayout) findViewById(R.id.llDown);
-        llMain = (LinearLayout) findViewById(R.id.llMain);
-        llmapLayout = (LinearLayout) findViewById(R.id.mapLayout);
-        LinearLayout.LayoutParams llD = (LinearLayout.LayoutParams) llDown.getLayoutParams();
-        llD.height = Tools.GetDesktopSize(Base).y - ((LinearLayout.LayoutParams) llTop.getLayoutParams()).height;
-        llDown.setLayoutParams(llD);
 
-        lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
-        lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
 
         ivPause = (ImageView) findViewById(R.id.ivPause);
         ivPause.setOnClickListener(new View.OnClickListener() {
@@ -150,56 +124,79 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         });
 
-        tvHelp = (TextView) findViewById(R.id.tvHelp);
-        tvHelp.setOnClickListener(new View.OnClickListener() {
+
+        btnClearAll=(Button)findViewById(R.id.btnCLearAllEvents);
+        btnClearAll.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                HelpDialog();
+
+                DatabaseHelper dbh = new DatabaseHelper(MainActivity.this);
+                SQLiteDatabase db = dbh.getReadableDatabase();
+                db.delete(DatabaseContracts.Events.TABLE_NAME,"",null);
+                db.close();
+                dbh.close();
+                ((LinearLayout)MainActivity.this.findViewById(R.id.llinSroll)).removeAllViews();
             }
         });
 
-        //ivwIfI = (ImageView) findViewById(R.id.ivWiFi);
-        ivGPS = (ImageView) findViewById(R.id.ivGPS);
-        ivNetLocation = (ImageView) findViewById(R.id.ivNetLocation);
-        ivBattery = (ImageView) findViewById(R.id.ivBattery);
+        btnMute=(Button)findViewById(R.id.btnMute);
+        if(Tools.Mute)
+            btnMute.setText(this.getResources().getString(R.string.unmute));
+        else
+            btnMute.setText(this.getResources().getString(R.string.mute));
+        btnMute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Tools.Mute){
+                    Tools.Mute = false;
+                    btnMute.setText(MainActivity.this.getResources().getString(R.string.mute));
+                }
+                else {
+                    Tools.Mute = true;
+                    btnMute.setText(MainActivity.this.getResources().getString(R.string.unmute));
+                }
+            }
+        });
 
-        ivCloseMap = (ImageView) findViewById(R.id.ivCloseMap);
-        ivCloseMap.setOnClickListener(new View.OnClickListener() {
-                                          public void onClick(View v) {
-                                              lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
-                                              lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
 
-                                              lpTop.topMargin = 0;
-                                              lpDown.topMargin = 0;
-                                              llMain.setAlpha(1);
-                                              llTop.setLayoutParams(lpTop);
-                                              llDown.setLayoutParams(lpDown);
-                                              llMain.setVisibility(View.VISIBLE);
-                                              if (Tools.locationMarker != null)
-                                                  Tools.locationMarker.remove();
-                                              Tools.locationMarker = null;
-                                          }
 
-                                          ;
-                                      }
-        );
 
-        llTop.setOnTouchListener(this);
-        llMain.setOnTouchListener(this);
+        lytProfile=(LinearLayout)findViewById(R.id.lytProfile);
+        lytHeaderTop=(LinearLayout)findViewById(R.id.lytTopHeader);
 
-        ivArrowDown = (ImageView) findViewById(R.id.ivArrowDown);
-        ivArrowDown.setOnClickListener(new View.OnClickListener() {
-                                           public void onClick(View v) {
-                                               lpTop = (LinearLayout.LayoutParams) llTop.getLayoutParams();
-                                               lpDown = (LinearLayout.LayoutParams) llDown.getLayoutParams();
+         lytEventsAndProfile=((LinearLayout) MainActivity.this.findViewById(R.id.lytEventsAndProfile));
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        //int width=dm.widthPixels;
+        height=dm.heightPixels;
+        ibtnUp=(ImageButton)findViewById(R.id.ibtnUp);
+        ibtnUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
 
-                                               lpTop.topMargin = -lpTop.height;
-                                               lpDown.topMargin = Tools.GetDesktopSize(Base).y + lpTop.height / 2;
-                                               llMain.setVisibility(View.INVISIBLE);
-                                           }
+                 if (lytEventsAndProfileparams.topMargin >= (int) (height / 2)- lytProfile.getHeight())
+                    lytEventsAndProfileparams.setMargins(0, 0, 0, 0);
+                else if (lytEventsAndProfileparams.topMargin!=0 && lytEventsAndProfileparams.topMargin <=  height - lytProfile.getHeight()-lytHeaderTop.getHeight()-15)
+                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2)- lytProfile.getHeight(), 0, 0);
 
-                                           ;
-                                       }
-        );
+                lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
+            }
+        });
+        ibtnDown=(ImageButton)findViewById(R.id.ibtnDown);
+        ibtnDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
+                if (lytEventsAndProfileparams.topMargin == 0)//top
+                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2)- lytProfile.getHeight(), 0, 0);
+                else if (lytEventsAndProfileparams.topMargin == (int) (height / 2)- lytProfile.getHeight())//midle
+                    lytEventsAndProfileparams.setMargins(0, height - lytProfile.getHeight()-lytHeaderTop.getHeight()-15, 0, 0);
+
+                lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
+            }
+        });
+
 
         View.OnClickListener ShowProfile = new View.OnClickListener() {
             public void onClick(View v) {
@@ -213,27 +210,41 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         tvPersonName.setOnClickListener(ShowProfile);
 
 
+        ivGps=(ImageView)findViewById(R.id.ivGPS);
         View.OnClickListener GPSClick = new View.OnClickListener() {
             public void onClick(View v) {
                 Tools.turnGPSOnOff(Base);
             }
         };
-        ivGPS.setOnClickListener(GPSClick);
-        ivNetLocation.setOnClickListener(GPSClick);
-        ivBattery.setOnClickListener(GPSClick);
+        ivGps.setOnClickListener(GPSClick);
 
         mMapFragment = MapFragment.newInstance();
         FragmentTransaction fragmentTransaction =
                 getFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.llMapLoad, mMapFragment);
         fragmentTransaction.commit();
-        llmapLayout.setGravity(android.view.Gravity.BOTTOM);
 
+        ibtnGeofences = (ImageButton) findViewById(R.id.ibtnGeofences);
+        ibtnGeofences.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(Base, Places.class);
+                Base.startActivity(myIntent);
+            }
+        });
         ibtnChat = (ImageButton) findViewById(R.id.ibtnChat);
         ibtnChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(Base, GroupsActivity.class);
+                Base.startActivity(myIntent);
+            }
+        });
+        ibtnRoutes = (ImageButton) findViewById(R.id.ibtnRoutes);
+        ibtnRoutes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(Base, RoutesActivity.class);
                 Base.startActivity(myIntent);
             }
         });
@@ -335,10 +346,12 @@ initializeInviteButton();
                         Base.startActivity(myIntent);
                         break;
                     case 2:
-                        onTouch(lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 360, 520, 1));
-                        onTouch(lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, 548, 906, 1));
-                        onTouch(lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 548, 906, 1));
-                        break;
+                        lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
+                            lytEventsAndProfileparams.setMargins(0, height - lytProfile.getHeight()-lytHeaderTop.getHeight()-15, 0, 0);
+
+                        lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
+
+                      break;
                     case 3:
                         myIntent = new Intent(Base, GroupsActivity.class);
                         Base.startActivity(myIntent);
@@ -581,67 +594,6 @@ db.delete(DatabaseContracts.Geogences.TABLE_NAME,"",null);
      * ***************************************************************
      */
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        int x = (int) event.getRawX();
-        int y = (int) event.getRawY();
-
-        lpTop  = (LinearLayout.LayoutParams) llTop.getLayoutParams();
-        lpDown  = (LinearLayout.LayoutParams) llDown.getLayoutParams();
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (-lpTop.topMargin >= lpTop.height)
-                    lpDown.topMargin = Tools.GetDesktopSize(this).y - lpTop.height;
-
-                StartTouchX = x;
-                StartTouchY = y;
-                break;
-            case MotionEvent.ACTION_UP:
-                if (lpDown.topMargin > 45) {
-                    lpTop.topMargin = -lpTop.height;
-                    lpDown.topMargin = Tools.GetDesktopSize(this).y + lpTop.height / 2;
-                    llMain.setVisibility(View.INVISIBLE);
-                } else {
-                    lpTop.topMargin = 0;
-                    lpDown.topMargin = 0;
-                    llMain.setVisibility(View.VISIBLE);
-                }
-            case MotionEvent.ACTION_MOVE:
-                Point p = Tools.GetDesktopSize(this);
-
-                int distancY = (StartTouchY - y);
-
-                if (lpTop.topMargin >= 0 && distancY >= 0)
-                    return false;
-
-                if (lpDown.topMargin >= p.y && distancY <= 0)
-                    return false;
-
-                lpTop.topMargin = lpTop.topMargin + (distancY);
-                lpDown.topMargin = lpDown.topMargin - (distancY) * 2;
-                llMain.setAlpha(llMain.getAlpha() + (float) (((distancY * 100.0) / p.y) / 100.0) * 2);
-
-
-                if (lpTop.topMargin > 0) {
-                    lpTop.topMargin = 0;
-                    lpDown.topMargin = 0;
-                }
-
-                llTop.setLayoutParams(lpTop);
-                llDown.setLayoutParams(lpDown);
-
-                StartTouchX = x;
-                StartTouchY = y;
-                break;
-            default:
-                break;
-        }
-        return true;
-        // if you want to consume the behavior then return true else retur false
-    }
-
-
     private void StartServices() {
         Timer _Timer = new Timer(true);
         _Timer.schedule(new TimerTask() {
@@ -683,7 +635,6 @@ Boolean isfirst=true;
                                     Tools.setUpMap(mMapFragment.getMap(), getApplicationContext(), isfirst);
                                 if (isfirst)
                                     isfirst = false;
-
                             }
                             //every 30 minutes
                             if(counter==30*60){
@@ -723,22 +674,13 @@ Boolean isfirst=true;
                             date = null;
 
                             if (LocationListener.isGPSEnabled) {
-                                //ivGPS.setVisibility(View.VISIBLE);
-                                ivBattery.setImageResource(R.drawable.battery_caution);
-                                ivGPS.setImageResource(R.drawable.satellite_48_hot);
+                                ivGps.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.gps_on));
                             } else {
-                                //ivGPS.setVisibility(View.INVISIBLE);
-                                ivBattery.setImageResource(R.drawable.battery);
-                                ivGPS.setImageResource(R.drawable.satellite_cancel);
-                            }
+                                ivGps.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.gps_off)); }
 
                             if (LocationListener.isNetworkEnabled) {
-                                //ivNetLocation.setVisibility(View.VISIBLE);
-                                ivNetLocation.setImageResource(R.drawable.rss);
-                            } else {
-                                //ivNetLocation.setVisibility(View.INVISIBLE);
-                                ivNetLocation.setImageResource(R.drawable.antenna_delete);
-                            }
+                                ivGps.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.gps_on));} else {
+                                ivGps.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.gps_off));}
 
                             LinearLayout SV = (LinearLayout) findViewById(R.id.llinSroll);
                             MEvent.ShowMessage(SV, MEvent.FirstDate, MEvent.Lastdate,false);
@@ -831,7 +773,7 @@ Boolean isfirst=true;
 
     private void PauseDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pause GPS");
+        builder.setTitle(MainActivity.this.getResources().getString(R.string.pausetracking));
 
         final RadioGroup RG = new RadioGroup(this);
 
@@ -863,7 +805,8 @@ Boolean isfirst=true;
                     int id = RG.getCheckedRadioButtonId();
                     int hour = (int) ((RadioButton) RG.findViewById(id)).getTag();
                     LocationListener.StartPause(hour);
-                    (new EventManager(MainActivity.Base)).AddEvevnt(" Paused tracking", "-4", MessageEvent.Pause_Event);
+                    (new EventManager(MainActivity.Base)).AddEvevnt(MainActivity.Base.getResources().getString(R.string.pausetracking), "-4", MessageEvent.Pause_Event);
+                    MainActivity.this.ivPause.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.player_pause));
                 } catch (Exception ex) {
 
                 }
@@ -875,6 +818,7 @@ Boolean isfirst=true;
             public void onClick(DialogInterface dialog, int which) {
                 LocationListener.StartPause(0);
                 dialog.cancel();
+                MainActivity.this.ivPause.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.pause_off));
             }
         });
 

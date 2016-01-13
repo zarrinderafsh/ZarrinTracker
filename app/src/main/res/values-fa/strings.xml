@@ -81,4 +81,13 @@
     <string name="findroute">یافتن مسیر</string>
     <string name="clearmarkers">پاک کردن مارکرها</string>
     <string name="nomarker">حداقل می بایست دو مارکر انتخاب کنید.</string>
+    <string name="chats">چت</string>
+    <string name="places">مکان ها</string>
+    <string name="upArrow">پیکان بالا</string>
+    <string name="downArrow">پیکان پایین</string>
+    <string name="clearAll">حذف همه</string>
+    <string name="mute">بی صدا</string>
+    <string name="unmute">صدا</string>
+    <string name="gpsState">وضعیت GPS </string>
+    <string name="pausetracking">رهگیری متوقف است</string>
 </resources>

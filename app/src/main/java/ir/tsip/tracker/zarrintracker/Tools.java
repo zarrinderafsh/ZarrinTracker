@@ -87,7 +87,7 @@ import java.util.Map;
  */
 public class Tools {
 
-public static  Boolean HasCredit=true;
+public static  Boolean HasCredit=true,Mute=false;
 
 
     public static boolean isOnline(Context context) {
@@ -216,8 +216,9 @@ static boolean IsFirst=true;
         //Toast.makeText(MainActivity.Base, "from map", Toast.LENGTH_SHORT).show();
         if (markers == null)
             markers = new HashMap<Integer, Marker>();
+
         if (Tools.isOnline(context))
-            getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom), context, googleMap);
+            Tools.getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom),context, googleMap);
         else {
         }
         if (isfirst || IsFirst) {
@@ -307,7 +308,7 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
     //    private static RequestQueue queue;
     public static Map<Integer, Marker> markers;
     private static WebServices WS;
-    public static HorizontalListView lsvMarkers;
+    public static ListView lsvMarkers;
     private static ImageListAdapter imgAdapter;
     public static void backWebServices(int ObjectCode, String Data) {
 
@@ -346,7 +347,7 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
                     if (p.image == null)
                         p.GetImageFromServer();
                     if (lsvMarkers == null)
-                        lsvMarkers = (HorizontalListView) MainActivity.Base.findViewById(R.id.lsvMarkers);
+                        lsvMarkers = (ListView) MainActivity.Base.findViewById(R.id.lsvMarkers);
 
                     if (m == null) {
                         markers.put(id,

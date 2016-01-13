@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -131,6 +132,7 @@ public class MessageEvent {
                 null, "","", DatabaseContracts.Events.COLUMN_NAME_Date+" DESC" , "");
         if(c.moveToFirst())
         {
+            if(!Tools.Mute)
             Tools.PlayAlert(_Context);
 
             int id;
@@ -193,9 +195,10 @@ public class MessageEvent {
                                     Tools.locationMarker = Tools.GoogleMapObj.addMarker(new MarkerOptions().position(new LatLng(L.Lat, L.Lon)));
                                     Tools.GoogleMapObj.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(L.Lat, L.Lon), 16.0f));
 
-                                    ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 360, 520, 1));
-                                    ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, 548, 906, 1));
-                                    ((MainActivity) MainActivity.Base).onTouch(((MainActivity) MainActivity.Base).lsvtest, MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 548, 906, 1));
+                                 MainActivity.Base.lytEventsAndProfileparams = (RelativeLayout.LayoutParams)  MainActivity.Base.lytEventsAndProfile.getLayoutParams();
+                                    MainActivity.Base.    lytEventsAndProfileparams.setMargins(0,  MainActivity.Base.height -  MainActivity.Base.lytProfile.getHeight()- MainActivity.Base.lytHeaderTop.getHeight()-15, 0, 0);
+
+                                    MainActivity.Base.lytEventsAndProfile.setLayoutParams( MainActivity.Base.lytEventsAndProfileparams);
                                 }
                             } else if (v.getTag().getClass().equals(Integer.class)) {
                                 Integer i = (Integer) v.getTag();
@@ -218,13 +221,14 @@ public class MessageEvent {
                         case NEW_MESSAGE_EVENT:
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(0);
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setText(view.getResources().getString(R.string.openChat));
+                            view.setBackgroundColor(Color.parseColor("#8CC739"));
                             break;
                         case SOS_EVENT:
                             L = new Loc();
                             L.Lat = Lat;
                             L.Lon = Lon;
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
-                            ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
+                          //  ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
                             view.setBackgroundColor(Color.parseColor("#550000"));
                             break;
                         case AREA_EVENT:
@@ -232,7 +236,7 @@ public class MessageEvent {
                             L.Lat = Lat;
                             L.Lon = Lon;
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
-                            ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
+                           // ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
                             view.setBackgroundColor(Color.parseColor("#4D658D"));
                             break;
                         case CREADIT_EVENT:
@@ -246,6 +250,7 @@ public class MessageEvent {
                             L.Lat = Lat;
                             L.Lon = Lon;
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
+                            view.setBackgroundColor(Color.parseColor("#21BEDE"));
                             break;
                         default:
                             break;

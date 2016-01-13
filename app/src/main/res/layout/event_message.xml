@@ -1,20 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/background_message"
-    android:padding="5dp"
-        android:layout_margin="10dp">
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight=".3"
+        android:background="#ffffff"
+        android:layout_marginLeft="15dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingLeft="5dp">
+
+        <ImageView
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:id="@+id/ivImageEvent"
+            android:src="@drawable/sample_user"
+            android:layout_gravity="center_vertical"
+            android:background="#ffffff" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="right">
+        android:layout_weight=".7"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical|right"
+        android:background="#ffffff"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvMessageEvent"
+            android:text="Some Text"
+            android:textColor="#000000" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -24,46 +47,19 @@
             android:gravity="right"
             android:textColor="#ff28ab8b"
             android:textStyle="bold"
-            android:layout_marginRight="10dp" />
+            android:layout_marginTop="10dp" />
+
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="2"
-            android:gravity="center_vertical|center_horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/ivImageEvent" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvMessageEvent" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right">
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginRight="15dp"
+        android:layout_gravity="center_vertical"
+        android:background="#ffffff"
+        android:gravity="center_vertical|center_horizontal"
+        android:padding="2dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -71,8 +67,8 @@
             android:text="@string/location"
             android:id="@+id/tvLocationEvent"
             android:textSize="18dp"
-            android:layout_marginRight="20dp"
-            android:textColor="#ff0364d2" />
+            android:textColor="#8CC739"
+            android:layout_margin="5dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -80,16 +76,8 @@
             android:text="@string/delete"
             android:id="@+id/tvDeleteEvent"
             android:textSize="18dp"
-            android:layout_marginRight="20dp"
-            android:textColor="#ff0364d2" />
+            android:textColor="#e31f64"
+            android:layout_margin="5dp" />
     </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp" android:background="@color/common_action_bar_splitter"
-            android:layout_weight=".7"
-            android:layout_marginRight="30dp"
-            android:layout_marginLeft="30dp">
-        </LinearLayout>
-</LinearLayout>
 </LinearLayout>
