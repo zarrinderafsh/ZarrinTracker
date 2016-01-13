@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity  {
     ImageView ivHelp,ivGps;
     ImageView ivPersonImage;
     GoogleMap googleMap;
-    ImageButton ibtnChat,ibtnRoutes,ibtnUp,ibtnDown,ibtnGeofences;
+    ImageButton ibtnChat,ibtnRoutes,ibtnUp,ibtnDown,ibtnGeofences,ibtnOfflineTracking;
     TextView tvPersonName;
     Timer _TimerMain;
     int height;
@@ -189,9 +189,9 @@ public class MainActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
                 if (lytEventsAndProfileparams.topMargin == 0)//top
-                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2)- lytProfile.getHeight(), 0, 0);
-                else if (lytEventsAndProfileparams.topMargin == (int) (height / 2)- lytProfile.getHeight())//midle
-                    lytEventsAndProfileparams.setMargins(0, height - lytProfile.getHeight()-lytHeaderTop.getHeight()-15, 0, 0);
+                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight(), 0, 0);
+                else if (lytEventsAndProfileparams.topMargin == (int) (height / 2) - lytProfile.getHeight())//midle
+                    lytEventsAndProfileparams.setMargins(0, height - lytProfile.getHeight() - lytHeaderTop.getHeight() - 15, 0, 0);
 
                 lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
             }
@@ -229,6 +229,22 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(Base, Places.class);
+                Base.startActivity(myIntent);
+            }
+        });
+        ibtnOfflineTracking = (ImageButton) findViewById(R.id.ibtnOfflineTracking);
+        ibtnOfflineTracking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Tools.imgAdapter == null) {
+                    Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (Tools.imgAdapter.getCount()==0) {
+                    Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent myIntent = new Intent(Base, OfflineMap.class);
                 Base.startActivity(myIntent);
             }
         });
@@ -296,6 +312,11 @@ initializeInviteButton();
         m6.text=getResources().getString(R.string.routes);
         m6.image=BitmapFactory.decodeResource(getResources(),R.drawable.route);
         adapter.AddItem(m6);
+        Objects.MenuItem m7= new Objects().new MenuItem();
+        m7.id=7;
+        m7.text=getResources().getString(R.string.offlinemap);
+        m7.image=BitmapFactory.decodeResource(getResources(),R.drawable.offlie_map);
+        adapter.AddItem(m7);
         Objects.MenuItem m5= new Objects().new MenuItem();
         m5.id=5;
         m5.text=getResources().getString(R.string.about);
@@ -370,6 +391,20 @@ initializeInviteButton();
                         Base.startActivity(myIntent);
                         break;
                     case 7:
+                        if(Tools.imgAdapter==null)
+                        {
+                            Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (Tools.imgAdapter.getCount()==0) {
+                            Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        myIntent = new Intent(Base, OfflineMap.class);
+                        Base.startActivity(myIntent);
+                        break;
+                    case 8:
                         myIntent = new Intent(Base, about.class);
                         Base.startActivity(myIntent);
                         break;

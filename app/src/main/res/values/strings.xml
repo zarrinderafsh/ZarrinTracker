@@ -114,5 +114,10 @@
     <string name="mute">Mute</string>
     <string name="unmute">Unmute</string>
     <string name="gpsState">GPS state</string>
+    <string name="offlinetracking2">Tracking</string>
     <string name="pausetracking">Tracking Paused </string>
+    <string name="title_activity_offline_map">Map</string>
+    <string name="offlinemap">Movement Direction</string>
+    <string name="noMarkerData">No User Data, Please Try Again</string>
+    <string name="offlinetrackingdescription">You can track your group mates in from choosed hour until next 1 hour.</string>
 </resources>

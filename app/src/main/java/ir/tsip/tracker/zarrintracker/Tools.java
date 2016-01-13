@@ -309,7 +309,7 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
     public static Map<Integer, Marker> markers;
     private static WebServices WS;
     public static ListView lsvMarkers;
-    private static ImageListAdapter imgAdapter;
+    public static ImageListAdapter imgAdapter;
     public static void backWebServices(int ObjectCode, String Data) {
 
         if (ObjectCode == 0) {//Markers

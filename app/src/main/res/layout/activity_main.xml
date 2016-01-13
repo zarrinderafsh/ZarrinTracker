@@ -22,10 +22,11 @@
                 android:orientation="vertical"
                 android:padding="5dp">
                 <ImageView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:src="@drawable/ic_launcher"
-                    android:id="@+id/imgSwipetoright"/>
+                    android:id="@+id/imgSwipetoright"
+                    android:layout_gravity="center_vertical" />
             </LinearLayout>
             <TextView
                 android:layout_width="0dp"
@@ -37,8 +38,8 @@
                 android:orientation="vertical"
                 android:padding="5dp">
                 <ImageButton
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:id="@+id/ibtnChat"
                     android:src="@drawable/chat"
                     android:contentDescription="@string/chats"
@@ -62,8 +63,8 @@
                 android:orientation="vertical"
                 android:padding="5dp">
                 <ImageButton
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:id="@+id/ibtnRoutes"
                     android:src="@drawable/routes"
                     android:contentDescription="@string/routes"
@@ -86,8 +87,32 @@
                 android:orientation="vertical"
                 android:padding="5dp">
                 <ImageButton
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:id="@+id/ibtnOfflineTracking"
+                    android:src="@drawable/offlie_map"
+                    android:contentDescription="@string/offlinemap"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:scaleType="fitCenter" />
+                <TextView
+                    android:id="@+id/txtOfflineTrackingCaption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/offlinetracking2"
+                    android:textSize="15sp"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:textColor="#FFFFFF"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="5dp">
+                <ImageButton
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:id="@+id/ibtnGeofences"
                     android:src="@drawable/geofences"
                     android:contentDescription="@string/places"

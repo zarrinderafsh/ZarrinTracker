@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/offlinetrackingdescription"
+            android:id="@+id/txtCaptions"
+            android:layout_gravity="center_horizontal"
+            android:textSize="15sp"
+            android:gravity="center_horizontal" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ir.tsip.tracker.zarrintracker.PersianDatePicker
+                android:layout_width="150dp"
+                android:layout_height="100dp"
+                android:id="@+id/dtpCalendar"
+                app:displayMonthNames="true"
+                app:selectedDay="2"
+                app:selectedMonth="6"
+                app:selectedYear="1394"
+                android:layout_weight=".5" />
+
+            <TimePicker
+                android:layout_width="150dp"
+                android:layout_height="100dp"
+                android:id="@+id/tmpFromTime"
+                android:layout_weight=".25" />
+        </LinearLayout>
+
+        <ir.tsip.tracker.zarrintracker.HorizontalListView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/hlsvUsers"></ir.tsip.tracker.zarrintracker.HorizontalListView>
+
+    </LinearLayout>
+
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:id="@+id/map"
+    tools:context="ir.tsip.tracker.zarrintracker.OfflineMap"
+    android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+</LinearLayout>

@@ -119,6 +119,10 @@
             android:name=".RoutesActivity"
             android:label="@string/title_activity_routes" >
         </activity>
+        <activity
+            android:name=".OfflineMap"
+            android:label="@string/title_activity_offline_map" >
+        </activity>
     </application>
 
 </manifest>

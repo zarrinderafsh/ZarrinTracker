@@ -89,5 +89,9 @@
     <string name="mute">بی صدا</string>
     <string name="unmute">صدا</string>
     <string name="gpsState">وضعیت GPS </string>
+    <string name="offlinetracking2">رهگیری</string>
     <string name="pausetracking">رهگیری متوقف است</string>
+    <string name="offlinemap">مسیر حرکت</string>
+    <string name="noMarkerData">اطلاعات کاربران موجود نیست لطفا دوباره سعی کنید</string>
+    <string name="offlinetrackingdescription">شما می توانید هم گروهی های خودرا ردیابی کنید از ساعت انتخاب شده تا ۱ ساعت بعد آن.</string>
 </resources>

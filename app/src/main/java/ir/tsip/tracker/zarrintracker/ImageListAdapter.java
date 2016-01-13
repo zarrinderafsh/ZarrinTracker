@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 
 /**
@@ -41,23 +42,28 @@ public class ImageListAdapter extends ArrayAdapter<Objects.MarkerItem> {
             inflater = (LayoutInflater) _activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
             convertView = inflater.inflate(R.layout.marker_item_layout, null);
-
         TextView txtname=(TextView)convertView.findViewById(R.id.txtName);
         ImageView imgphoto=(ImageView)convertView.findViewById(R.id.imgPhoto);
         final Objects.MarkerItem marker=(Objects.MarkerItem)getItem(position);
         if(marker._image==null)
             marker._image= BitmapFactory.decodeResource(_activity.getResources(), R.drawable.sample_user);
+        convertView.setTag(marker._id);
         imgphoto.setImageBitmap(marker._image);
-        imgphoto.setOnClickListener(new View.OnClickListener() {
+        click= new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Tools.GoogleMapObj.animateCamera(CameraUpdateFactory.newLatLngZoom(Tools.markers.get(marker._id).getPosition(), 16.0f));
             }
-        });
+        };
+        if(UseDefaultClickListener)
+        imgphoto.setOnClickListener(click);
         txtname.setText(marker._name);
         return  convertView;
 
     }
+
+    private View.OnClickListener click;
+    public Boolean UseDefaultClickListener=true;
 
     public void AddMarker(Objects.MarkerItem markerItem){
         this.items.add(markerItem);
