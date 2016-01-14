@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,11 +49,12 @@ private HorizontalListView hlsvUsers;
 
     private  void InitializeWidgets(){
         hlsvUsers=(HorizontalListView)findViewById(R.id.hlsvUsers);
+        ArrayList<Persons> persons=Persons.GetAll();
         ImageListAdapter adapter=new ImageListAdapter(this);
         adapter.UseDefaultClickListener=false;
-        if(Tools.imgAdapter!=null )
-            for (Objects.MarkerItem m:Tools.imgAdapter.items) {
-                adapter.AddMarker(m);
+        if(persons.size()>0 )
+            for (Persons p:persons) {
+                adapter.AddMarker(new Objects().new MarkerItem(p.ID,p.image,p.name,"",null));
             }
         else
             Toast.makeText(OfflineMap.this, OfflineMap.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_LONG).show();
@@ -79,7 +81,7 @@ private HorizontalListView hlsvUsers;
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
               mMap.clear();
                 params.clear();
-                params.put("imei", Tools.GetImei(OfflineMap.this));
+                params.put("pcode", view.getTag().toString());
                 params.put("startdate", smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour()) + ":" + String.valueOf(tmpFromTime.getCurrentMinute())+":00");
                 params.put("enddate", smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour() + 1) + ":" + String.valueOf(tmpFromTime.getCurrentMinute())+":00");
                 w.addQueue("ir.tsip.tracker.zarrintracker.OfflineMap", 0, params, "GetDirectionForAndroid");
@@ -92,38 +94,46 @@ private HorizontalListView hlsvUsers;
 
 
     public static void backWebServices (int ObjectCode, String Data) {
-        if(ObjectCode==0)
-        {
+        if (ObjectCode == 0) {
             try {
-                if(Data==null)
+                if (Data == null || Data.equals("null")) {
                     Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.noMarkerData), Toast.LENGTH_LONG).show();
-
+                return;
+                }
                 JSONObject location;
                 PolygonOptions polyOpt;
-                polyOpt = new PolygonOptions();
-                LatLng prevLoc=null,curLoc;
-                int blue=255,red=0,green=150;
+
+                LatLng prevLoc = null, curLoc;
+                int blue = 255, red = 0, green = 150;
                 JSONArray jo = new JSONArray(Data);
-              //  Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
+                //  Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
 
-                for (int i=0;i<jo.length();i++) {
-                    location=jo.getJSONObject(i).getJSONObject("Location");
-                    curLoc=new LatLng(location.getDouble("X"), location.getDouble("Y"));
-
-                        polyOpt.add(curLoc);
+                for (int i = 0; i < jo.length(); i++) {
+                    location = jo.getJSONObject(i).getJSONObject("Location");
+                    curLoc = new LatLng(location.getDouble("X"), location.getDouble("Y"));
+                    if (prevLoc != null) {
+                        polyOpt = new PolygonOptions();
+                        polyOpt.add(prevLoc).add(curLoc);
                         polyOpt.strokeWidth(2);
-                        polyOpt.fillColor(Color.RED);
+                        polyOpt.strokeColor(Color.rgb(red, green, blue));
                         // mMap.addMarker(new MarkerOptions().position().title("Marker"));
-
-
-                    if(i==0)
+                        red += 5;
+                        blue -= 5;
+                        green -= 5;
+                        if (red >= 255)
+                            red = 255;
+                        if (blue <= 0)
+                            blue = 0;
+                        if (green <= 0)
+                            green = 0;
+                        mMap.addPolygon(polyOpt);
+                    }
+                    if (i == 0)
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 14.0f));
-
+                    prevLoc = curLoc;
                 }
-                mMap.addPolygon(polyOpt);
-            }
-            catch (Exception er){
-String s=er.getMessage();
+            } catch (Exception er) {
+                String s = er.getMessage();
             }
         }
     }

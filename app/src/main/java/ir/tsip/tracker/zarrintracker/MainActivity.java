@@ -236,14 +236,6 @@ public class MainActivity extends AppCompatActivity  {
         ibtnOfflineTracking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Tools.imgAdapter == null) {
-                    Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (Tools.imgAdapter.getCount()==0) {
-                    Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 Intent myIntent = new Intent(Base, OfflineMap.class);
                 Base.startActivity(myIntent);
             }
@@ -391,16 +383,6 @@ initializeInviteButton();
                         Base.startActivity(myIntent);
                         break;
                     case 7:
-                        if(Tools.imgAdapter==null)
-                        {
-                            Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        if (Tools.imgAdapter.getCount()==0) {
-                            Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
                         myIntent = new Intent(Base, OfflineMap.class);
                         Base.startActivity(myIntent);
                         break;

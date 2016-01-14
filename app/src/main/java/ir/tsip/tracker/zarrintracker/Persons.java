@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.util.Base64;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -224,5 +225,33 @@ public boolean isme=false;
             dbh.close();
         }
     }
-
+    public static   ArrayList<Persons> GetAll(){
+        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        ArrayList<Persons> persons=new ArrayList<>();
+        try {
+            Cursor c = db.query(DatabaseContracts.Persons.TABLE_NAME,
+                    null,
+                    "",
+                    null,
+                    null,
+                    null,
+                    null);
+            if (c.moveToFirst()) {
+               do {
+                   Persons p=new Persons();
+                   p.ID = c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID));
+                   p.name = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_name));
+                p.   image = Tools.getBitmapFromByte(c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_image)));
+                p.   isme=c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_is_me))>0?true:false;
+persons.add(p);
+               }while (c.moveToNext());
+            }
+        } catch (Exception e) {
+        } finally {
+            db.close();
+            dbh.close();
+        }
+        return  persons;
+    }
 }
