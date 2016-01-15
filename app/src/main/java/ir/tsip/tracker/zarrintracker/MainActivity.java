@@ -49,6 +49,7 @@ import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -64,7 +65,6 @@ public class MainActivity extends AppCompatActivity  {
     Timer _TimerMain;
     int height;
     TextView tvPause;
-    Button btnClearAll,btnMute;
     MessageEvent MEvent;
     LinearLayout lytEventsAndProfile,lytProfile,lytHeaderTop;
     RelativeLayout.LayoutParams lytEventsAndProfileparams;
@@ -125,38 +125,7 @@ public class MainActivity extends AppCompatActivity  {
         });
 
 
-        btnClearAll=(Button)findViewById(R.id.btnCLearAllEvents);
-        btnClearAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                DatabaseHelper dbh = new DatabaseHelper(MainActivity.this);
-                SQLiteDatabase db = dbh.getReadableDatabase();
-                db.delete(DatabaseContracts.Events.TABLE_NAME,"",null);
-                db.close();
-                dbh.close();
-                ((LinearLayout)MainActivity.this.findViewById(R.id.llinSroll)).removeAllViews();
-            }
-        });
-
-        btnMute=(Button)findViewById(R.id.btnMute);
-        if(Tools.Mute)
-            btnMute.setText(this.getResources().getString(R.string.unmute));
-        else
-            btnMute.setText(this.getResources().getString(R.string.mute));
-        btnMute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(Tools.Mute){
-                    Tools.Mute = false;
-                    btnMute.setText(MainActivity.this.getResources().getString(R.string.mute));
-                }
-                else {
-                    Tools.Mute = true;
-                    btnMute.setText(MainActivity.this.getResources().getString(R.string.unmute));
-                }
-            }
-        });
 
 
 
@@ -224,38 +193,38 @@ public class MainActivity extends AppCompatActivity  {
         fragmentTransaction.add(R.id.llMapLoad, mMapFragment);
         fragmentTransaction.commit();
 
-        ibtnGeofences = (ImageButton) findViewById(R.id.ibtnGeofences);
-        ibtnGeofences.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(Base, Places.class);
-                Base.startActivity(myIntent);
-            }
-        });
-        ibtnOfflineTracking = (ImageButton) findViewById(R.id.ibtnOfflineTracking);
-        ibtnOfflineTracking.setOnClickListener(new View.OnClickListener() {
+//        ibtnGeofences = (ImageButton) findViewById(R.id.ibtnGeofences);
+        ((LinearLayout)findViewById(R.id.lytPlaces)).setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  Intent myIntent = new Intent(Base, Places.class);
+                  Base.startActivity(myIntent);
+              }
+          });
+     //   ibtnOfflineTracking = (ImageButton) findViewById(R.id.ibtnOfflineTracking);
+        ((LinearLayout)findViewById(R.id.lytTracking)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(Base, OfflineMap.class);
                 Base.startActivity(myIntent);
             }
         });
-        ibtnChat = (ImageButton) findViewById(R.id.ibtnChat);
-        ibtnChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(Base, GroupsActivity.class);
-                Base.startActivity(myIntent);
-            }
-        });
-        ibtnRoutes = (ImageButton) findViewById(R.id.ibtnRoutes);
-        ibtnRoutes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(Base, RoutesActivity.class);
-                Base.startActivity(myIntent);
-            }
-        });
+    //    ibtnChat = (ImageButton) findViewById(R.id.ibtnChat);
+        ((LinearLayout)findViewById(R.id.lytChat)).setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  Intent myIntent = new Intent(Base, GroupsActivity.class);
+                  Base.startActivity(myIntent);
+              }
+          });
+     //   ibtnRoutes = (ImageButton) findViewById(R.id.ibtnRoutes);
+        ((LinearLayout)findViewById(R.id.lytRoutes)).setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  Intent myIntent = new Intent(Base, RoutesActivity.class);
+                  Base.startActivity(myIntent);
+              }
+          });
 initializeDrawer();
 
 //        IntentFilter filter = new IntentFilter("ir.tstracker.activity.proximity");
@@ -315,6 +284,89 @@ initializeInviteButton();
         m5.image=BitmapFactory.decodeResource(getResources(),R.drawable.about);
         adapter.AddItem(m5);
 
+        Objects.MenuItem m8= new Objects().new MenuItem();
+        m8.id=8;
+        m8.type=3;
+
+        String loe=Tools.getLocale(this);
+        if(loe.equals("fa") )
+            m8.checked=0;
+        if(loe.equals("en") )
+            m8.checked=1;
+        else
+        m8.checked=0;
+        m8.radiosTexts  .add("فارسی");
+        m8.radiosTexts.add("English");
+        m8.checkedChangeListener=new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+               if(group.getTag().equals(checkedId))
+                   return;
+                group.setTag(checkedId);
+                Locale locale;
+                if (checkedId == 0)//persian
+                {
+                    Tools.SetLocale("fa");
+                    locale = new Locale("fa");
+                } else//english
+                {
+
+                    Tools.SetLocale("en");
+                    locale = new Locale("en");
+                }
+                Locale.setDefault(locale);
+                Configuration config = new Configuration();
+                config.locale = locale;
+                getBaseContext().getResources().updateConfiguration(config,
+                        getBaseContext().getResources().getDisplayMetrics());
+
+                Intent intent = MainActivity.this.getIntent();
+                MainActivity.this.finish();
+                MainActivity.this.startActivity(intent);
+            }
+        };
+        m8.text=getResources().getString(R.string.language);
+        m8.image=null;
+        adapter.AddItem(m8);
+        Objects.MenuItem m9= new Objects().new MenuItem();
+        m9.id=8;
+        m9.type=1;
+
+            m9.text=(this.getResources().getString(R.string.mute));
+        if(Tools.Mute)
+            m9.checked=1;
+        else
+        m9.checked=0;
+        m9.image=null;
+        m9.clickEvent=new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Tools.Mute){
+                    Tools.Mute = false;
+              }
+                else {
+                    Tools.Mute = true;
+              }
+            }
+        };
+        adapter.AddItem(m9);
+        Objects.MenuItem m10= new Objects().new MenuItem();
+        m10.id=10;
+        m10.type=2;
+        m10.text=getResources().getString(R.string.clearAllEvents);
+        m10.image=null;
+        m10.clickEvent=new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseHelper dbh = new DatabaseHelper(MainActivity.this);
+                SQLiteDatabase db = dbh.getReadableDatabase();
+                db.delete(DatabaseContracts.Events.TABLE_NAME,"",null);
+                db.close();
+                dbh.close();
+                ((LinearLayout)MainActivity.this.findViewById(R.id.llinSroll)).removeAllViews();
+            }
+        };
+        adapter.AddItem(m10);
         lsvtest.setAdapter(adapter);
 
 
@@ -533,14 +585,18 @@ db.delete(DatabaseContracts.Geogences.TABLE_NAME,"",null);
     }
 
     public static void insertDevice(String Data) throws JSONException {
-        if(Data == "null")
-            return;
-        JSONObject jo = new JSONObject(Data);
-        String key = jo.getString("key");
-        String logo = jo.getString("logo");
-        String site = jo.getString("site");
-        String tell = jo.getString("tell");
 
+        String key ="";
+        String logo = "Ts";
+        String site = "tstracker.ir";
+        String tell = "";
+        if(Data != "null") {
+            JSONObject jo = new JSONObject(Data);
+            key = jo.getString("key");
+             logo = jo.getString("logo");
+             site = jo.getString("site");
+             tell = jo.getString("tell");
+        }
         DatabaseHelper dh;
         SQLiteDatabase db;
         dh = new DatabaseHelper(Base.getApplicationContext());
@@ -557,6 +613,7 @@ db.delete(DatabaseContracts.Geogences.TABLE_NAME,"",null);
             values.put(DatabaseContracts.Settings.COLUMN_NAME_logo, logo);
             values.put(DatabaseContracts.Settings.COLUMN_NAME_site, site);
             values.put(DatabaseContracts.Settings.COLUMN_NAME_tell, tell);
+            values.put(DatabaseContracts.Settings.COLUMN_locale, "fa");
             values.put(DatabaseContracts.Settings.COLUMN_NAME_Accurate, "h");
             values.put(DatabaseContracts.Settings.COLUMN_NAME_interval, 5000);
             // Insert the new row, returning the primary key value of the new row

@@ -36,7 +36,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:id="@+id/lytChat">
                 <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -61,7 +62,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:id="@+id/lytRoutes">
                 <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -85,7 +87,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:id="@+id/lytTracking">
                 <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -109,7 +112,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:id="@+id/lytPlaces">
                 <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -225,14 +229,12 @@
                         android:layout_marginLeft="5dp"
                         android:layout_gravity="center_vertical"
                         android:clickable="true" />
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight=".7"/>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:layout_marginLeft="20dp">
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -290,28 +292,12 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <Button
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:text="@string/mute"
-                                android:textColor="#085dad"
-                                android:id="@+id/btnMute"
-                                style="@style/Base.Widget.AppCompat.Button.Borderless" />
-                            <Button
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:text="@string/clearAll"
-                                android:textColor="#e31f64"
-                                android:id="@+id/btnCLearAllEvents"
-                                style="@style/Base.Widget.AppCompat.Button.Borderless" />
-                        </LinearLayout>
                     </LinearLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight=".7"/>
                 </LinearLayout>
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -362,7 +348,7 @@
     </LinearLayout>
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="start"
         android:id="@+id/lsvtest"
         android:background="#ff0a86cd"/>

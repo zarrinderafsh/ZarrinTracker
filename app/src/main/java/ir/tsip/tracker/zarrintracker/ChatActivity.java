@@ -76,6 +76,16 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        if(!Tools.HasCredit) {
+            Toast.makeText(this, this.getResources().getString(R.string.nocreadit), Toast.LENGTH_SHORT).show();
+
+            Intent myIntent = new Intent(this, PurchaseActivity.class);
+            myIntent.putExtra("msg", "Charge Account");
+            startActivity(myIntent);
+            return;
+        }
+
 IsChatActivityShowing=true;
         _this = null;
         _this = this;
@@ -355,7 +365,7 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
             p.ID=-1;
         }
         //[C||E||G](date) [from] : message
-        String message=p.ID+"~~~~~ME~~[C]!"+gpID +"!("+ new Date().toString()+") ["+EditProfileActivity.getName(_this)+"] : "+msg;
+        String message=p.ID+"~~~~~ME~~[C]!"+gpID +"!("+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",new Locale("en")).format(  new Date())+") ["+EditProfileActivity.getName(_this)+"] : "+msg;
         InsertMessages(new String[]{message});
         HashMap<String, String> params;
         params = new HashMap<>();
@@ -545,7 +555,7 @@ String gpCode;
                   data=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_NAME_Data));
                     p.GetData(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.ChatLog.COLUMN_Person_Id)));
                     try {
-                        CreateGroupLayer(iso8601Format.parse(data.substring(data.indexOf("("), data.indexOf(")") - data.indexOf("(")).replace("(","").replace("\\/","-")),
+                        CreateGroupLayer(iso8601Format.parse(data.substring(data.indexOf("("), data.indexOf(")")).replace("(","").replace("\\/", "-")),
                                 data,
                                 p.image,
                                 0,
@@ -553,7 +563,7 @@ String gpCode;
                                 p.ID);
                     }
                     catch(Exception er){
-
+String e=er.getMessage();
                     }
                     if (c.isLast())
                         break;

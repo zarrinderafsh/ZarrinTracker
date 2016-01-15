@@ -1,6 +1,7 @@
 package ir.tsip.tracker.zarrintracker;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -41,7 +42,18 @@ private HorizontalListView hlsvUsers;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_map);
+        if(!Tools.HasCredit) {
+            Toast.makeText(OfflineMap.this, this.getResources().getString(R.string.nocreadit), Toast.LENGTH_SHORT).show();
+
+          Intent  myIntent = new Intent(this, PurchaseActivity.class);
+            myIntent.putExtra("msg","Charge Account");
+            startActivity(myIntent);
+            return;
+        }
+
         setUpMapIfNeeded();
+
+
 
         InitializeWidgets();
     }

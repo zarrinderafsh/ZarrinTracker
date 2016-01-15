@@ -85,8 +85,9 @@
     <string name="places">مکان ها</string>
     <string name="upArrow">پیکان بالا</string>
     <string name="downArrow">پیکان پایین</string>
-    <string name="clearAll">حذف همه</string>
+    <string name="clearAllEvents">حذف تمامی رویدادها</string>
     <string name="mute">بی صدا</string>
+    <string name="language">زبان</string>
     <string name="unmute">صدا</string>
     <string name="gpsState">وضعیت GPS </string>
     <string name="offlinetracking2">رهگیری</string>
@@ -94,4 +95,5 @@
     <string name="offlinemap">مسیر حرکت</string>
     <string name="noMarkerData">اطلاعات کاربران موجود نیست لطفا دوباره سعی کنید</string>
     <string name="offlinetrackingdescription">شما می توانید هم گروهی های خودرا ردیابی کنید از ساعت انتخاب شده تا ۱ ساعت بعد آن.</string>
+    <string name="nocreadit">شما شارژ کافی ندارید. لفا اقدام به شارژ نمایید.</string>
 </resources>

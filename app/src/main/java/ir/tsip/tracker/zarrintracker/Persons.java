@@ -206,9 +206,10 @@ public boolean isme=false;
     public static void UpdateImages(){
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
         SQLiteDatabase db = dbh.getReadableDatabase();
+        Persons p=new Persons();
+        Cursor c=null;
         try {
-            Persons p=new Persons();
-            Cursor c = db.query(DatabaseContracts.Persons.TABLE_NAME,
+           c=db.query(DatabaseContracts.Persons.TABLE_NAME,
                     null,
                     "",
                     null,
@@ -221,16 +222,19 @@ public boolean isme=false;
             }
         } catch (Exception e) {
         } finally {
+            c.close();
             db.close();
             dbh.close();
+            p=null;
         }
     }
     public static   ArrayList<Persons> GetAll(){
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
         SQLiteDatabase db = dbh.getReadableDatabase();
         ArrayList<Persons> persons=new ArrayList<>();
+        Cursor c =null;
         try {
-            Cursor c = db.query(DatabaseContracts.Persons.TABLE_NAME,
+            c= db.query(DatabaseContracts.Persons.TABLE_NAME,
                     null,
                     "",
                     null,
@@ -249,6 +253,7 @@ persons.add(p);
             }
         } catch (Exception e) {
         } finally {
+            c.close();
             db.close();
             dbh.close();
         }

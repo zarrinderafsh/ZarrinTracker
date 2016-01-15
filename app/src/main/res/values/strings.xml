@@ -110,8 +110,9 @@
     <string name="places">Places</string>
     <string name="upArrow">Up Arrow</string>
     <string name="downArrow">Down Arrow</string>
-    <string name="clearAll">Clear All</string>
+    <string name="clearAllEvents">Clear All Events</string>
     <string name="mute">Mute</string>
+    <string name="language">Language</string>
     <string name="unmute">Unmute</string>
     <string name="gpsState">GPS state</string>
     <string name="offlinetracking2">Tracking</string>
@@ -120,4 +121,5 @@
     <string name="offlinemap">Movement Direction</string>
     <string name="noMarkerData">No User Data, Please Try Again</string>
     <string name="offlinetrackingdescription">You can track your group mates in from choosed hour until next 1 hour.</string>
+    <string name="nocreadit">You have no charge. Please recharge to use application.</string>
 </resources>

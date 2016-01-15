@@ -412,7 +412,7 @@ public class LocationListener  extends Service implements android.location.Locat
                     SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
                 }
                 if (isGPSEnabled || isNetworkEnabled)
-                    Tools.Notificationm(mContext, "TsTracker", "Last Get Location:" + SDate, "",0);
+                    Tools.Notificationm(mContext, "TsTracker", "Last Get Location:" + SDate, "",0,R.drawable.notification_icon_anim);
                 else
                     Tools.HideNotificationm();
 

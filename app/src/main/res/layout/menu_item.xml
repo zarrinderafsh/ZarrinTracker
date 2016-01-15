@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/lytImageAndText">
     <ImageView
         android:layout_width="32dp"
         android:layout_height="32dp"
@@ -25,4 +26,25 @@
         android:textColor="#ffffff"
         android:text="Some text"/>
     </LinearLayout>
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New Switch"
+        android:id="@+id/swch"
+        android:textColor="#ffffff"
+        android:visibility="gone" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/btnMenuItem"
+        android:visibility="gone" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/rdpgMenuItem"></RadioGroup>
 </LinearLayout>

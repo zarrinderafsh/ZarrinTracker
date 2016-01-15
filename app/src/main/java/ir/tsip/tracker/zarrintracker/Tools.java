@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -87,7 +88,7 @@ import java.util.Map;
  */
 public class Tools {
 
-public static  Boolean HasCredit=true,Mute=false;
+    public static Boolean HasCredit = true, Mute = false;
 
 
     public static boolean isOnline(Context context) {
@@ -105,16 +106,17 @@ public static  Boolean HasCredit=true,Mute=false;
 
 
     public static Intent resultIntent;
-    public static NotificationCompat.Builder mBuilder;
+    //    public static NotificationCompat.Builder mBuilder;
     public static TaskStackBuilder stackBuilder;
     public static PendingIntent resultPendingIntent;
     public static NotificationManager mNotificationManager;
 
-    public static void Notificationm(Context context, String Title, String Details, String packge,int notifyNumber) {
+    public static void Notificationm(Context context, String Title, String Details, String packge, int notifyNumber, int Drawable) {
+        NotificationCompat.Builder mBuilder = null;
         if (mBuilder == null) {
             mBuilder =
                     new NotificationCompat.Builder(context)
-                            .setSmallIcon(R.drawable.notification_icon_anim)
+                            .setSmallIcon(Drawable)
                             .setContentTitle(Title)
                             .setContentText(Details);
         } else {
@@ -188,27 +190,29 @@ public static  Boolean HasCredit=true,Mute=false;
         return googleMap;
     }
 
-    public static  int MyPersonId=0;
-    public static int FindMyPersonID(){
-        MyPersonId=0;
+    public static int MyPersonId = 0;
+
+    public static int FindMyPersonID() {
+        MyPersonId = 0;
         WebServices W;
         HashMap<String, String> params;
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
         SQLiteDatabase db = dbh.getReadableDatabase();
         Cursor c;
-        c = db.query(DatabaseContracts.Persons.TABLE_NAME,new String[]{ DatabaseContracts.Persons.COLUMN_NAME_ID},DatabaseContracts.Persons.COLUMN_is_me +"=1", null, "", "", "", "");
+        c = db.query(DatabaseContracts.Persons.TABLE_NAME, new String[]{DatabaseContracts.Persons.COLUMN_NAME_ID}, DatabaseContracts.Persons.COLUMN_is_me + "=1", null, "", "", "", "");
         if (c.moveToFirst()) {
-            MyPersonId=Integer.valueOf(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID)));
+            MyPersonId = Integer.valueOf(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID)));
         }
-        return  MyPersonId;
+        return MyPersonId;
     }
 
 
     public static GoogleMap GoogleMapObj;
     public static Marker locationMarker;
 
-static boolean IsFirst=true;
-    public static void setUpMap(GoogleMap googleMap, Context context,boolean isfirst) {
+    static boolean IsFirst = true;
+
+    public static void setUpMap(GoogleMap googleMap, Context context, boolean isfirst) {
         if (googleMap == null || LocationListener.CurrentLocation == null)
             return;
         else if (isfirst || IsFirst)
@@ -218,37 +222,37 @@ static boolean IsFirst=true;
             markers = new HashMap<Integer, Marker>();
 
         if (Tools.isOnline(context))
-            Tools.getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom),context, googleMap);
+            Tools.getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom), context, googleMap);
         else {
         }
         if (isfirst || IsFirst) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
-DrawCircles(context);
+            DrawCircles(context);
             GoogleMapObj.setMyLocationEnabled(true);
-            IsFirst=false;
+            IsFirst = false;
         }
     }
 
-    public static void DrawCircles(Context context){
-        if(Tools.GoogleMapObj== null)
+    public static void DrawCircles(Context context) {
+        if (Tools.GoogleMapObj == null)
             return;
         Tools.GoogleMapObj.clear();
 
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getWritableDatabase();
-        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius,DatabaseContracts.Geogences.COLUMN_NAME_center,DatabaseContracts.Geogences.COLUMN_NAME_name};
+        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius, DatabaseContracts.Geogences.COLUMN_NAME_center, DatabaseContracts.Geogences.COLUMN_NAME_name};
         Cursor c;
         c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
         c.moveToFirst();
         String center;
         String meters;
-        while(true && c.getCount()>0) {
+        while (true && c.getCount() > 0) {
             try {
                 center = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).replace("lat/lng: (", "").replace(")", "");
                 meters = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
                 Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]), Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(meters)));
-          } catch (Exception er) {
-er.getMessage();
+            } catch (Exception er) {
+                er.getMessage();
             }
             if (c.isLast())
                 break;
@@ -259,38 +263,39 @@ er.getMessage();
         dbh.close();
     }
 
-    private static  ArrayList<Integer> proximities=new ArrayList<>();
-    public static void setupGeofences(Context context){
+    private static ArrayList<Integer> proximities = new ArrayList<>();
 
-        if(Tools.GoogleMapObj== null )
+    public static void setupGeofences(Context context) {
+
+        if (Tools.GoogleMapObj == null)
             return;
 
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getWritableDatabase();
-        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius,DatabaseContracts.Geogences.COLUMN_NAME_center,DatabaseContracts.Geogences.COLUMN_NAME_name};
+        String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID, DatabaseContracts.Geogences.COLUMN_NAME_radius, DatabaseContracts.Geogences.COLUMN_NAME_center, DatabaseContracts.Geogences.COLUMN_NAME_name};
         Cursor c;
         c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
         c.moveToFirst();
         String center;
         String meters;
-        int id=0;
-        while(true && c.getCount()>0) {
+        int id = 0;
+        while (true && c.getCount() > 0) {
             try {
                 center = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_center)).replace("lat/lng: (", "").replace(")", "");
                 meters = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_radius));
                 Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(center.split(",")[0]), Double.valueOf(center.split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(meters)));
-                id=Integer.valueOf(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID)));
-                if(!proximities.contains(id)) {
+                id = Integer.valueOf(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID)));
+                if (!proximities.contains(id)) {
                     LocationListener.locationManager.addProximityAlert(
                             Double.valueOf(center.split(",")[0]),
                             Double.valueOf(center.split(",")[1]),
                             Float.valueOf(meters),
                             -1,
                             PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id), 0));
-              proximities.add(id);
+                    proximities.add(id);
                 }
             } catch (Exception er) {
-Log.e("Tools.GeofenceSetup",er.getMessage());
+                Log.e("Tools.GeofenceSetup", er.getMessage());
             }
             if (c.isLast())
                 break;
@@ -304,22 +309,23 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
     }
 
 
-
     //    private static RequestQueue queue;
     public static Map<Integer, Marker> markers;
     private static WebServices WS;
     public static ListView lsvMarkers;
     public static ImageListAdapter imgAdapter;
+
     public static void backWebServices(int ObjectCode, String Data) {
 
         if (ObjectCode == 0) {//Markers
             try {
-                if(MainActivity.Base==null )
-                    return;;
-                if(imgAdapter==null) {
+                if (MainActivity.Base == null)
+                    return;
+                ;
+                if (imgAdapter == null) {
                     imgAdapter = new ImageListAdapter(MainActivity.Base);
                 }
-                if(markers.size()==0)
+                if (markers.size() == 0)
                     imgAdapter.Clear();
                 JSONObject jo = new JSONObject(Data);
                 Marker m;
@@ -342,7 +348,7 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
 //                        p.ID = Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
 //                        p.name = ja.getJSONObject(i).getString("Title");
 //                        p.isme = false;
-                       // p.update();
+                        // p.update();
                     }
                     if (p.image == null)
                         p.GetImageFromServer();
@@ -363,28 +369,30 @@ Log.e("Tools.GeofenceSetup",er.getMessage());
                         m.setPosition(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
                         m.setTitle(ja.getJSONObject(i).getString("Title"));
                         m.setIcon(BitmapDescriptorFactory.fromBitmap(LoadImage(p.image, 96)));
-                         imgAdapter.GetItemByID(id)._image=LoadImage(p.image, 96);
-                        imgAdapter.GetItemByID(id)._name=p.name;
+                        imgAdapter.GetItemByID(id)._image = LoadImage(p.image, 96);
+                        imgAdapter.GetItemByID(id)._name = p.name;
                     }//Add icon for each marker at bottom of map, and when click on it, go to marker location
 
                 }
                 lsvMarkers.setAdapter(imgAdapter);
 //                imgAdapter.notifyDataSetChanged();
             } catch (Exception er) {
-er.getMessage();
+                er.getMessage();
             }
         }
     }
 
     public static void getDevicesLocation(String bounds, String zoom, final Context context, final GoogleMap gmap) {
+     if(!Tools.HasCredit)
+         return;
         bounds = bounds.replace("LatLngBounds{southwest=lat/lng: ", "(");
         bounds = bounds.replace("northeast=lat/lng: ", "");
         bounds = bounds.replace("}", ")");
         HashMap<String, String> params = new HashMap<>();
         params.put("bounds", bounds);
         //Zoom = zoomlevel,imei
-        String zoomAndImei=new String (zoom + "," + Tools.GetImei(context));
-        params.put("zoom",zoomAndImei);
+        String zoomAndImei = new String(zoom + "," + Tools.GetImei(context));
+        params.put("zoom", zoomAndImei);
         if (WS == null)
             WS = new WebServices(context);
 
@@ -413,9 +421,7 @@ er.getMessage();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
             Bitmap bTemp = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.toByteArray().length);
             return stream.toByteArray();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -425,11 +431,9 @@ er.getMessage();
             return null;
         try {
             Bitmap bitmap;
-            bitmap = BitmapFactory.decodeByteArray(bitmapByte,0,bitmapByte.length);
+            bitmap = BitmapFactory.decodeByteArray(bitmapByte, 0, bitmapByte.length);
             return bitmap;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
         return null;
@@ -445,7 +449,7 @@ er.getMessage();
         }
     }
 
-    public static Bitmap BorderImage(Bitmap Image,int Weight,int BorderColor){
+    public static Bitmap BorderImage(Bitmap Image, int Weight, int BorderColor) {
         Bitmap bmpWithBorder = Bitmap.createBitmap(Image.getWidth() + Weight * 2, Image.getHeight() + Weight * 2, Image.getConfig());
         Canvas canvas = new Canvas(bmpWithBorder);
         canvas.drawColor(BorderColor);
@@ -459,11 +463,12 @@ er.getMessage();
         options.inPurgeable = true;
         options.inInputShareable = true;
         options.inTempStorage = new byte[1024 * 32];
-if (Radious > 0)
+        if (Radious > 0)
             b = CircleImage.getRoundedRectBitmap(
-                    Bitmap.createScaledBitmap(b,Radious,Radious,true), Radious);
-        return  b;
+                    Bitmap.createScaledBitmap(b, Radious, Radious, true), Radious);
+        return b;
     }
+
     public static void LoadImage(ImageView iv, byte[] imageAsBytes, int Radious) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDither = false;
@@ -473,7 +478,7 @@ if (Radious > 0)
 
         Bitmap bm = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length, options);
         if (Radious > 0)
-            bm = CircleImage.getRoundedRectBitmap(Bitmap.createScaledBitmap(bm,Radious,Radious,true), Radious);
+            bm = CircleImage.getRoundedRectBitmap(Bitmap.createScaledBitmap(bm, Radious, Radious, true), Radious);
         iv.setImageBitmap(bm);
     }
 
@@ -488,7 +493,7 @@ if (Radious > 0)
 
         Bitmap bm = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length, options);
         if (Radious > 0)
-            bm = CircleImage.getRoundedRectBitmap(Bitmap.createScaledBitmap(bm,Radious,Radious,true), Radious);
+            bm = CircleImage.getRoundedRectBitmap(Bitmap.createScaledBitmap(bm, Radious, Radious, true), Radious);
         return bm;
     }
 
@@ -521,5 +526,47 @@ if (Radious > 0)
     }
 
 
+    public static String getLocale(Context context) {
+        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+
+        String locale = "fa";
+        Cursor c=null;
+        try {
+           c = db.query(DatabaseContracts.Settings.TABLE_NAME,
+                    null,
+                    "",
+                    null,
+                    null,
+                    null,
+                    null);
+            if (c.moveToFirst()) {
+
+                locale = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COLUMN_locale));
+
+
+            }
+        } catch (Exception e) {
+        } finally {
+            c.close();
+            db.close();
+            dbh.close();
+        }
+        return locale;
+    }
+
+    public static void SetLocale(String Locale) {
+        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        try {
+            ContentValues V = new ContentValues();
+            V.put(DatabaseContracts.Settings.COLUMN_locale, Locale);
+            db.update(DatabaseContracts.Settings.TABLE_NAME, V, "", null);
+        } catch (Exception e) {
+        } finally {
+            db.close();
+            dbh.close();
+        }
+    }
 }
 

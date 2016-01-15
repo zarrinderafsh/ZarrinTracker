@@ -1,9 +1,16 @@
 package ir.tsip.tracker.zarrintracker;
 
 import android.graphics.Bitmap;
+import android.provider.Settings;
+import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ali on 11/15/15.
@@ -57,6 +64,13 @@ public class Objects {
         public Bitmap image;
         public String text;
         public String customTag;
+        public int type=0;
+        public View.OnClickListener clickEvent=null;
+        public List<String> radiosTexts=new ArrayList<>();
+        public RadioGroup.OnCheckedChangeListener checkedChangeListener;
+        public int checked=0;
     }
+
+
 
 }
