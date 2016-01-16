@@ -1,37 +1,56 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent"
     tools:context="ir.tsip.tracker.zarrintracker.PurchaseActivity"
-    android:orientation="horizontal">
+    android:orientation="vertical">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/BackColor"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtmsg"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtPurchaseMessage"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtmsg"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txtPurchaseMessage"/>
 
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="هزینه شارژ برای هر نفر در گروه شما روزانه 100 تومان است. به عنوان مثال در صورت وجود 3 نفر در گروه شما روزانه هزینه شارژ 300 تومان می شود. بنا براین با شارژ 5000 تومان شما 15 روز از امکانات نرم افزار استفاده می کنید."
+            android:id="@+id/textView9"
+            android:layout_gravity="center_horizontal"
+            android:padding="10dp" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="50,000 ریال"
             android:id="@+id/rdb5"
-            android:contextClickable="false" />
+            android:contextClickable="false"
+            android:layout_marginLeft="20dp" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="100,000 ریال"
-            android:id="@+id/rdb10" />
+            android:id="@+id/rdb10"
+            android:layout_marginLeft="20dp" />
 
         <Button
             android:layout_width="match_parent"
@@ -39,5 +58,6 @@
             android:text="@string/btnPurchase"
             android:id="@+id/btnPurchase"/>
     </LinearLayout>
+
 
 </LinearLayout>

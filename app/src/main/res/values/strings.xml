@@ -127,4 +127,5 @@
     <string name="sos">SOS</string>
     <string name="entered">Entered</string>
     <string name="exited">Exited</string>
+    <string name="PlaceDescription">-</string>
 </resources>

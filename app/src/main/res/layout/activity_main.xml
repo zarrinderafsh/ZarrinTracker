@@ -37,7 +37,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="5dp"
-                android:id="@+id/lytChat">
+                android:id="@+id/lytChat"
+                android:clickable="true">
                 <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -45,7 +46,7 @@
                     android:src="@drawable/chat"
                     android:contentDescription="@string/chats"
                     android:background="@android:color/transparent"
-                    android:clickable="true"
+                    android:clickable="false"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:scaleType="fitCenter" />
 
@@ -63,7 +64,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="5dp"
-                android:id="@+id/lytRoutes">
+                android:id="@+id/lytRoutes"
+                android:clickable="true">
                 <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -71,7 +73,7 @@
                     android:src="@drawable/routes"
                     android:contentDescription="@string/routes"
                     android:background="@android:color/transparent"
-                    android:clickable="true"
+                    android:clickable="false"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:scaleType="fitCenter" />
                 <TextView
@@ -88,7 +90,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="5dp"
-                android:id="@+id/lytTracking">
+                android:id="@+id/lytTracking"
+                android:clickable="true">
                 <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -96,7 +99,7 @@
                     android:src="@drawable/offlie_map"
                     android:contentDescription="@string/offlinemap"
                     android:background="@android:color/transparent"
-                    android:clickable="true"
+                    android:clickable="false"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:scaleType="fitCenter" />
                 <TextView
@@ -113,7 +116,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="5dp"
-                android:id="@+id/lytPlaces">
+                android:id="@+id/lytPlaces"
+                android:clickable="true">
                 <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -121,7 +125,7 @@
                     android:src="@drawable/geofences"
                     android:contentDescription="@string/places"
                     android:background="@android:color/transparent"
-                    android:clickable="true"
+                    android:clickable="false"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:scaleType="fitCenter" />
                 <TextView
@@ -139,13 +143,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="5dp"
-                android:id="@+id/lytSos">
+                android:id="@+id/lytSos"
+                android:clickable="true">
                 <ImageView
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:id="@+id/ivHelp"
                 android:src="@drawable/help"
-                android:clickable="true"
+                android:clickable="false"
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
@@ -261,7 +266,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:orientation="vertical"
-                                    android:layout_marginRight="5dp">
+                                    android:layout_marginRight="15dp">
                                     <ImageView
                                         android:layout_width="28dp"
                                         android:layout_height="28dp"
@@ -284,7 +289,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:orientation="vertical"
-                                    android:layout_marginLeft="5dp">
+                                    android:layout_marginLeft="15dp">
                                     <ImageView
                                         android:layout_width="28dp"
                                         android:layout_height="28dp"

@@ -2,31 +2,21 @@ package ir.tsip.tracker.zarrintracker;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.SystemClock;
-import android.os.Vibrator;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.sql.Blob;
-import java.sql.Struct;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -194,6 +184,9 @@ public class MessageEvent {
                                 if (L.Lon > 0 && L.Lat > 0) {
                                     Tools.locationMarker = Tools.GoogleMapObj.addMarker(new MarkerOptions().position(new LatLng(L.Lat, L.Lon)));
                                     Tools.GoogleMapObj.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(L.Lat, L.Lon), 16.0f));
+
+                                    MainActivity.Base.ibtnUp.setVisibility(View.VISIBLE);
+                                    MainActivity.Base.ibtnDown.setVisibility(View.INVISIBLE);
 
                                  MainActivity.Base.lytEventsAndProfileparams = (RelativeLayout.LayoutParams)  MainActivity.Base.lytEventsAndProfile.getLayoutParams();
                                     MainActivity.Base.    lytEventsAndProfileparams.setMargins(0,  MainActivity.Base.height -  MainActivity.Base.lytProfile.getHeight()- MainActivity.Base.lytHeaderTop.getHeight()-15, 0, 0);

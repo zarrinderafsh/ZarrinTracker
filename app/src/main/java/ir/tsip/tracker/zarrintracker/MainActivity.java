@@ -1,8 +1,6 @@
 package ir.tsip.tracker.zarrintracker;
 
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
@@ -14,10 +12,8 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.os.Vibrator;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,7 +23,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -41,6 +36,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
@@ -49,7 +45,6 @@ import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -139,16 +134,22 @@ public class MainActivity extends AppCompatActivity  {
         //int width=dm.widthPixels;
         height=dm.heightPixels;
         ibtnUp=(ImageButton)findViewById(R.id.ibtnUp);
+        ibtnUp.setVisibility(View.INVISIBLE);
         ibtnUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
 
-                 if (lytEventsAndProfileparams.topMargin >= (int) (height / 2)- lytProfile.getHeight())
-                    lytEventsAndProfileparams.setMargins(0, 0, 0, 0);
-                else if (lytEventsAndProfileparams.topMargin!=0 && lytEventsAndProfileparams.topMargin <=  height - lytProfile.getHeight()-lytHeaderTop.getHeight()-15)
-                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2)- lytProfile.getHeight(), 0, 0);
-
+                 if (lytEventsAndProfileparams.topMargin <= (int) (height / 2)- lytProfile.getHeight()) {
+                     lytEventsAndProfileparams.setMargins(0, 0, 0, 0);
+                     ibtnUp.setVisibility(View.INVISIBLE);
+                     ibtnDown.setVisibility(View.VISIBLE);
+                 }
+                else if (lytEventsAndProfileparams.topMargin!=0 && lytEventsAndProfileparams.topMargin <=  height - lytProfile.getHeight()-lytHeaderTop.getHeight()-15) {
+                     ibtnUp.setVisibility(View.VISIBLE);
+                     ibtnDown.setVisibility(View.VISIBLE);
+                     lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight() - 50, 0, 0);
+                 }
                 lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
             }
         });
@@ -157,11 +158,16 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
-                if (lytEventsAndProfileparams.topMargin == 0)//top
+                if (lytEventsAndProfileparams.topMargin == 0){//TOP
+                    ibtnUp.setVisibility(View.VISIBLE);
+                    ibtnDown.setVisibility(View.VISIBLE);
                     lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight(), 0, 0);
-                else if (lytEventsAndProfileparams.topMargin == (int) (height / 2) - lytProfile.getHeight())//midle
+                }
+                else if (lytEventsAndProfileparams.topMargin <= (int) (height / 2) - lytProfile.getHeight()) {//midle
+                    ibtnUp.setVisibility(View.VISIBLE);
+                    ibtnDown.setVisibility(View.INVISIBLE);
                     lytEventsAndProfileparams.setMargins(0, height - lytProfile.getHeight() - lytHeaderTop.getHeight() - 15, 0, 0);
-
+                }
                 lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
             }
         });
@@ -334,6 +340,9 @@ initializeInviteButton();
                     case 2:
                         lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
                             lytEventsAndProfileparams.setMargins(0, height - lytProfile.getHeight()-lytHeaderTop.getHeight()-15, 0, 0);
+
+                        ibtnUp.setVisibility(View.VISIBLE);
+                        ibtnDown.setVisibility(View.INVISIBLE);
 
                         lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
 
