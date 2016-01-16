@@ -221,7 +221,7 @@ public class MessageEvent {
                         case NEW_MESSAGE_EVENT:
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(0);
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setText(view.getResources().getString(R.string.openChat));
-                            view.setBackgroundColor(Color.parseColor("#8CC739"));
+                        //    view.setBackgroundColor(Color.parseColor("#8CC739"));
                             break;
                         case SOS_EVENT:
                             L = new Loc();
@@ -229,7 +229,7 @@ public class MessageEvent {
                             L.Lon = Lon;
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
                           //  ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
-                            view.setBackgroundColor(Color.parseColor("#550000"));
+                          //  view.setBackgroundColor(Color.parseColor("#550000"));
                             break;
                         case AREA_EVENT:
                             L = new Loc();
@@ -237,12 +237,12 @@ public class MessageEvent {
                             L.Lon = Lon;
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
                            // ((TextView) view.findViewById(R.id.tvMessageEvent)).setTextColor(Color.WHITE);
-                            view.setBackgroundColor(Color.parseColor("#4D658D"));
+                          //  view.setBackgroundColor(Color.parseColor("#4D658D"));
                             break;
                         case CREADIT_EVENT:
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(1);
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setText(view.getResources().getString(R.string.charge));
-                            view.setBackgroundColor(Color.parseColor("#D9D372"));
+                       //     view.setBackgroundColor(Color.parseColor("#D9D372"));
                             break;
                         case Pause_Event:
                         case GPS_EVENT:
@@ -250,7 +250,7 @@ public class MessageEvent {
                             L.Lat = Lat;
                             L.Lon = Lon;
                             ((TextView) view.findViewById(R.id.tvLocationEvent)).setTag(L);
-                            view.setBackgroundColor(Color.parseColor("#21BEDE"));
+                         //   view.setBackgroundColor(Color.parseColor("#21BEDE"));
                             break;
                         default:
                             break;

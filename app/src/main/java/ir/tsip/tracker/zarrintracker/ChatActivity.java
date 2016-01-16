@@ -77,14 +77,6 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        if(!Tools.HasCredit) {
-            Toast.makeText(this, this.getResources().getString(R.string.nocreadit), Toast.LENGTH_SHORT).show();
-
-            Intent myIntent = new Intent(this, PurchaseActivity.class);
-            myIntent.putExtra("msg", "Charge Account");
-            startActivity(myIntent);
-            return;
-        }
 
 IsChatActivityShowing=true;
         _this = null;

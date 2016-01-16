@@ -56,13 +56,12 @@ public class ProximityIntentReceiver extends BroadcastReceiver {
             }
         }
             if (entering) {
-            state="Entered "+state;
+            state=context.getResources().getString(R.string.entered)+" "+state;
         }else {
-            state="Exited "+state;
+            state=context.getResources().getString(R.string.exited)+" "+state;
         }
-        if(!Tools.HasCredit)
-            return;
+
         (new EventManager(context)).AddEvevnt(state, "-1", MessageEvent.AREA_EVENT);
-        Toast.makeText(context, state, Toast.LENGTH_SHORT).show();
+     //   Toast.makeText(context, state, Toast.LENGTH_SHORT).show();
     }
 }

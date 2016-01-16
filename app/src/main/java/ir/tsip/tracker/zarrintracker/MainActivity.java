@@ -117,8 +117,8 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-        ivHelp = (ImageView) findViewById(R.id.ivHelp);
-        ivHelp.setOnClickListener(new View.OnClickListener() {
+       // ivHelp = (ImageView) findViewById(R.id.ivHelp);
+        ((LinearLayout)findViewById(R.id.lytSos)).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 HelpDialog();
             }
@@ -278,95 +278,16 @@ initializeInviteButton();
         m7.text=getResources().getString(R.string.offlinemap);
         m7.image=BitmapFactory.decodeResource(getResources(),R.drawable.offlie_map);
         adapter.AddItem(m7);
+        Objects.MenuItem m8= new Objects().new MenuItem();
+        m8.id=8;
+        m8.text=getResources().getString(R.string.setting);
+        m8.image=BitmapFactory.decodeResource(getResources(),R.drawable.setting);
+        adapter.AddItem(m8);
         Objects.MenuItem m5= new Objects().new MenuItem();
         m5.id=5;
         m5.text=getResources().getString(R.string.about);
         m5.image=BitmapFactory.decodeResource(getResources(),R.drawable.about);
         adapter.AddItem(m5);
-
-        Objects.MenuItem m8= new Objects().new MenuItem();
-        m8.id=8;
-        m8.type=3;
-
-        String loe=Tools.getLocale(this);
-        if(loe.equals("fa") )
-            m8.checked=0;
-        if(loe.equals("en") )
-            m8.checked=1;
-        else
-        m8.checked=0;
-        m8.radiosTexts  .add("فارسی");
-        m8.radiosTexts.add("English");
-        m8.checkedChangeListener=new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-               if(group.getTag().equals(checkedId))
-                   return;
-                group.setTag(checkedId);
-                Locale locale;
-                if (checkedId == 0)//persian
-                {
-                    Tools.SetLocale("fa");
-                    locale = new Locale("fa");
-                } else//english
-                {
-
-                    Tools.SetLocale("en");
-                    locale = new Locale("en");
-                }
-                Locale.setDefault(locale);
-                Configuration config = new Configuration();
-                config.locale = locale;
-                getBaseContext().getResources().updateConfiguration(config,
-                        getBaseContext().getResources().getDisplayMetrics());
-
-                Intent intent = MainActivity.this.getIntent();
-                MainActivity.this.finish();
-                MainActivity.this.startActivity(intent);
-            }
-        };
-        m8.text=getResources().getString(R.string.language);
-        m8.image=null;
-        adapter.AddItem(m8);
-        Objects.MenuItem m9= new Objects().new MenuItem();
-        m9.id=8;
-        m9.type=1;
-
-            m9.text=(this.getResources().getString(R.string.mute));
-        if(Tools.Mute)
-            m9.checked=1;
-        else
-        m9.checked=0;
-        m9.image=null;
-        m9.clickEvent=new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(Tools.Mute){
-                    Tools.Mute = false;
-              }
-                else {
-                    Tools.Mute = true;
-              }
-            }
-        };
-        adapter.AddItem(m9);
-        Objects.MenuItem m10= new Objects().new MenuItem();
-        m10.id=10;
-        m10.type=2;
-        m10.text=getResources().getString(R.string.clearAllEvents);
-        m10.image=null;
-        m10.clickEvent=new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatabaseHelper dbh = new DatabaseHelper(MainActivity.this);
-                SQLiteDatabase db = dbh.getReadableDatabase();
-                db.delete(DatabaseContracts.Events.TABLE_NAME,"",null);
-                db.close();
-                dbh.close();
-                ((LinearLayout)MainActivity.this.findViewById(R.id.llinSroll)).removeAllViews();
-            }
-        };
-        adapter.AddItem(m10);
         lsvtest.setAdapter(adapter);
 
 
@@ -439,6 +360,10 @@ initializeInviteButton();
                         Base.startActivity(myIntent);
                         break;
                     case 8:
+                        myIntent = new Intent(Base, SettingActivity.class);
+                        Base.startActivity(myIntent);
+                        break;
+                    case 9:
                         myIntent = new Intent(Base, about.class);
                         Base.startActivity(myIntent);
                         break;

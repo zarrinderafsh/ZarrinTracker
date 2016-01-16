@@ -43,8 +43,8 @@
                 android:contentDescription="@string/ivWiFiDesc"
                 android:src="@drawable/addgroup"
                 android:clickable="true"
-                android:layout_below="@+id/textView5"
-                android:layout_alignRight="@+id/textView5"
+                android:layout_below="@+id/txtSosTopMenuItem"
+                android:layout_alignRight="@+id/txtSosTopMenuItem"
                 android:layout_marginRight="0dp" />
 
 

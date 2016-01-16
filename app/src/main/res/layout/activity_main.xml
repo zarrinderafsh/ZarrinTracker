@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="#085dad"
+            android:background="#ff0a86cd"
             android:id="@+id/lytTopHeader"
             android:measureWithLargestChild="false">
             <LinearLayout
@@ -133,22 +133,35 @@
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:textColor="#FFFFFF"/>
             </LinearLayout>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight=".7"/>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:id="@+id/lytSos">
                 <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:id="@+id/ivHelp"
                 android:src="@drawable/help"
-                android:clickable="true" />
+                android:clickable="true"
+                    android:layout_gravity="center_horizontal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sos"
+                    android:id="@+id/txtSosTopMenuItem"
+                    android:textColor="#ffffff"
+                    android:layout_gravity="center_horizontal" />
             </LinearLayout>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight=".7"
+                android:id="@+id/textView5" />
         </LinearLayout>
         <RelativeLayout
         android:layout_width="match_parent"
@@ -298,6 +311,32 @@
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_weight=".7"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true">
+                        <ImageButton
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:scaleType="fitCenter"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@string/upArrow"
+                            android:src="@drawable/up_arrow"
+                            android:id="@+id/ibtnUp"
+                            android:layout_margin="1dp"/>
+                        <ImageButton
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:scaleType="fitCenter"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@string/downArrow"
+                            android:src="@drawable/down_arrow"
+                            android:id="@+id/ibtnDown"
+                            android:layout_margin="1dp"/>
+                    </LinearLayout>
                 </LinearLayout>
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -319,32 +358,7 @@
                     </ScrollView>
                 </RelativeLayout>
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true">
-                <ImageButton
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:scaleType="fitCenter"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/upArrow"
-                    android:src="@drawable/up_arrow"
-                    android:id="@+id/ibtnUp"
-                    android:layout_margin="5dp"/>
-                <ImageButton
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:scaleType="fitCenter"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/downArrow"
-                    android:src="@drawable/down_arrow"
-                    android:id="@+id/ibtnDown"
-                    android:layout_margin="5dp"/>
-            </LinearLayout>
-    </RelativeLayout>
+        </RelativeLayout>
     </LinearLayout>
     <ListView
         android:layout_width="match_parent"

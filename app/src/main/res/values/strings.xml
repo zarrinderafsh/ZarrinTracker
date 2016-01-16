@@ -80,11 +80,12 @@
     <string name="takephoto"> Take a photo</string>
     <string name="chooseFromLibrary">Choose from library</string>
     <string name="imageUploaded">Image uploaded on server.</string>
-    <string name="madeBy"> Made By  \n Morteza Zarrin Derafsh\n Ali Heidari </string>
+    <string name="madeBy"> Produced by Tarahan Samane Ide Pouya \n Developers:  \n Morteza Zarrin Derafsh\n Ali Heidari </string>
     <string name="name">Name</string>
     <string name="phone">Phone</string>
     <string name="email">Email</string>
     <string name="save">Save</string>
+    <string name="setting">Settings</string>
     <string name="codeDuration">Your generated key is valid for 15 minutes.</string>
     <string name="joinGroupsUnlimited">You can join groups unlimited.</string>
     <string name="groups">Groups</string>
@@ -122,4 +123,8 @@
     <string name="noMarkerData">No User Data, Please Try Again</string>
     <string name="offlinetrackingdescription">You can track your group mates in from choosed hour until next 1 hour.</string>
     <string name="nocreadit">You have no charge. Please recharge to use application.</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="sos">SOS</string>
+    <string name="entered">Entered</string>
+    <string name="exited">Exited</string>
 </resources>

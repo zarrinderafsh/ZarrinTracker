@@ -23,6 +23,7 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_RunningAlarm = "RunningAlarm";
         public static final String COLUMN_NAME_Accurate = "Accurate";
         public static final String COLUMN_locale = "locale";
+        public static final String COLUMN_mute = "mute";
 
         private static final String COMMA_SEP = ",";
         public static final String SQL_CREATE_Table =
@@ -37,6 +38,7 @@ public class DatabaseContracts {
                         Settings.COLUMN_NAME_tell + " varchar(20) " + COMMA_SEP +
                         Settings.COLUMN_NAME_Accurate + " char(1) " + COMMA_SEP +
                         Settings.COLUMN_locale + " char(2) " + COMMA_SEP +
+                        Settings.COLUMN_mute + " INTEGER " + COMMA_SEP +
                         Settings.COLUMN_NAME_RunningAlarm + " INTEGER " + COMMA_SEP +
                         Settings.COLUMN_NAME_interval + " varchar(20) " +  " )";
 

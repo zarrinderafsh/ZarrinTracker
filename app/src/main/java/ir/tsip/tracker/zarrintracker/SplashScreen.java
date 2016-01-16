@@ -2,7 +2,10 @@ package ir.tsip.tracker.zarrintracker;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+
+import java.util.Locale;
 
 /**
  * Created by vamsikrishna on 12-Feb-15.
@@ -14,6 +17,15 @@ public class SplashScreen extends Activity {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
+
+        Tools.Mute=Tools.getMute(this);
+Locale locale=new Locale(Tools.getLocale(this));
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config,
+                getBaseContext().getResources().getDisplayMetrics());
+
 
         Thread timerThread = new Thread(){
             public void run(){

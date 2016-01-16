@@ -42,14 +42,7 @@ private HorizontalListView hlsvUsers;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_map);
-        if(!Tools.HasCredit) {
-            Toast.makeText(OfflineMap.this, this.getResources().getString(R.string.nocreadit), Toast.LENGTH_SHORT).show();
 
-          Intent  myIntent = new Intent(this, PurchaseActivity.class);
-            myIntent.putExtra("msg","Charge Account");
-            startActivity(myIntent);
-            return;
-        }
 
         setUpMapIfNeeded();
 
@@ -129,9 +122,9 @@ private HorizontalListView hlsvUsers;
                         polyOpt.strokeWidth(2);
                         polyOpt.strokeColor(Color.rgb(red, green, blue));
                         // mMap.addMarker(new MarkerOptions().position().title("Marker"));
-                        red += 5;
-                        blue -= 5;
-                        green -= 5;
+                        red += 1;
+                        blue -= 1;
+                        green -= 1;
                         if (red >= 255)
                             red = 255;
                         if (blue <= 0)

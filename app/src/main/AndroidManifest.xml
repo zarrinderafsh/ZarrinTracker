@@ -123,6 +123,10 @@
             android:name=".OfflineMap"
             android:label="@string/title_activity_offline_map" >
         </activity>
+        <activity
+            android:name=".SettingActivity"
+            android:label="@string/title_activity_setting" >
+        </activity>
     </application>
 
 </manifest>

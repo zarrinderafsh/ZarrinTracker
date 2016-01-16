@@ -383,8 +383,7 @@ public class Tools {
     }
 
     public static void getDevicesLocation(String bounds, String zoom, final Context context, final GoogleMap gmap) {
-     if(!Tools.HasCredit)
-         return;
+
         bounds = bounds.replace("LatLngBounds{southwest=lat/lng: ", "(");
         bounds = bounds.replace("northeast=lat/lng: ", "");
         bounds = bounds.replace("}", ")");
@@ -527,7 +526,7 @@ public class Tools {
 
 
     public static String getLocale(Context context) {
-        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
 
         String locale = "fa";
@@ -555,6 +554,49 @@ public class Tools {
         return locale;
     }
 
+    public static void SetMute(Boolean mut) {
+        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        try {
+            ContentValues V = new ContentValues();
+            V.put(DatabaseContracts.Settings.COLUMN_mute, mut?1:0);
+            db.update(DatabaseContracts.Settings.TABLE_NAME, V, "", null);
+        } catch (Exception e) {
+        } finally {
+            db.close();
+            dbh.close();
+        }
+    }
+
+    public static Boolean getMute(Context context) {
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+
+        Cursor c=null;
+        try {
+            c = db.query(DatabaseContracts.Settings.TABLE_NAME,
+                    null,
+                    "",
+                    null,
+                    null,
+                    null,
+                    null);
+            if (c.moveToFirst()) {
+
+              return  (c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COLUMN_mute))>0)? true: false;
+
+
+            }
+        } catch (Exception e) {
+        } finally {
+            c.close();
+            db.close();
+            dbh.close();
+        }
+        return false;
+    }
+
+
     public static void SetLocale(String Locale) {
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
         SQLiteDatabase db = dbh.getReadableDatabase();
@@ -568,5 +610,7 @@ public class Tools {
             dbh.close();
         }
     }
+
+
 }
 

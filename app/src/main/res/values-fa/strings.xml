@@ -52,10 +52,11 @@
     <string name="joinGroups">عضویت در گروه</string>
     <string name="joinGroupsUnlimited">شما در بی نهایت گروه می توانید عضو شوید</string>
     <string name="location">مکان</string>
-    <string name="madeBy">ساخته شده توسط  مرتضی زرین درفش و علی حیدری</string>
+    <string name="madeBy">تولید شده توسط شرکت راحان سامانه ایده پویا  \n گسترش دهندگان : \n مرتضی زرین درفش و علی حیدری</string>
     <string name="map">نقشه</string>
     <string name="name">نام</string>
     <string name="ok">انجام</string>
+    <string name="setting">تنظیمات</string>
     <string name="pause">توقف</string>
     <string name="personname">نام شما</string>
     <string name="phone">تلفن</string>
@@ -96,4 +97,7 @@
     <string name="noMarkerData">اطلاعات کاربران موجود نیست لطفا دوباره سعی کنید</string>
     <string name="offlinetrackingdescription">شما می توانید هم گروهی های خودرا ردیابی کنید از ساعت انتخاب شده تا ۱ ساعت بعد آن.</string>
     <string name="nocreadit">شما شارژ کافی ندارید. لفا اقدام به شارژ نمایید.</string>
+    <string name="sos">کمک</string>
+    <string name="entered">وارد شده به</string>
+    <string name="exited">خارج شده از</string>
 </resources>

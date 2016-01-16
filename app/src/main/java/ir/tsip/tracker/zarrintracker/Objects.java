@@ -64,11 +64,7 @@ public class Objects {
         public Bitmap image;
         public String text;
         public String customTag;
-        public int type=0;
-        public View.OnClickListener clickEvent=null;
-        public List<String> radiosTexts=new ArrayList<>();
-        public RadioGroup.OnCheckedChangeListener checkedChangeListener;
-        public int checked=0;
+
     }
 
 
