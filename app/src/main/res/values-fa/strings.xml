@@ -100,4 +100,5 @@
     <string name="sos">کمک</string>
     <string name="entered">وارد شده به</string>
     <string name="exited">خارج شده از</string>
+    <string name="groupNoCharge">گروه شارژ کافی ندارد. از مدیر گزوه بخواهید گروه را شارژ کند.</string>
 </resources>

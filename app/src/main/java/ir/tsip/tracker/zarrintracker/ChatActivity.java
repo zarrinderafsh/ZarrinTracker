@@ -419,7 +419,9 @@ if(msg==null || msg=="" || msg==" " || msg.length()<1)
                 //close the activity
                 _this.setResult(1);//1 means group activity will be finished.
                 _this.finish();
-            } else
+            }else if(ObjectCode==-1 && Data.equals("-1"))
+                Toast.makeText(_this, _this.getResources().getString(R.string.groupNoCharge) , Toast.LENGTH_SHORT).show();
+            else
                 Toast.makeText(_this,_this.getResources().getString(R.string.somethingWrong) , Toast.LENGTH_SHORT).show();
         }
     }
