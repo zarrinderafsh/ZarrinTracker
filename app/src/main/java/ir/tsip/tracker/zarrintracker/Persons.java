@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -21,9 +22,20 @@ public class Persons {
     public String name;
     public Bitmap image;
 public boolean isme=false;
+public static Context con;
+
+
+    public Persons(){
+        if(con==null){
+            if(LocationListener.mContext==null)
+                con=MainActivity.Base;
+            else
+                con=LocationListener.mContext;
+        }
+    }
 
     public boolean Save() {
-        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        DatabaseHelper dbh = new DatabaseHelper(con);
         SQLiteDatabase db = dbh.getReadableDatabase();
         try {
             ContentValues V = new ContentValues();
@@ -47,7 +59,7 @@ public boolean isme=false;
     }
 
     public boolean update() {
-        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        DatabaseHelper dbh = new DatabaseHelper(con);
         SQLiteDatabase db = dbh.getReadableDatabase();
         try {
             ContentValues V = new ContentValues();
@@ -69,7 +81,7 @@ public boolean isme=false;
     }
 
     public boolean Delete() {
-        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        DatabaseHelper dbh = new DatabaseHelper(con);
         SQLiteDatabase db = dbh.getReadableDatabase();
         try {
             db.delete(DatabaseContracts.Persons.TABLE_NAME, DatabaseContracts.Persons.COLUMN_NAME_ID + "=" + ID, null);
@@ -87,9 +99,10 @@ public boolean isme=false;
     }
 
     public boolean Find(int pID, boolean pSetData) {
-        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
-        SQLiteDatabase db = dbh.getReadableDatabase();
+        DatabaseHelper dbh = new DatabaseHelper(con);
+        SQLiteDatabase db=null;
         try {
+            db = dbh.getReadableDatabase();
             ContentValues V = new ContentValues();
             V.put(DatabaseContracts.Persons.COLUMN_NAME_name, name);
             if (image != null) {
@@ -116,6 +129,7 @@ public boolean isme=false;
                 return true;
             }
         } catch (Exception e) {
+            Log.e("position",e.getMessage());
             return false;
         } finally {
             db.close();
@@ -128,7 +142,7 @@ public boolean isme=false;
         return Find(pID, true);
     }
     public boolean FindDeviceOwner() {
-        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        DatabaseHelper dbh = new DatabaseHelper(con);
         SQLiteDatabase db = dbh.getReadableDatabase();
         try {
             ContentValues V = new ContentValues();
@@ -204,7 +218,7 @@ public boolean isme=false;
     }
 
     public static void UpdateImages(){
-        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        DatabaseHelper dbh = new DatabaseHelper(con);
         SQLiteDatabase db = dbh.getReadableDatabase();
         Persons p=new Persons();
         Cursor c=null;
@@ -229,7 +243,7 @@ public boolean isme=false;
         }
     }
     public static   ArrayList<Persons> GetAll(){
-        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        DatabaseHelper dbh = new DatabaseHelper(con);
         SQLiteDatabase db = dbh.getReadableDatabase();
         ArrayList<Persons> persons=new ArrayList<>();
         Cursor c =null;

@@ -37,6 +37,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.cast.Cast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
@@ -80,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setContentView(R.layout.activity_main);
         Base = this;
+        if(Persons.con==null){
+            if(LocationListener.mContext==null)
+                Persons.con=MainActivity.Base;
+            else
+                Persons.con=LocationListener.mContext;
+        }
 
         if (Tools.markers != null) {
             Tools.markers.clear();
@@ -437,9 +444,9 @@ public class MainActivity extends AppCompatActivity {
         {
             if (Float.valueOf(Data.split(",")[0]) > 0) {
                 String msg =
-                        MainActivity.Base.getResources().getString(R.string.creditAmount) + " " + Data.split(",")[2] + "\n" +
+                        MainActivity.Base.getResources().getString(R.string.creditAmount) + " " + Data.split(",")[2].replace(".0000","") + "\n" +
                                 Data.split(",")[1] + " " + MainActivity.Base.getResources().getString(R.string.groupCOunts) + "\n";
-                msg += (Data.split(",")[0].equals("Infinity")) ? "" : Data.split(",")[0] + " " + MainActivity.Base.getResources().getString(R.string.DaysToRecharge);
+                msg += (Data.split(",")[0].equals("Infinity")) ? "" :String.valueOf(Math.round( Float.valueOf(Data.split(",")[0]))) + " " + MainActivity.Base.getResources().getString(R.string.DaysToRecharge);
                 MessageEvent.InsertMessage(MainActivity.Base, msg, MessageEvent.CREADIT_EVENT);
                 Tools.HasCredit = true;
             } else {

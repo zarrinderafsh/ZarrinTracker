@@ -106,37 +106,44 @@ private HorizontalListView hlsvUsers;
                 return;
                 }
                 JSONObject location;
-                PolygonOptions polyOpt;
-
+                PolygonOptions polyOpt= new PolygonOptions();
+                ArrayList<PolygonOptions> pol=new ArrayList<>();
                 LatLng prevLoc = null, curLoc;
                 int blue = 255, red = 0, green = 150;
                 JSONArray jo = new JSONArray(Data);
-                //  Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
+                  Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
 
                 for (int i = 0; i < jo.length(); i++) {
                     location = jo.getJSONObject(i).getJSONObject("Location");
                     curLoc = new LatLng(location.getDouble("X"), location.getDouble("Y"));
-                    if (prevLoc != null) {
-                        polyOpt = new PolygonOptions();
-                        polyOpt.add(prevLoc).add(curLoc);
+                   // if (prevLoc != null) {
+                      //  polyOpt = new PolygonOptions();
+                       // polyOpt.add(prevLoc).add(curLoc);
+                    polyOpt.add(curLoc);
                         polyOpt.strokeWidth(2);
                         polyOpt.strokeColor(Color.rgb(red, green, blue));
                         // mMap.addMarker(new MarkerOptions().position().title("Marker"));
-                        red += 1;
-                        blue -= 1;
-                        green -= 1;
-                        if (red >= 255)
-                            red = 255;
-                        if (blue <= 0)
-                            blue = 0;
-                        if (green <= 0)
-                            green = 0;
-                        mMap.addPolygon(polyOpt);
-                    }
+//                        red += 1;
+//                        blue -= 1;
+//                        green -= 1;
+//                        if (red >= 255)
+//                            red = 255;
+//                        if (blue <= 0)
+//                            blue = 0;
+//                        if (green <= 0)
+//                            green = 0;
+//                        pol.add(polyOpt);
+                   // }
                     if (i == 0)
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 14.0f));
-                    prevLoc = curLoc;
+                       mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 14.0f));
+                 //   prevLoc = curLoc;
                 }
+                mMap.addPolygon(polyOpt);
+//                for (PolygonOptions p:pol) {
+//
+//                    mMap.addPolygon(p);
+//                }
+                pol=null;
             } catch (Exception er) {
                 String s = er.getMessage();
             }
