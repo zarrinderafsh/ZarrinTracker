@@ -8,6 +8,15 @@
    android:orientation="vertical">
 
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/PlaceDescription"
+        android:id="@+id/textView7"
+        android:layout_gravity="center_horizontal"
+        android:textStyle="bold"
+        android:textSize="20dp" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

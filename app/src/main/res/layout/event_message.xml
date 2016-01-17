@@ -8,10 +8,9 @@
         android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight=".3"
+        android:layout_weight="0.22"
         android:background="#ffffff"
-        android:layout_marginLeft="15dp"
-        android:gravity="center_vertical|center_horizontal"
+        android:gravity="center_vertical"
         android:paddingLeft="5dp">
 
         <ImageView
@@ -19,7 +18,7 @@
             android:layout_height="52dp"
             android:id="@+id/ivImageEvent"
             android:src="@drawable/sample_user"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="center"
             android:background="#ffffff" />
     </LinearLayout>
 
@@ -30,10 +29,13 @@
         android:orientation="vertical"
         android:layout_gravity="center_vertical|right"
         android:background="#ffffff"
-        android:padding="20dp">
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tvMessageEvent"
             android:text="Some Text"
@@ -49,17 +51,27 @@
             android:textStyle="bold"
             android:layout_marginTop="10dp" />
 
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="________________________"
+            android:id="@+id/ttt"
+            android:textColor="#ff395c74"
+            android:gravity="center"
+            android:singleLine="true"
+            android:padding="0dp" />
+
     </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="65dp"
         android:layout_height="match_parent"
-        android:layout_marginRight="15dp"
         android:layout_gravity="center_vertical"
         android:background="#ffffff"
         android:gravity="center_vertical|center_horizontal"
-        android:padding="2dp">
+        android:padding="2dp"
+        android:layout_marginRight="5dp">
 
         <TextView
             android:layout_width="wrap_content"
