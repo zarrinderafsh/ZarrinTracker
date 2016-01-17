@@ -37,7 +37,7 @@ public class EventManager {
     }
 
     public void SendSOS() {
-        AddEvevnt("Please contact me ASAP.I may need your help", "-2",MessageEvent.SOS_EVENT);
+        AddEvevnt(Base.getResources().getString(R.string.sosMessage), "-2",MessageEvent.SOS_EVENT);
 
     }
 

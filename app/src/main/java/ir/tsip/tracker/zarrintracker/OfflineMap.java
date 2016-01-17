@@ -11,9 +11,11 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.appdatasearch.GetRecentContextCall;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -35,8 +37,14 @@ public class OfflineMap extends FragmentActivity {
 
     static private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 private HorizontalListView hlsvUsers;
-    private PersianDatePicker dtpDate;
+     private PersianDatePicker dtpDate;
     private TimePicker tmpFromTime;
+    static WebServices w;
+     final SimpleDateFormat smplDate=new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US);
+static String pcode="0";
+
+    private static int startrow,count;
+    private static  String startdate,enddate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,19 +86,18 @@ private HorizontalListView hlsvUsers;
         tmpFromTime.setIs24HourView(true);
 
 
-        final WebServices w=new WebServices(OfflineMap.this);
-        final HashMap<String,String> params=new HashMap<>();
-        final SimpleDateFormat smplDate=new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        hlsvUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+          hlsvUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
               mMap.clear();
-                params.clear();
-                params.put("pcode", view.getTag().toString());
-                params.put("startdate", smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour()) + ":" + String.valueOf(tmpFromTime.getCurrentMinute())+":00");
-                params.put("enddate", smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour() + 1) + ":" + String.valueOf(tmpFromTime.getCurrentMinute())+":00");
-                w.addQueue("ir.tsip.tracker.zarrintracker.OfflineMap", 0, params, "GetDirectionForAndroid");
+              pcode=  view.getTag().toString();
+                startrow=0;
+                count=20;
+                startdate= smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour()) + ":" + String.valueOf(tmpFromTime.getCurrentMinute())+":00";
+                enddate=smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour() + 1) + ":" + String.valueOf(tmpFromTime.getCurrentMinute())+":00";
+                RequestServer();
                 Toast.makeText(OfflineMap.this, OfflineMap.this.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
+
             }
         });
 
@@ -98,52 +105,50 @@ private HorizontalListView hlsvUsers;
     }
 
 
+    private  static  void RequestServer(){
+        w=new WebServices(MainActivity.Base);
+        final HashMap<String,String> params=new HashMap<>();
+        params.clear();
+        params.put("pcode", pcode);
+        params.put("startdate", startdate);
+        params.put("enddate", enddate);
+        params.put("startrow", String.valueOf(startrow));
+        params.put("lastrow", String.valueOf(startrow + count));
+        w.addQueue("ir.tsip.tracker.zarrintracker.OfflineMap", 0, params, "GetDirectionForAndroid");
+      w=null;
+    }
+
     public static void backWebServices (int ObjectCode, String Data) {
         if (ObjectCode == 0) {
             try {
+                if ((Data == null || Data.equals("null"))&& startrow==0) {
+                    return;
+                }
                 if (Data == null || Data.equals("null")) {
                     Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.noMarkerData), Toast.LENGTH_LONG).show();
                 return;
                 }
+
                 JSONObject location;
                 PolygonOptions polyOpt= new PolygonOptions();
-                ArrayList<PolygonOptions> pol=new ArrayList<>();
-                LatLng prevLoc = null, curLoc;
-                int blue = 255, red = 0, green = 150;
+                LatLng curLoc;
                 JSONArray jo = new JSONArray(Data);
-                  Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
+               //   Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
 
                 for (int i = 0; i < jo.length(); i++) {
                     location = jo.getJSONObject(i).getJSONObject("Location");
-                    curLoc = new LatLng(location.getDouble("X"), location.getDouble("Y"));
-                   // if (prevLoc != null) {
-                      //  polyOpt = new PolygonOptions();
-                       // polyOpt.add(prevLoc).add(curLoc);
-                    polyOpt.add(curLoc);
-                        polyOpt.strokeWidth(2);
-                        polyOpt.strokeColor(Color.rgb(red, green, blue));
-                        // mMap.addMarker(new MarkerOptions().position().title("Marker"));
-//                        red += 1;
-//                        blue -= 1;
-//                        green -= 1;
-//                        if (red >= 255)
-//                            red = 255;
-//                        if (blue <= 0)
-//                            blue = 0;
-//                        if (green <= 0)
-//                            green = 0;
-//                        pol.add(polyOpt);
-                   // }
-                    if (i == 0)
-                       mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 14.0f));
-                 //   prevLoc = curLoc;
+
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(location.getDouble("X"), location.getDouble("Y"))).icon(BitmapDescriptorFactory.fromResource(R.drawable.point)));
+
+                    if (i == 0 && startrow==0) {
+                        curLoc = new LatLng(location.getDouble("X"), location.getDouble("Y"));
+
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 14.0f));
+                    }
                 }
-                mMap.addPolygon(polyOpt);
-//                for (PolygonOptions p:pol) {
-//
-//                    mMap.addPolygon(p);
-//                }
-                pol=null;
+                startrow+=count;
+
+                RequestServer();
             } catch (Exception er) {
                 String s = er.getMessage();
             }

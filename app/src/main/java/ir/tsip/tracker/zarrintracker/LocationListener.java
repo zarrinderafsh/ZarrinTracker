@@ -391,6 +391,7 @@ public class LocationListener  extends Service implements android.location.Locat
     private void StartServices() {
 
 
+        Tools.Mute=Tools.getMute(mContext);
         if(ChatActivity._this==null) {
             ChatActivity._this = new ChatActivity();
             ChatActivity.context = mContext;

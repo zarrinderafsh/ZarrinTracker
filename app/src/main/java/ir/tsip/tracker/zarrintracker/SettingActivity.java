@@ -50,7 +50,7 @@ Button btnClearEvents;
                     Tools.SetMute(false);
                 } else {
                     Tools.Mute = true;
-                    Tools.SetMute(false);
+                    Tools.SetMute(true);
                 }
             }
         });
