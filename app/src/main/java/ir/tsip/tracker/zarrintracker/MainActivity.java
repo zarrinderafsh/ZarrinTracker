@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         //int width=dm.widthPixels;
         height = dm.heightPixels;
         ibtnUp = (ImageButton) findViewById(R.id.ibtnUp);
-        ibtnUp.setVisibility(View.INVISIBLE);
+        ibtnUp.setVisibility(View.GONE);
         ibtnUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,7 +144,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (lytEventsAndProfileparams.topMargin <= (int) (height / 2) - lytProfile.getHeight()) {
                     lytEventsAndProfileparams.setMargins(0, 0, 0, 0);
-                    ibtnUp.setVisibility(View.INVISIBLE);
+                    ibtnUp.setVisibility(View.GONE);
+                    ((TextView)MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.VISIBLE);
                 } else if (lytEventsAndProfileparams.topMargin != 0 && lytEventsAndProfileparams.topMargin <= height - lytProfile.getHeight() - lytHeaderTop.getHeight() - 15) {
                     ibtnUp.setVisibility(View.VISIBLE);
@@ -162,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 if (lytEventsAndProfileparams.topMargin == 0) {//TOP
                     ibtnUp.setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.VISIBLE);
+                    ((TextView)MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.GONE);
                     lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight(), 0, 0);
                 } else if (lytEventsAndProfileparams.topMargin <= (int) (height / 2) - lytProfile.getHeight()) {//midle
                     ibtnUp.setVisibility(View.VISIBLE);

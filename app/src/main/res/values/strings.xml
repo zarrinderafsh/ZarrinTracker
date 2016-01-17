@@ -130,4 +130,5 @@
     <string name="PlaceDescription">-</string>
     <string name="groupNoCharge">Group has no enough charge.</string>
     <string name="sosMessage">Please contact me ASAP.I may need your help</string>
+    <string name="maphint">Click to see map</string>
 </resources>

@@ -332,6 +332,16 @@
                             android:src="@drawable/up_arrow"
                             android:id="@+id/ibtnUp"
                             android:layout_margin="1dp"/>
+
+                        <TextView
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/maphint"
+                            android:id="@+id/txtMapHint"
+                            android:textSize="8sp"
+                            android:visibility="visible"
+                            android:layout_marginRight="5dp" />
+
                         <ImageButton
                             android:layout_width="32dp"
                             android:layout_height="32dp"
@@ -341,6 +351,7 @@
                             android:src="@drawable/down_arrow"
                             android:id="@+id/ibtnDown"
                             android:layout_margin="1dp"/>
+
                     </LinearLayout>
                 </LinearLayout>
                 <RelativeLayout
