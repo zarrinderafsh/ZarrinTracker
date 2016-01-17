@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">tsTracker</string>
+    <string name="app_name">Position Locator</string>
     <string name="hello_world" translatable="false">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_splash" translatable="false">SplashActivity</string>
@@ -127,5 +127,7 @@
     <string name="sos">SOS</string>
     <string name="entered">Entered</string>
     <string name="exited">Exited</string>
-    <string name="groupNoCharge">Group has no charge. Contact group admin to recharge it.</string>
+    <string name="PlaceDescription">-</string>
+    <string name="groupNoCharge">Group has no enough charge.</string>
+    <string name="sosMessage">Please contact me ASAP.I may need your help</string>
 </resources>

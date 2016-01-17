@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">tsTracker</string>
+    <string name="app_name">موقعیت یاب</string>
     <string name="DaysToRecharge">روز باقی مانده تا اتمام شارژ</string>
     <string name="DontTranslate1"></string>
     <string name="EnterJoinCode">کد را وارد کنید</string>
@@ -18,7 +18,7 @@
     <string name="abou">راهنما</string>
     <string name="action_settings">تنظیمات</string>
     <string name="add">اضافه کردن</string>
-    <string name="appShortDescribe">دوستان,خانواده,کارمندان, بیماران, ماشین ها و گوشی خودرا ردیابی کنید و از چت کردن لذت ببرید.</string>
+    <string name="appShortDescribe">موقعیت یاب</string>
     <string name="btnPurchase">شارژ</string>
     <string name="btnPurchaseWaitMessage">در حال گرفتن تعرفه ها</string>
     <string name="cancel">بستن</string>
@@ -76,7 +76,20 @@
     <string name="dontusesymbol">از ~!#$%^*()? استفاده نکنید.</string>
     <string name="wait">لطفا صبرکنید!</string>
     <string name="geofenceadded">ناحیه جدید اضافه شد</string>
-    <string name="help">شما</string>
+    <string name="help">
+موقعیت عزیزان ، دوستان و همکاران خود را بصورت آنلاین مشاهده کنید.  گروهی ایجاد کنید و یا در گروههای دیگر عضو شوید . گفتگوی متنی آنلاین داشته باشید. از ورود و خروج اعضا گروه به یک مکان خاص مانند مدرسه ، محل کار و یا محل قرار آگاه شوید.  درخواست کمک بفرستید و از کلی خدمات دیگر استفاده کنید.
+
+موقعیت یاب ابزاری برای دسترسی آنلاین به موقعیت عزیزان ، دوستان و همکاران شما است. نرم افزار موقعیت یاب را می توانید در یک خانواده ، در یک شرکت پخش ، در یک شرکت بازرگانی و ... استفاده کرد.
+
+تعداد اعضایی که میتوانید در یک گروه داشته باشید نامحدود است. موقعیت یاب از دو روش به موقعیت مکانی دسترسی دارد:
+
+1- GPS : موقعیت بر اساس اطلاعات ماهواده . مزایا نیاز به اینترنت ندارد معایب مصرف شارژ باطری زیاد و عدم کار در فضاهای مسقف.
+
+2- Net: موقعیت بر اساس اطلاعات شبکه. مزایا مصرف شارژ باطری کم. معایب نیاز به روشن بودن اینترنت.
+
+برای استفاده از نرم افزار موقعیت یاب باید تمام اعضایی که میخواهید موقعیت آنها را داشته باشید ،این ابزار را نصب کنند.
+
+    </string>
     <string name="routes">مسیریابی</string>
     <string name="cantaddmoremarkers">نمی توانید مارکر بیشتری اضافه کنید.</string>
     <string name="findroute">یافتن مسیر</string>
@@ -100,5 +113,8 @@
     <string name="sos">کمک</string>
     <string name="entered">وارد شده به</string>
     <string name="exited">خارج شده از</string>
-    <string name="groupNoCharge">گروه شارژ کافی ندارد. از مدیر گزوه بخواهید گروه را شارژ کند.</string>
+    <string name="PlaceDescription">میتونی با تعیین موقعیت مکان های خاص مثلا خانه ، مدرسه ، محل قرار و ... از زمان ورود و خروج اعضا گروهت به این موقعیتها آگاه باشی.</string>
+    <string name="groupNoCharge">گروه دارای شارژ کافی نمی باشد.</string>
+
+    <string name="sosMessage">لطفا با من تماس بگیرید. من نیاز به کمک دارم.</string>
 </resources>
