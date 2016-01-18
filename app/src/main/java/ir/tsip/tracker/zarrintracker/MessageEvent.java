@@ -258,7 +258,7 @@ public class MessageEvent {
             while(c.moveToNext());
         }
         if(Data.length()>1)
-        Tools.Notificationm(_Context, "TsTracker Events", Data,_Context.getPackageName(),1,R.drawable.ic_launcher);
+        Tools.Notificationm(_Context, _Context.getResources().getString(R.string.app_name), Data,_Context.getPackageName(),1,R.drawable.ic_launcher);
         c.close();
         db.close();
         dbh.close();
