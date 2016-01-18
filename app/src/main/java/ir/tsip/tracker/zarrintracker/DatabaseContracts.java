@@ -168,6 +168,7 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_radius = "radius";
         public static final String COLUMN_NAME_name = "name";
+        public static final String COLUMN_OwnerCOde = "OwnerCode";
         public static final String COLUMN_NAME_center = "center";
         public static final String COLUMN_NAME_isOwner = "isOwner";
         public static final String SQL_CREATE_Table =
@@ -175,7 +176,8 @@ public class DatabaseContracts {
                         Geogences.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
                         Geogences.COLUMN_NAME_name + " nvarchar(250)," +
                         Geogences.COLUMN_NAME_center + " nvarchar(250)," +
-                        Geogences.COLUMN_NAME_isOwner + " int," +
+                        Geogences.COLUMN_OwnerCOde + " INTEGER," +
+                        Geogences.COLUMN_NAME_isOwner + " INTEGER," +
                         Geogences.COLUMN_NAME_radius + " INTEGER )";
 
         public static final String SQL_DELETE_Table =

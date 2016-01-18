@@ -96,7 +96,7 @@ _context=this;
     public static void backWebServices (int ObjectCode, String Data) {
         if(ObjectCode==0){
             if((!Data.startsWith("-1")) && Data.length()>3){
-                //                               Name~Points~radius~clientAreaCode
+                //                               Name~Points~radius~clientAreaCode~ownerDeviceCOde
                 Circle circle=  Tools.GoogleMapObj.addCircle(new CircleOptions().center(new LatLng(Double.valueOf(Data.split("~")[1].split(",")[0]), Double.valueOf(Data.split("~")[1].split(",")[1]))).fillColor(Color.TRANSPARENT).strokeColor(Color.RED).strokeWidth(5).radius(Float.valueOf(Data.split("~")[2])));
 
                 ContentValues Val = new ContentValues();
@@ -107,6 +107,7 @@ _context=this;
                 Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, circle.getCenter().toString().replace("lat/lng: (", "").replace(")", ""));
                 Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, circle.getRadius());
                 Val.put(DatabaseContracts.Geogences.COLUMN_NAME_isOwner, 1);
+                Val.put(DatabaseContracts.Geogences.COLUMN_OwnerCOde,Integer.valueOf(Data.split("~")[4]));
               int id=(int) db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
 
                 //Add proximity alert to location manager

@@ -142,15 +142,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
 
-                if (lytEventsAndProfileparams.topMargin <= (int) (height / 2) - lytProfile.getHeight()) {
+                if (lytEventsAndProfileparams.topMargin == (int) (height / 2) - lytProfile.getHeight()) {
                     lytEventsAndProfileparams.setMargins(0, 0, 0, 0);
                     ibtnUp.setVisibility(View.GONE);
                     ((TextView)MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.VISIBLE);
-                } else if (lytEventsAndProfileparams.topMargin != 0 && lytEventsAndProfileparams.topMargin <= height - lytProfile.getHeight() - lytHeaderTop.getHeight() - 15) {
+                } else if ( lytEventsAndProfileparams.topMargin == (height - (lytProfile.getHeight()+23 )- lytHeaderTop.getHeight()-15 )) {
                     ibtnUp.setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.VISIBLE);
-                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight() - 50, 0, 0);
+                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - (lytProfile.getHeight()+23 ) , 0, 0);
                 }
                 lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
             }
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                     ibtnDown.setVisibility(View.VISIBLE);
                     ((TextView)MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.GONE);
                     lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight(), 0, 0);
-                } else if (lytEventsAndProfileparams.topMargin <= (int) (height / 2) - lytProfile.getHeight()) {//midle
+                } else if (lytEventsAndProfileparams.topMargin == (int) (height / 2) - lytProfile.getHeight()) {//midle
                     ibtnUp.setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.INVISIBLE);
                     lytEventsAndProfileparams.setMargins(0, height - lytProfile.getHeight() - lytHeaderTop.getHeight() - 15, 0, 0);
@@ -475,6 +475,7 @@ public class MainActivity extends AppCompatActivity {
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, g.split("~")[2]);
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_ID, g.split("~")[3]);
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_isOwner, Integer.valueOf(g.split("~")[4]));
+                        Val.put(DatabaseContracts.Geogences.COLUMN_OwnerCOde, Integer.valueOf(g.split("~")[5]));
                         if (db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val) > 0) {
 
                         }

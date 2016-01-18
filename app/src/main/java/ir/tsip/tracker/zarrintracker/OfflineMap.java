@@ -121,7 +121,7 @@ static String pcode="0";
     public static void backWebServices (int ObjectCode, String Data) {
         if (ObjectCode == 0) {
             try {
-                if ((Data == null || Data.equals("null"))&& startrow==0) {
+                if ((Data == null || Data.equals("null"))&& startrow!=0) {
                     return;
                 }
                 if (Data == null || Data.equals("null")) {

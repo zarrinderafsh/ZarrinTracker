@@ -18,6 +18,7 @@ public class EventManager {
     private Context Base;
     private static WebServices WS;
     HashMap<String, String> params;
+    public String gpId=null;
     public EventManager(Context context)
     {
         Base = context;
@@ -25,15 +26,24 @@ public class EventManager {
 
     public void AddEvevnt(String S,String msgtype,String eventType)
     {
-       params = new HashMap<>();
-        params.put("message", S);
-        params.put("imei",Tools.GetImei(Base));
-        params.put("gpID", "0");
-        params.put("msgtype", msgtype);
         if(WS == null)
             WS = new WebServices(Base);
-        WS.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity",2,params,"SetMessage");
+        params = new HashMap<>();
+        params.put("message", S);
+        params.put("imei",Tools.GetImei(Base));
+        //If it is geofence event,
+        if(eventType== MessageEvent.AREA_EVENT && msgtype.equals("-1") && gpId!=null){
+            params.put("areaOwnerCode",gpId);
+            WS.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 2, params, "GeofenceEvent");
+        }
+        //if it is any event except geofence event
+        else {
+            params.put("gpID", "0");
+            params.put("msgtype", msgtype);
+            WS.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity",2,params,"SetMessage");
+        }
         MessageEvent.InsertMessage(Base, S,eventType);
+        WS=null;
     }
 
     public void SendSOS() {
