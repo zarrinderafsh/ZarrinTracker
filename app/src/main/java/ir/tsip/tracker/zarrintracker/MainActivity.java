@@ -37,7 +37,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.cast.Cast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
@@ -142,15 +141,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
 
-                if (lytEventsAndProfileparams.topMargin == (int) (height / 2) - lytProfile.getHeight()) {
+                if (lytEventsAndProfileparams.topMargin <= (int) (height / 2) - lytProfile.getHeight()) {
                     lytEventsAndProfileparams.setMargins(0, 0, 0, 0);
                     ibtnUp.setVisibility(View.GONE);
                     ((TextView)MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.VISIBLE);
-                } else if ( lytEventsAndProfileparams.topMargin == (height - (lytProfile.getHeight()+23 )- lytHeaderTop.getHeight()-15 )) {
+                } else if (lytEventsAndProfileparams.topMargin != 0 && lytEventsAndProfileparams.topMargin <= height - lytProfile.getHeight() - lytHeaderTop.getHeight() - 15) {
                     ibtnUp.setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.VISIBLE);
-                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - (lytProfile.getHeight()+23 ) , 0, 0);
+                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight() - 50, 0, 0);
                 }
                 lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
             }
@@ -165,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     ibtnDown.setVisibility(View.VISIBLE);
                     ((TextView)MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.GONE);
                     lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight(), 0, 0);
-                } else if (lytEventsAndProfileparams.topMargin == (int) (height / 2) - lytProfile.getHeight()) {//midle
+                } else if (lytEventsAndProfileparams.topMargin <= (int) (height / 2) - lytProfile.getHeight()) {//midle
                     ibtnUp.setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.INVISIBLE);
                     lytEventsAndProfileparams.setMargins(0, height - lytProfile.getHeight() - lytHeaderTop.getHeight() - 15, 0, 0);
