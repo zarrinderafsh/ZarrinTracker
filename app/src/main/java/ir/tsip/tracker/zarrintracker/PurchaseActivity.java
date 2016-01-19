@@ -129,6 +129,7 @@ HashMap<String,String> products=new HashMap<>();
                 try {
                     String plan="";
                     Integer code=0;
+
                     if(rdb10.isChecked()) {
                         plan = "plan3";
                         code=1002;
@@ -137,8 +138,6 @@ HashMap<String,String> products=new HashMap<>();
                         plan = "family2";
                         code=1001;
                     }
-//                    plan="test";
-//                    code=1003;
                     Bundle bundle = mService.getBuyIntent(3,   PurchaseActivity.this.getPackageName(), plan, "inapp", "developerPayload");
 
                     PendingIntent pendingIntent = bundle.getParcelable("BUY_INTENT");
@@ -175,9 +174,9 @@ int vs=0;
                 price=new Double(91743);
 
             }
-//            if(requestCode==1003){
-//                price=new Double(70);
-//            }
+            if(requestCode==1003){
+                price=new Double(917);
+            }
             HashMap<String, String> params = new HashMap<>();
             try {
                 jo = new JSONObject(purchaseData);
@@ -191,9 +190,9 @@ int vs=0;
                 w.addQueue("ir.tsip.tracker.zarrintracker.PurchaseActivity", 0, params, "Purchase");
                 w = null;
 token=jo.getString("purchaseToken");
-                Toast.makeText(PurchaseActivity.this, "You have bought the \" + sku + \". Excellent choice, adventurer!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PurchaseActivity.this, PurchaseActivity.this.getResources().getString(R.string.successfulCahrge), Toast.LENGTH_SHORT).show();
             } catch (JSONException e) {
-                Toast.makeText(PurchaseActivity.this, "Failed to parse purchase data.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PurchaseActivity.this,  PurchaseActivity.this.getResources().getString(R.string.failedCahrge), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }

@@ -118,4 +118,6 @@
 
     <string name="sosMessage">لطفا با من تماس بگیرید. من نیاز به کمک دارم.</string>
     <string name="maphint">برای دیدن نقشه کلیک کنید</string>
+    <string name="successfulCahrge">اکانت شما شارژ شد.</string>
+    <string name="failedCahrge">مشکلی در ارسال الاعات پیش آمده است.</string>
 </resources>
