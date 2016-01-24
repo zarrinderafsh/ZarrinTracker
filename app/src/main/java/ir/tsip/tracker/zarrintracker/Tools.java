@@ -213,18 +213,19 @@ public class Tools {
     static boolean IsFirst = true;
 
     public static void setUpMap(GoogleMap googleMap, Context context, boolean isfirst) {
-        if (googleMap == null || LocationListener.CurrentLocation == null)
-            return;
-        else if (isfirst || IsFirst)
+
+        if (isfirst || IsFirst && googleMap != null )
             GoogleMapObj = googleMap;
-        //Toast.makeText(MainActivity.Base, "from map", Toast.LENGTH_SHORT).show();
         if (markers == null)
             markers = new HashMap<Integer, Marker>();
 
-        if (Tools.isOnline(context))
+        if (Tools.isOnline(context) && googleMap!=null)
             Tools.getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom), context, googleMap);
-        else {
-        }
+
+        if (googleMap == null || LocationListener.CurrentLocation == null)
+            return;
+        //Toast.makeText(MainActivity.Base, "from map", Toast.LENGTH_SHORT).show();
+
         if (isfirst || IsFirst) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
             DrawCircles(context);

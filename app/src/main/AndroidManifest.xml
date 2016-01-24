@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ir.tsip.tracker.zarrintracker"
-    android:versionCode="2"
-    android:versionName="2.0">
+    package="ir.tsip.tracker.zarrintracker">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
