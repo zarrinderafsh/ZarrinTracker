@@ -133,4 +133,5 @@
     <string name="maphint">Click to see map</string>
     <string name="successfulCahrge">Your account has been charged.</string>
     <string name="failedCahrge">Something wrong happened.</string>
+    <string name="rial">Rial</string>
 </resources>

@@ -24,6 +24,7 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_Accurate = "Accurate";
         public static final String COLUMN_locale = "locale";
         public static final String COLUMN_mute = "mute";
+        public  static final String Column_purchase_message="purcahseMsg";
 
         private static final String COMMA_SEP = ",";
         public static final String SQL_CREATE_Table =
@@ -35,6 +36,7 @@ public class DatabaseContracts {
                         Settings.COLUMN_NAME_key + " varchar(20) " + COMMA_SEP +
                         Settings.COLUMN_NAME_logo + " varchar(20) " + COMMA_SEP +
                         Settings.COLUMN_NAME_site + " varchar(20) " + COMMA_SEP +
+                        Settings.Column_purchase_message + " varchar(200) " + COMMA_SEP +
                         Settings.COLUMN_NAME_tell + " varchar(20) " + COMMA_SEP +
                         Settings.COLUMN_NAME_Accurate + " char(1) " + COMMA_SEP +
                         Settings.COLUMN_locale + " char(2) " + COMMA_SEP +

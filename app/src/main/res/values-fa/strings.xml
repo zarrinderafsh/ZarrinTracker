@@ -109,7 +109,7 @@
     <string name="offlinemap">مسیر حرکت</string>
     <string name="noMarkerData">اطلاعات کاربران موجود نیست لطفا دوباره سعی کنید</string>
     <string name="offlinetrackingdescription">شما می توانید هم گروهی های خودرا ردیابی کنید از ساعت انتخاب شده تا ۱ ساعت بعد آن.</string>
-    <string name="nocreadit">شما شارژ کافی ندارید. لفا اقدام به شارژ نمایید.</string>
+    <string name="nocreadit">شما شارژ کافی ندارید. لطفا اقدام به شارژ نمایید.</string>
     <string name="sos">کمک</string>
     <string name="entered">وارد شده به</string>
     <string name="exited">خارج شده از</string>
@@ -120,4 +120,5 @@
     <string name="maphint">برای دیدن نقشه کلیک کنید</string>
     <string name="successfulCahrge">اکانت شما شارژ شد.</string>
     <string name="failedCahrge">مشکلی در ارسال الاعات پیش آمده است.</string>
+    <string name="rial">ریال</string>
 </resources>

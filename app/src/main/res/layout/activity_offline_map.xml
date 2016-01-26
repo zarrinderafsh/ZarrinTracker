@@ -20,7 +20,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:transitionGroup="false">
             <ir.tsip.tracker.zarrintracker.PersianDatePicker
                 android:layout_width="150dp"
                 android:layout_height="100dp"

@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -78,6 +80,19 @@ HashMap<String,String> products=new HashMap<>();
         Intent serviceIntent = new Intent( "ir.cafebazaar.pardakht.InAppBillingService.BIND");
         serviceIntent.setPackage("com.farsitel.bazaar");
         PurchaseActivity.this.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
+
+        DatabaseHelper dbh=new DatabaseHelper(this);
+        SQLiteDatabase db=dbh.getReadableDatabase();
+        String[] columns = {DatabaseContracts.Settings.Column_purchase_message};
+        Cursor c = db.query(DatabaseContracts.Settings.TABLE_NAME, columns, "", null, "", "", DatabaseContracts.Settings.COLUMN_NAME_ID);
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+            ((TextView)findViewById(R.id.txtpurchasemessage)).setText(c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Settings.Column_purchase_message)));
+        }
+        c.close();
+        db.close();
+        dbh.close();
+
 
         btnPurchase = (Button) findViewById(R.id.btnPurchase);
         txtMessage = (TextView) findViewById(R.id.txtmsg);

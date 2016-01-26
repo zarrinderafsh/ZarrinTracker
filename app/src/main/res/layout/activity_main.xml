@@ -237,7 +237,7 @@
                     android:clickable="true"
                         android:layout_gravity="center_vertical" />
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/personname"
                         android:id="@+id/tvPersonName"
