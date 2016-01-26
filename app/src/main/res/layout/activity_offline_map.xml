@@ -22,20 +22,25 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ir.tsip.tracker.zarrintracker.PersianDatePicker
-                android:layout_width="150dp"
+                android:layout_width="145dp"
                 android:layout_height="100dp"
                 android:id="@+id/dtpCalendar"
                 app:displayMonthNames="true"
                 app:selectedDay="2"
                 app:selectedMonth="6"
                 app:selectedYear="1394"
-                android:layout_weight=".5" />
+                android:layout_weight="0.26"
+                android:touchscreenBlocksFocus="false" />
 
             <TimePicker
                 android:layout_width="150dp"
                 android:layout_height="100dp"
                 android:id="@+id/tmpFromTime"
-                android:layout_weight=".25" />
+                android:layout_weight=".25"
+                android:timePickerMode="spinner"
+                android:measureAllChildren="false"
+                android:touchscreenBlocksFocus="false"
+                android:longClickable="false" />
         </LinearLayout>
 
         <ir.tsip.tracker.zarrintracker.HorizontalListView
