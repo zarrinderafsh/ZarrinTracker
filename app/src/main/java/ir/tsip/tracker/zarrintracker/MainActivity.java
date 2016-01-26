@@ -445,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
         {
             if (Float.valueOf(Data.split(",")[0]) > 0) {
                 String msg =
-                        MainActivity.Base.getResources().getString(R.string.creditAmount) + " " + Data.split(",")[2].replace(".0000","") + "\n" +
+                        MainActivity.Base.getResources().getString(R.string.creditAmount) + " " + Data.split(",")[2].replace(".0000","") +" "+Base.getResources().getString(R.string.rial) +"\n" +
                                 Data.split(",")[1] + " " + MainActivity.Base.getResources().getString(R.string.groupCOunts) + "\n";
                 msg += (Data.split(",")[0].equals("Infinity")) ? "" :String.valueOf(Math.round( Float.valueOf(Data.split(",")[0]))) + " " + MainActivity.Base.getResources().getString(R.string.DaysToRecharge);
                 MessageEvent.InsertMessage(MainActivity.Base, msg, MessageEvent.CREADIT_EVENT);
@@ -526,12 +526,14 @@ public class MainActivity extends AppCompatActivity {
         String logo = "Ts";
         String site = "tstracker.ir";
         String tell = "";
+        String purchaseMsg="";
         if (Data != "null") {
             JSONObject jo = new JSONObject(Data);
             key = jo.getString("key");
             logo = jo.getString("logo");
             site = jo.getString("site");
             tell = jo.getString("tell");
+            purchaseMsg= jo.getString("pmsg");
         }
         DatabaseHelper dh;
         SQLiteDatabase db;
@@ -549,6 +551,7 @@ public class MainActivity extends AppCompatActivity {
             values.put(DatabaseContracts.Settings.COLUMN_NAME_logo, logo);
             values.put(DatabaseContracts.Settings.COLUMN_NAME_site, site);
             values.put(DatabaseContracts.Settings.COLUMN_NAME_tell, tell);
+            values.put(DatabaseContracts.Settings.Column_purchase_message, purchaseMsg);
             values.put(DatabaseContracts.Settings.COLUMN_locale, "fa");
             values.put(DatabaseContracts.Settings.COLUMN_NAME_Accurate, "h");
             values.put(DatabaseContracts.Settings.COLUMN_NAME_interval, 5000);
@@ -562,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /********************************************************************DrawerLayout Methods*/
+    /***************************************ext*****************************DrawerLayout Methods*/
     /**
      * Called when invalidateOptionsMenu() is triggered
      */

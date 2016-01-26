@@ -32,10 +32,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="هزینه شارژ برای هر نفر در گروه شما روزانه 100 تومان است. به عنوان مثال در صورت وجود 3 نفر در گروه شما روزانه هزینه شارژ 300 تومان می شود. بنا براین با شارژ 5000 تومان شما 15 روز از امکانات نرم افزار استفاده می کنید."
-            android:id="@+id/textView9"
+            android:text=""
+            android:id="@+id/txtpurchasemessage"
             android:layout_gravity="center_horizontal"
-            android:padding="10dp" />
+            android:padding="10dp"/>
 
 
 
