@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         //int width=dm.widthPixels;
         height = dm.heightPixels;
+
         ibtnUp = (ImageButton) findViewById(R.id.ibtnUp);
         ibtnUp.setVisibility(View.GONE);
         ibtnUp.setOnClickListener(new View.OnClickListener() {
@@ -237,6 +238,15 @@ public class MainActivity extends AppCompatActivity {
 //        IntentFilter filter = new IntentFilter("ir.tstracker.activity.proximity");
 //        registerReceiver(new ProximityIntentReceiver(), filter);
         initializeInviteButton();
+
+        lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
+        if (lytEventsAndProfileparams.topMargin == 0) {//TOP
+            ibtnUp.setVisibility(View.VISIBLE);
+            ibtnDown.setVisibility(View.VISIBLE);
+            ((TextView)MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.GONE);
+            lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight(), 0, 0);
+        }
+        lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
 
     }
 
