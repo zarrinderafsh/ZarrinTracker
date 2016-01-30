@@ -701,16 +701,10 @@ public class MainActivity extends AppCompatActivity {
                             }
                             date = null;
 
-                            if (LocationListener.isGPSEnabled) {
-                                ivGps.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.gps_on));
-                            } else {
+                            if (!LocationListener.isGPSEnabled && !LocationListener.isNetworkEnabled) {
                                 ivGps.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.gps_off));
-                            }
-
-                            if (LocationListener.isNetworkEnabled) {
-                                ivGps.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.gps_on));
                             } else {
-                                ivGps.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.gps_off));
+                                ivGps.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.gps_on));
                             }
 
                             LinearLayout SV = (LinearLayout) findViewById(R.id.llinSroll);

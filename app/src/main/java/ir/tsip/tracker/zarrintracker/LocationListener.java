@@ -12,8 +12,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -62,6 +60,9 @@ public class LocationListener  extends Service implements android.location.Locat
     public static double CurrentSignal;
     public static Location CurrentLocation;
 
+    public Boolean ShowsatelliteAndInternetON;
+    public Boolean ShowsatelliteAndInternetOff;
+
 
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 0 meters
@@ -73,10 +74,14 @@ public class LocationListener  extends Service implements android.location.Locat
     public static LocationManager locationManager;
 
     public LocationListener() {
+        ShowsatelliteAndInternetON = false;
+        ShowsatelliteAndInternetOff = false;
     }
 
     public LocationListener(Context context) {
         this.mContext = context;
+        ShowsatelliteAndInternetON = false;
+        ShowsatelliteAndInternetOff = false;
     }
 
     public void PrepareLocation() {
@@ -106,7 +111,7 @@ public class LocationListener  extends Service implements android.location.Locat
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                 }
-                if (isGPSEnabled) {
+                if (isGPSEnabled && !isNetworkEnabled) {
                     locationManager.requestLocationUpdates(
                             LocationManager.GPS_PROVIDER,
                             MIN_TIME_BW_UPDATES,
@@ -227,11 +232,9 @@ public class LocationListener  extends Service implements android.location.Locat
         return InternetConnection;
     }
 
-    /**
-     * Function to show settings alert dialog
-     * On pressing Settings button will lauch Settings Options
-     */
-
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
     @Override
     public void onGpsStatusChanged(int p) {
 
@@ -241,10 +244,10 @@ public class LocationListener  extends Service implements android.location.Locat
             case GpsStatus.GPS_EVENT_FIRST_FIX:
                 break;
             case GpsStatus.GPS_EVENT_STOPPED:
-               // String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
-                (new EventManager(mContext)).AddEvevnt(mContext.getResources().getString(R.string.gpsIsOff), "-3",MessageEvent.GPS_EVENT);
+                isGPSEnabled = true;
                 break;
             case GpsStatus.GPS_EVENT_STARTED:
+                isGPSEnabled = true;
                 break;
         }
         int count = 0;
@@ -357,14 +360,24 @@ public class LocationListener  extends Service implements android.location.Locat
 
     @Override
     public void onProviderDisabled(String provider) {
+        ShowsatelliteAndInternetOff = false;
+        ShowsatelliteAndInternetON = false;
+
+        if (provider.compareTo("gps") == 0)
+            isGPSEnabled = false;
+        else
+            isNetworkEnabled = false;
+
+        if(!isNetworkEnabled && !isGPSEnabled)
+            (new EventManager(mContext)).AddEvevnt(mContext.getResources().getString(R.string.gpsIsOff), "-3",MessageEvent.GPS_EVENT);
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
+        if (provider.compareTo("gps") == 0)
+            isGPSEnabled = true;
+        else
+            isNetworkEnabled = true;
     }
 
     @Override
@@ -413,18 +426,18 @@ public class LocationListener  extends Service implements android.location.Locat
                     SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
                 }
                 if (isGPSEnabled || isNetworkEnabled)
-                    Tools.Notificationm(mContext, mContext.getResources().getString(R.string.app_name), "Last Get Location:" + SDate, "",0,R.drawable.notification_icon_anim);
+                    Tools.Notificationm(mContext, mContext.getResources().getString(R.string.app_name), "Last Get Location:" + SDate, "", 0, R.drawable.notification_icon_anim);
                 else
                     Tools.HideNotificationm();
 
                 params2 = new HashMap<>();
                 params2.put("imei", Tools.GetImei(mContext));
                 params2.put("gpID", "0");
-                W= new WebServices(mContext);
+                W = new WebServices(mContext);
                 W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage");
-                W=null;
+                W = null;
                 //Show Latest Notification
-                if(MainActivity.Base==null || MainActivity.IsPaused) {
+                if (MainActivity.Base == null || MainActivity.IsPaused) {
                     c = Calendar.getInstance();
                     c.set(Calendar.SECOND, c.get(Calendar.SECOND) - 10);
                     me.ShowMessage(null, c.getTime(), Calendar.getInstance().getTime(), true);
@@ -434,15 +447,14 @@ public class LocationListener  extends Service implements android.location.Locat
                 //internet connectivty=true
                 //satellite state=true
                 //wireless state=false
-                if(Tools.isOnline(mContext)){
-                    if(isGPSEnabled && !isNetworkEnabled)
-                        MessageEvent.InsertMessage(mContext, mContext.getString(R.string.satelliteAndInternetON),MessageEvent.GPS_EVENT);
-                }
-                //internet connectivty=false
-                //satellite state=false
-                //wireless state=true
-                else if(!isGPSEnabled && isNetworkEnabled)
-                    MessageEvent.InsertMessage(mContext, mContext.getString(R.string.satelliteAndInternetOFF),MessageEvent.GPS_EVENT);
+                    if (!ShowsatelliteAndInternetON && Tools.isOnline(mContext) && isGPSEnabled) {
+                        ShowsatelliteAndInternetON = true;
+                        MessageEvent.InsertMessage(mContext, mContext.getString(R.string.satelliteAndInternetON), MessageEvent.GPS_EVENT);
+                    }
+                    else if (!ShowsatelliteAndInternetOff && !isGPSEnabled && !Tools.isOnline(mContext)) {
+                        ShowsatelliteAndInternetOff = true;
+                        MessageEvent.InsertMessage(mContext, mContext.getString(R.string.satelliteAndInternetOFF), MessageEvent.GPS_EVENT);
+                    }
 
             }
 
