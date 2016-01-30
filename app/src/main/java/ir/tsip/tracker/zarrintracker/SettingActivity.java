@@ -20,12 +20,29 @@ import java.util.Set;
 
 public class SettingActivity extends AppCompatActivity {
 Button btnClearEvents;
-    Switch swchMute;
+    Switch swchMute,swchVisibilityState;
     RadioGroup rdgp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+
+
+      swchVisibilityState=(Switch)findViewById(R.id.swchVisibilityState);
+        swchVisibilityState.setChecked(Tools.VisibleToOwnGroupMembers);
+        swchVisibilityState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WebServices w=new WebServices(SettingActivity.this);
+                w.addQueue("",0,Tools.GetImei(SettingActivity.this),"VisibilityState");
+                w=null;
+                if (Tools.VisibleToOwnGroupMembers) {
+                    Tools.VisibleToOwnGroupMembers = false;
+                } else {
+                    Tools.VisibleToOwnGroupMembers = true;
+                }
+            }
+        });
 
         btnClearEvents=(Button)findViewById(R.id.btnClearAllEvents);
         btnClearEvents.setOnClickListener(new View.OnClickListener() {

@@ -134,4 +134,7 @@
     <string name="successfulCahrge">Your account has been charged.</string>
     <string name="failedCahrge">Something wrong happened.</string>
     <string name="rial">Rial</string>
+    <string name="satelliteAndInternetON">You are connected to internet. To reduce battery usage, put location state on wirless mode.</string>
+    <string name="satelliteAndInternetOFF">You are not connected to internet. To better accuracy, put location state on satellite mode </string>
+    <string name ="visibilityState">Location Visibility State To Own Group Members</string>
 </resources>

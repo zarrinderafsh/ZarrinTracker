@@ -7,13 +7,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
@@ -51,7 +54,7 @@ import java.util.Map;
  */
 public class Tools {
 
-    public static Boolean HasCredit = true, Mute = false;
+    public static Boolean HasCredit = true, Mute = false,VisibleToOwnGroupMembers=true;
 
 
     public static boolean isOnline(Context context) {
@@ -194,8 +197,21 @@ public class Tools {
             DrawCircles(context);
             GoogleMapObj.setMyLocationEnabled(true);
             IsFirst = false;
+            GoogleMapObj.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    WebServices w=new WebServices(MainActivity.Base);
+                    WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 5, Tools.GetImei(MainActivity.Base), "getInfoAndroid");
+                    w=null;
+                    if(minfo==null)
+                        minfo=marker;
+                    return true;
+                }
+            });
         }
     }
+
+    private static Marker minfo;
 
     public static void DrawCircles(Context context) {
         if (Tools.GoogleMapObj == null)
@@ -255,7 +271,7 @@ public class Tools {
                             Double.valueOf(center.split(",")[1]),
                             Float.valueOf(meters),
                             -1,
-                            PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id), 0));
+                            PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id),PendingIntent.FLAG_UPDATE_CURRENT));
                     proximities.add(id);
                 }
             } catch (Exception er) {
@@ -283,6 +299,7 @@ public class Tools {
 
         if (ObjectCode == 0) {//Markers
             try {
+
                 if (MainActivity.Base == null)
                     return;
                 ;
@@ -321,8 +338,10 @@ public class Tools {
 
                     if (m == null) {
                         markers.put(id,
-                                GoogleMapObj.addMarker(new MarkerOptions().position(
-                                        new LatLng(Double.valueOf(lat), Double.valueOf(lng))).title(ja.getJSONObject(i).getString("Title")).icon(BitmapDescriptorFactory.fromBitmap(LoadImage(p.image, 96)))));
+                                GoogleMapObj.addMarker(new MarkerOptions()
+                                        .position(new LatLng(Double.valueOf(lat), Double.valueOf(lng)))
+                                        .title(ja.getJSONObject(i).getString("Title"))
+                                        .icon(BitmapDescriptorFactory.fromBitmap(drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96))))));
                         imgAdapter.AddMarker(new Objects().new MarkerItem(id,
                                 LoadImage(p.image, 96),
                                 ja.getJSONObject(i).getString("Title"),
@@ -332,7 +351,7 @@ public class Tools {
                     } else {
                         m.setPosition(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
                         m.setTitle(ja.getJSONObject(i).getString("Title"));
-                        m.setIcon(BitmapDescriptorFactory.fromBitmap(LoadImage(p.image, 96)));
+                        m.setIcon(BitmapDescriptorFactory.fromBitmap(drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96))));
                         imgAdapter.GetItemByID(id)._image = LoadImage(p.image, 96);
                         imgAdapter.GetItemByID(id)._name = p.name;
                     }//Add icon for each marker at bottom of map, and when click on it, go to marker location
@@ -344,6 +363,21 @@ public class Tools {
                 er.getMessage();
             }
         }
+        else if(ObjectCode==5){
+          if(minfo!=null)
+          {
+              minfo.setTitle(Data);
+              minfo.showInfoWindow();
+          }
+        }
+    }
+
+    public static Bitmap drawCustomMarker(Bitmap firstImage,Bitmap secondImage){
+        Bitmap b=Bitmap.createBitmap(128,148, Bitmap.Config.ARGB_8888);
+        Canvas c=new Canvas(b);
+        c.drawBitmap(firstImage,0,0,null);
+        c.drawBitmap(secondImage,new Rect(0,0,96,96),new Rect(20,12,116,108),null);
+        return  b;
     }
 
     public static void getDevicesLocation(String bounds, String zoom, final Context context, final GoogleMap gmap) {

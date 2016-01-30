@@ -53,7 +53,7 @@ public class ProximityIntentReceiver extends BroadcastReceiver {
         }
         else {
             try {
-                LocationListener.locationManager.removeProximityAlert(PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id), 0));
+                LocationListener.locationManager.removeProximityAlert(PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id), PendingIntent.FLAG_UPDATE_CURRENT));
             } catch (Exception exx) {
 
 

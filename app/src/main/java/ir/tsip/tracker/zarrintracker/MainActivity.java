@@ -544,6 +544,10 @@ public class MainActivity extends AppCompatActivity {
             site = jo.getString("site");
             tell = jo.getString("tell");
             purchaseMsg= jo.getString("pmsg");
+            if(jo.getString("visibility").equals("1"))
+                Tools.VisibleToOwnGroupMembers=true;
+            else
+                Tools.VisibleToOwnGroupMembers=false;
         }
         DatabaseHelper dh;
         SQLiteDatabase db;

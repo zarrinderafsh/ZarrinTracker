@@ -61,6 +61,7 @@ _context=this;
     @Override
     protected void onResume() {
         super.onResume();
+        GetGeofences();
     }
 
     public void GetGeofences() {
@@ -117,7 +118,7 @@ _context=this;
                             circle.getCenter().longitude,
                             (float)circle.getRadius(),
                             -1,
-                            PendingIntent.getBroadcast(LocationListener.mContext,id, new Intent("ir.tstracker.activity.proximity").putExtra("id",id), 0));
+                            PendingIntent.getBroadcast(LocationListener.mContext,id, new Intent("ir.tstracker.activity.proximity").putExtra("id",id), PendingIntent.FLAG_UPDATE_CURRENT));
                 }
                 catch (Exception er){
 

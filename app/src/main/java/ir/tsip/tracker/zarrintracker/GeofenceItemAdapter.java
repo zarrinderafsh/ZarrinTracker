@@ -89,7 +89,7 @@ if(!((Objects.GeofenceItem)getItem(position)).isOwner){
                 db=null;
                 dbh=null;
                 try {
-                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext,items.get(position).id , new Intent("ir.tstracker.activity.proximity").putExtra("id",items.get(position).id), 0));
+                    LocationListener.locationManager.removeProximityAlert(  PendingIntent.getBroadcast(LocationListener.mContext,items.get(position).id , new Intent("ir.tstracker.activity.proximity").putExtra("id",items.get(position).id), PendingIntent.FLAG_UPDATE_CURRENT));
                 }
                 catch (Exception er){
 

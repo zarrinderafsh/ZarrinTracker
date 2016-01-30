@@ -35,14 +35,14 @@ import java.util.HashMap;
 public class MapPlacesActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-private double lat;
+    private double lat;
     private double lng;
     private double radius;
-    Button btnDeacrease,btnIncrease,btnSave;
+    Button btnDeacrease, btnIncrease, btnSave;
     EditText txtCirleName;
     Circle circle;
     int id;
-String name="Default";
+    String name = "Default";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,10 +146,8 @@ String name="Default";
                             db = null;
                             dbh = null;
                             W = null;
-                        } catch (
-                                Exception er
-                                )
-
+                            MapPlacesActivity.this.finish();
+                        } catch (Exception er)
                         {
 
                         }

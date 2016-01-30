@@ -241,8 +241,8 @@ public class LocationListener  extends Service implements android.location.Locat
             case GpsStatus.GPS_EVENT_FIRST_FIX:
                 break;
             case GpsStatus.GPS_EVENT_STOPPED:
-                String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
-                (new EventManager(mContext)).AddEvevnt(" GPS turned off." + SDate, "-3",MessageEvent.GPS_EVENT);
+               // String SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date());
+                (new EventManager(mContext)).AddEvevnt(mContext.getResources().getString(R.string.gpsIsOff), "-3",MessageEvent.GPS_EVENT);
                 break;
             case GpsStatus.GPS_EVENT_STARTED:
                 break;
@@ -429,6 +429,20 @@ public class LocationListener  extends Service implements android.location.Locat
                     c.set(Calendar.SECOND, c.get(Calendar.SECOND) - 10);
                     me.ShowMessage(null, c.getTime(), Calendar.getInstance().getTime(), true);
                 }
+
+                //CHECK GPS STATE
+                //internet connectivty=true
+                //satellite state=true
+                //wireless state=false
+                if(Tools.isOnline(mContext)){
+                    if(isGPSEnabled && !isNetworkEnabled)
+                        MessageEvent.InsertMessage(mContext, mContext.getString(R.string.satelliteAndInternetON),MessageEvent.GPS_EVENT);
+                }
+                //internet connectivty=false
+                //satellite state=false
+                //wireless state=true
+                else if(!isGPSEnabled && isNetworkEnabled)
+                    MessageEvent.InsertMessage(mContext, mContext.getString(R.string.satelliteAndInternetOFF),MessageEvent.GPS_EVENT);
 
             }
 

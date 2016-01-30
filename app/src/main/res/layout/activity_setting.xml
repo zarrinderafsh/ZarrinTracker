@@ -28,6 +28,14 @@
         android:layout_gravity="center_horizontal"
         android:layout_margin="15dp" />
 
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/visibilityState"
+        android:id="@+id/swchVisibilityState"
+        android:layout_gravity="center_horizontal"
+        android:singleLine="false" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
