@@ -4,12 +4,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
 import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -145,6 +149,7 @@ public class WebServices {
 
     private void SendData(final int Id,final String ClassName, final int ObjectCode , String Data, String FuncName)
     {
+        int MY_SOCKET_TIMEOUT_MS = 5000;
         Map<String, String> params = new HashMap<>();
         params = Tools.StringToHashMap(Data);
         if(params.size() == 0)
@@ -167,6 +172,12 @@ public class WebServices {
                 SetState(Id,2);
             }
         });
+
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         if (Data.length() > 1) {
             if(queue == null)
                 queue = Volley.newRequestQueue(context);
