@@ -111,7 +111,7 @@ public class LocationListener  extends Service implements android.location.Locat
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                 }
-                if (isGPSEnabled && !isNetworkEnabled) {
+                if (isGPSEnabled ) {
                     locationManager.requestLocationUpdates(
                             LocationManager.GPS_PROVIDER,
                             MIN_TIME_BW_UPDATES,
@@ -287,24 +287,25 @@ public class LocationListener  extends Service implements android.location.Locat
             LastLocation = location;
         MoveBearing = (int) location.bearingTo(LastLocation);
         MoveDistance = (int) location.distanceTo(LastLocation);
+        if (CurrentAccuracy < 100) {
+            if ((MoveDistance > 5 && Math.abs(MoveBearing - LastMoveBearing) > 10 && location.getSpeed() > 0.0)
+                    ||
+                    (MoveDistance > 40)
+                    ||
+                    LastLocation.getTime() == location.getTime()
+                    ) {
+                isNewLocation = true;
+                LastLocation = location;
+                LastMoveBearing = MoveBearing;
 
-        if ((MoveDistance > 5 && Math.abs(MoveBearing - LastMoveBearing) > 10 && location.getSpeed() > 0.0)
-                ||
-                (MoveDistance > 40)
-                ||
-                LastLocation.getTime() == location.getTime()
-                ) {
-            isNewLocation = true;
-            LastLocation = location;
-            LastMoveBearing = MoveBearing;
-
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-            Altitude = (int) location.getAltitude();
-            Speed = (int) (location.getSpeed() * 3.6);
-            gpsTime = location.getTime();
-            Process();
-            MessageManager.SetMessage("New Location Get :)");
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                Altitude = (int) location.getAltitude();
+                Speed = (int) (location.getSpeed() * 3.6);
+                gpsTime = location.getTime();
+                Process();
+                MessageManager.SetMessage("New Location Get :)");
+            }
         }
     }
 
