@@ -376,7 +376,7 @@ public class Tools {
         Bitmap b=Bitmap.createBitmap(128,148, Bitmap.Config.ARGB_8888);
         Canvas c=new Canvas(b);
         c.drawBitmap(firstImage,0,0,null);
-        c.drawBitmap(secondImage,new Rect(0,0,96,96),new Rect(20,12,116,108),null);
+        c.drawBitmap(secondImage,new Rect(0,0,96,96),new Rect(25,6,121,102),null);
         return  b;
     }
 
