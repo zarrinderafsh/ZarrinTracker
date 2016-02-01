@@ -434,9 +434,12 @@ public class LocationListener  extends Service implements android.location.Locat
                 params2 = new HashMap<>();
                 params2.put("imei", Tools.GetImei(mContext));
                 params2.put("gpID", "0");
-                W = new WebServices(mContext);
-                W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage");
-                W = null;
+                if(ChatActivity.AnswerLastGetMessage && Tools.isOnline(mContext)) {
+                    ChatActivity.AnswerLastGetMessage = false;
+                    W = new WebServices(mContext);
+                    W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage" , 1);
+                    W = null;
+                }
                 //Show Latest Notification
                 if (MainActivity.Base == null || MainActivity.IsPaused) {
                     c = Calendar.getInstance();

@@ -3,16 +3,12 @@ package ir.tsip.tracker.zarrintracker;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created by morteza on 2015-12-25.
@@ -225,12 +221,12 @@ public static Context con;
         try {
            c=db.query(DatabaseContracts.Persons.TABLE_NAME,
                     null,
-                    "",
+                    " image is null",
                     null,
                     null,
                     null,
                     null);
-            if (c.moveToFirst()) {
+            while (c.moveToNext()) {
                 p.ID= c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID));
                p.GetImageFromServer();
             }

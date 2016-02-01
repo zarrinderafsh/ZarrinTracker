@@ -59,7 +59,11 @@ public class WebServices {
         dbh.close();
     }
 
-    public void addQueue(String ClassName, int ObjectCode , HashMap<String,String> Data, String WebServiceName)
+    public void addQueue(String ClassName, int ObjectCode , HashMap<String,String> Data, String WebServiceName) {
+        addQueue(ClassName,ObjectCode,Data,WebServiceName,0);
+    }
+
+    public void addQueue(String ClassName, int ObjectCode , HashMap<String,String> Data, String WebServiceName, int FailDelete)
     {
 
         ContentValues Val = new ContentValues();
@@ -71,6 +75,7 @@ public class WebServices {
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data_String,Tools.HashMapToString(Data));
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_FailDelete,FailDelete);
 
         db.insert(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.QueueTable.COLUMN_NAME_ID, Val);
         } catch (Exception ex) {
@@ -129,7 +134,8 @@ public class WebServices {
                                         c.getString(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_ClassName)),
                                         c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_ObjectCode)),
                                         S,
-                                        c.getString(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName))
+                                        c.getString(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName)),
+                                        c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.QueueTable.COLUMN_NAME_FailDelete))
                                 );
                             } while (c.moveToNext());
                         }
@@ -147,9 +153,9 @@ public class WebServices {
         }, 0, DelaySecound);
     }
 
-    private void SendData(final int Id,final String ClassName, final int ObjectCode , String Data, String FuncName)
+    private void SendData(final int Id,final String ClassName, final int ObjectCode , String Data, String FuncName, final int FailDelete)
     {
-        int MY_SOCKET_TIMEOUT_MS = 5000;
+        int MY_SOCKET_TIMEOUT_MS = 60000;
         Map<String, String> params = new HashMap<>();
         params = Tools.StringToHashMap(Data);
         if(params.size() == 0)
@@ -168,8 +174,14 @@ public class WebServices {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-//                Delete(Id);
-                SetState(Id,2);
+                try {
+                    Object ret = Action.run(ClassName, "backWebServicesError", new Class[]{int.class, ClassName.getClass()}, new Object[]{ObjectCode, ClassName});
+                } catch (Exception er) {
+                }
+                if(FailDelete == 0)
+                    SetState(Id,2);
+                else
+                    Delete(Id);
             }
         });
 

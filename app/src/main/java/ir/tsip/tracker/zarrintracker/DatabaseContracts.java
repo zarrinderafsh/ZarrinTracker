@@ -89,6 +89,7 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_Data_Blob = "DataBlob";
         public static final String COLUMN_NAME_State = "State";
         public static final String COLUMN_NAME_Resault = "Resault";
+        public static final String COLUMN_NAME_FailDelete = "FailDelete";
 
         public static final String SQL_CREATE_Table =
                 "CREATE TABLE " + QueueTable.TABLE_NAME + " (" +
@@ -99,7 +100,8 @@ public class DatabaseContracts {
                         QueueTable.COLUMN_NAME_Data_String + " Text," +
                         QueueTable.COLUMN_NAME_Data_Blob + " BLOB," +
                         QueueTable.COLUMN_NAME_State + " INTEGER," +
-                        QueueTable.COLUMN_NAME_Resault + " nvarchar(1024));";
+                        QueueTable.COLUMN_NAME_Resault + " nvarchar(1024)," +
+                        QueueTable.COLUMN_NAME_FailDelete + " INTEGER);";
 
         public static final String SQL_DELETE_Table =
                 "DROP TABLE IF EXISTS " + QueueTable.TABLE_NAME;
