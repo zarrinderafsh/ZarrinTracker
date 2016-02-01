@@ -10,10 +10,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
+
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 /**
  * Created by morteza on 2015-11-13.
@@ -148,14 +153,14 @@ public class WebServices {
         Map<String, String> params = new HashMap<>();
         params = Tools.StringToHashMap(Data);
         if(params.size() == 0)
-            params.put("Data", Data);
+            params.put("Data",Data);// Encryprt(Data).toString());
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url+FuncName,
                 new JSONObject(params), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     Delete(Id);
-                    String data = response.getString("d");
+                    String data = response.getString("d");//Decrypt(response.getString("d"));
                     Object ret  = Action.run(ClassName,"backWebServices",new Class[] {int.class,data.getClass()}, new Object[] {ObjectCode,data});
                 } catch (Exception er) {
                 }
@@ -173,6 +178,34 @@ public class WebServices {
             queue.add(jsObjRequest);
         }
     }
+
+    public byte[] DecryptData(String data){
+        try {
+            byte[] key2=Tools.getkey(Tools.keyfromdb(context));
+// decrypt
+            byte[] decryptedData = Tools.encrypt(key2, data.getBytes());
+            return decryptedData;
+        }
+        catch (Exception er){
+            return new byte[]{};
+        }
+    }
+
+
+    public   byte[] EncryptData(String data){
+        try {
+            byte[] b = data.getBytes();
+            byte[] key2=Tools.getkey(Tools.keyfromdb(context));
+// encrypt
+            byte[] encryptedData = Tools.encrypt(key2, b);
+            return encryptedData;
+        }
+        catch (Exception er){
+            return new byte[]{};
+        }
+    }
+
+
 
 //    private void SendData(final int Id,final String ClassName, final int ObjectCode , byte[] Data, String FuncName)
 //    {

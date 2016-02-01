@@ -207,10 +207,17 @@ int vs=0;
                 w.addQueue("ir.tsip.tracker.zarrintracker.PurchaseActivity", 0, params, "Purchase");
                 w = null;
 token=jo.getString("purchaseToken");
+
+               // int response = mService.consumePurchase(3, MainActivity.Base.getPackageName(), token);
+
+
                 Toast.makeText(PurchaseActivity.this, PurchaseActivity.this.getResources().getString(R.string.successfulCahrge), Toast.LENGTH_SHORT).show();
             } catch (JSONException e) {
                 Toast.makeText(PurchaseActivity.this,  PurchaseActivity.this.getResources().getString(R.string.failedCahrge), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
+            }
+            catch (Exception er){
+                Toast.makeText(PurchaseActivity.this,  PurchaseActivity.this.getResources().getString(R.string.failedCahrge), Toast.LENGTH_SHORT).show();
             }
         }
     }

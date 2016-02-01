@@ -26,6 +26,7 @@ import android.os.BatteryManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Display;
 import android.view.Window;
@@ -44,10 +45,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Created by Administrator on 11/1/2015.
@@ -606,6 +613,56 @@ public class Tools {
         } finally {
             db.close();
             dbh.close();
+        }
+    }
+
+    public static byte[] encrypt(byte[] key, byte[] clear) throws Exception {
+        SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+        byte[] encrypted = cipher.doFinal(clear);
+        return encrypted;
+    }
+
+    public static byte[] decrypt(byte[] key, byte[] encrypted) throws Exception {
+        SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+        byte[] decrypted = cipher.doFinal(encrypted);
+        return decrypted;
+    }
+    public static byte[] keyfromdb(Context context){
+        //get key from db
+        String key="";
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        Cursor c = db.query(DatabaseContracts.Settings.TABLE_NAME, null, "", null, "", "", "");
+        if (c.moveToFirst()) {
+            key=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COLUMN_NAME_key));
+        }
+        dbh.close();
+        db.close();
+
+        try {
+            byte[] en= Tools.encrypt(new byte[]{1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6}, key.getBytes());
+            return Tools.decrypt(new byte[]{1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6}, en);
+        }
+        catch (Exception er){
+            return new byte[]{};
+        }
+    }
+    public static byte[] getkey(byte[] k){
+        try{
+            byte[] keyStart = k;
+            KeyGenerator kgen = KeyGenerator.getInstance("AES");
+            SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
+            sr.setSeed(keyStart);
+            kgen.init(128, sr); // 192 and 256 bits may not be available
+            SecretKey skey = kgen.generateKey();
+            return skey.getEncoded();
+        }
+        catch (Exception er){
+            return new byte[]{};
         }
     }
 
