@@ -98,17 +98,21 @@ static String pcode="0";
     }
 
 
-    private  static  void RequestServer(){
-        w=new WebServices(MainActivity.Base);
-        final HashMap<String,String> params=new HashMap<>();
+    private  static  void RequestServer() {
+        w = new WebServices(MainActivity.Base);
+        final HashMap<String, String> params = new HashMap<>();
         params.clear();
         params.put("pcode", pcode);
         params.put("startdate", startdate);
         params.put("enddate", enddate);
         params.put("startrow", String.valueOf(startrow));
         params.put("lastrow", String.valueOf(startrow + count));
-        w.addQueue("ir.tsip.tracker.zarrintracker.OfflineMap", 0, params, "GetDirectionForAndroid");
-      w=null;
+        w.addQueue("ir.tsip.tracker.zarrintracker.OfflineMap", 0, params, "GetDirectionForAndroid", 1);
+        w = null;
+    }
+
+    public static void backWebServicesError (int ObjectCode, String ClassName) {
+        Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.ServerError), Toast.LENGTH_LONG).show();
     }
 
     public static void backWebServices (int ObjectCode, String Data) {

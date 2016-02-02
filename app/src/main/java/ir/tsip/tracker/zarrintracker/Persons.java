@@ -9,6 +9,8 @@ import android.util.Base64;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by morteza on 2015-12-25.
@@ -17,8 +19,9 @@ public class Persons {
     public int ID;
     public String name;
     public Bitmap image;
-public boolean isme=false;
-public static Context con;
+    public boolean isme=false;
+    public static Context con;
+    public static HashMap<Integer,Date> GetImageFromServer;
 
 
     public Persons(){
@@ -27,6 +30,9 @@ public static Context con;
                 con=MainActivity.Base;
             else
                 con=LocationListener.mContext;
+
+            if(GetImageFromServer == null)
+                GetImageFromServer = new HashMap<Integer,Date>();
         }
     }
 
@@ -175,9 +181,21 @@ public static Context con;
 
 
     public void GetImageFromServer() {
-        WebServices W = new WebServices();
-        W.addQueue("ir.tsip.tracker.zarrintracker.Persons", 1, String.valueOf(ID), "LoadImageById");
-        W = null;
+        try {
+            if(GetImageFromServer == null)
+                GetImageFromServer = new HashMap<Integer,Date>();
+            if (GetImageFromServer.get(ID) == null || (new Date()).getTime() - GetImageFromServer.get(ID).getTime() > 1000 * 3600 ) {
+                //if(GetImageFromServer.get(ID) == null)
+                GetImageFromServer.put(ID, new Date());
+                WebServices W = new WebServices();
+                W.addQueue("ir.tsip.tracker.zarrintracker.Persons", 1, String.valueOf(ID), "LoadImageById");
+                W = null;
+            }
+        }
+        catch(Exception ex)
+        {
+
+        }
     }
 
     public void GetNameFromServer() {
@@ -214,6 +232,8 @@ public static Context con;
     }
 
     public static void UpdateImages(){
+        if(!Tools.isOnline(MainActivity.Base))
+            return;
         DatabaseHelper dbh = new DatabaseHelper(con);
         SQLiteDatabase db = dbh.getReadableDatabase();
         Persons p=new Persons();

@@ -153,7 +153,7 @@ public class WebServices {
         }, 0, DelaySecound);
     }
 
-    private void SendData(final int Id,final String ClassName, final int ObjectCode , String Data, String FuncName, final int FailDelete)
+    private void SendData(final int Id,final String ClassName, final int ObjectCode ,final String Data, String FuncName, final int FailDelete)
     {
         int MY_SOCKET_TIMEOUT_MS = 60000;
         Map<String, String> params = new HashMap<>();
@@ -175,7 +175,7 @@ public class WebServices {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try {
-                    Object ret = Action.run(ClassName, "backWebServicesError", new Class[]{int.class, ClassName.getClass()}, new Object[]{ObjectCode, ClassName});
+                    Object ret = Action.run(ClassName, "backWebServicesError", new Class[]{int.class, Data.getClass()}, new Object[]{ObjectCode, Data});
                 } catch (Exception er) {
                 }
                 if(FailDelete == 0)
