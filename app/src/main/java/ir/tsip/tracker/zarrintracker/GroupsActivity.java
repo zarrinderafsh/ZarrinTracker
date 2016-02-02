@@ -56,6 +56,14 @@ public class GroupsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_groups);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        final TextView txthelp=((TextView) findViewById(R.id.txthelp));
+        txthelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txthelp.setVisibility(View.GONE);
+            }
+        });
+
         context = this;
         if (GroupList == null)
             GroupList = new ArrayList<Integer>();

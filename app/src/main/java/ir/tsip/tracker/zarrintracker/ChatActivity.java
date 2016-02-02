@@ -67,7 +67,13 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-
+        final TextView txthelp=((TextView) findViewById(R.id.txthelp));
+        txthelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txthelp.setVisibility(View.GONE);
+            }
+        });
         IsChatActivityShowing = true;
         _this = null;
         _this = this;

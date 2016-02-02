@@ -66,4 +66,15 @@
                 android:id="@+id/lsvGroups"></LinearLayout>
         </ScrollView>
     </LinearLayout>
-</RelativeLayout>
+
+    <TextView
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/txthelp"
+        android:layout_centerInParent="true"
+        android:text="@string/helpGroups"
+        android:padding="5dp"
+        android:background="@drawable/item_layout"
+        android:minHeight="200dp"
+        android:gravity="center_horizontal" />
+    </RelativeLayout>

@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Circle;
@@ -46,15 +47,21 @@ _context=this;
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(Places.this, MapPlacesActivity.class);
-                myIntent.putExtra("lat",LocationListener.getLatitude());
-                myIntent.putExtra("lng",LocationListener.getLongitude());
-                myIntent.putExtra("radius",100);
+                myIntent.putExtra("lat", LocationListener.getLatitude());
+                myIntent.putExtra("lng", LocationListener.getLongitude());
+                myIntent.putExtra("radius", 100);
                 myIntent.putExtra("id", "0");
-                myIntent.putExtra("name", "Area"+(geos.size()+1));
+                myIntent.putExtra("name", "Area" + (geos.size() + 1));
                 Places.this.startActivity(myIntent);
             }
         });
-
+        final TextView txthelp=((TextView) findViewById(R.id.txthelp));
+        txthelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txthelp.setVisibility(View.GONE);
+            }
+        });
 
     }
 
