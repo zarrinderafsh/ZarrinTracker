@@ -28,66 +28,62 @@ import ir.tsip.tracker.zarrintracker.persindatepicker.util.PersianCalendar;
 
 public class OfflineMap extends FragmentActivity {
 
-    static private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-private HorizontalListView hlsvUsers;
-     private PersianDatePicker dtpDate;
+    private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private HorizontalListView hlsvUsers;
+    private PersianDatePicker dtpDate;
     private TimePicker tmpFromTime;
     static WebServices w;
-     final SimpleDateFormat smplDate=new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US);
-static String pcode="0";
+    final SimpleDateFormat smplDate = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    static String pcode = "0";
 
-    private static int startrow,count;
-    private static  String startdate,enddate;
+    private static int startrow, count;
+    private static String startdate, enddate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_map);
 
-
         setUpMapIfNeeded();
-
-
-
         InitializeWidgets();
     }
 
 
-    private  void InitializeWidgets(){
-        hlsvUsers=(HorizontalListView)findViewById(R.id.hlsvUsers);
-        ArrayList<Persons> persons=Persons.GetAll();
-        ImageListAdapter adapter=new ImageListAdapter(this);
-        adapter.UseDefaultClickListener=false;
-        if(persons.size()>0 )
-            for (Persons p:persons) {
-                adapter.AddMarker(new Objects().new MarkerItem(p.ID,p.image,p.name,"",null));
+    private void InitializeWidgets() {
+        hlsvUsers = (HorizontalListView) findViewById(R.id.hlsvUsers);
+        ArrayList<Persons> persons = Persons.GetAll();
+        ImageListAdapter adapter = new ImageListAdapter(this);
+        adapter.UseDefaultClickListener = false;
+        if (persons.size() > 0)
+            for (Persons p : persons) {
+                adapter.AddMarker(new Objects().new MarkerItem(p.ID, p.image, p.name, "", null));
             }
         else
             Toast.makeText(OfflineMap.this, OfflineMap.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_LONG).show();
 
         hlsvUsers.setAdapter(adapter);
 
-        dtpDate=(PersianDatePicker)findViewById(R.id.dtpCalendar);
-        PersianCalendar pc=new PersianCalendar();
+        dtpDate = (PersianDatePicker) findViewById(R.id.dtpCalendar);
+        PersianCalendar pc = new PersianCalendar();
         pc.setPersianDate(pc.getPersianYear(), pc.getPersianMonth(), pc.getPersianDay());
         dtpDate.setDisplayPersianDate(pc);
 
-        Calendar c=Calendar.getInstance();
-        tmpFromTime=(TimePicker)findViewById(R.id.tmpFromTime);
+        Calendar c = Calendar.getInstance();
+        tmpFromTime = (TimePicker) findViewById(R.id.tmpFromTime);
         tmpFromTime.setCurrentHour(c.get(Calendar.HOUR_OF_DAY) - 1);
         tmpFromTime.setCurrentMinute(c.get(Calendar.MINUTE));
         tmpFromTime.setIs24HourView(true);
 
 
-          hlsvUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        hlsvUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-              mMap.clear();
-              pcode=  view.getTag().toString();
-                startrow=0;
-                count=20;
-                startdate= smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour()) + ":" + String.valueOf(tmpFromTime.getCurrentMinute())+":00";
-                enddate=smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour() + 1) + ":" + String.valueOf(tmpFromTime.getCurrentMinute())+":00";
+                mMap.clear();
+                pcode = view.getTag().toString();
+                startrow = 0;
+                count = 20;
+                startdate = smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour()) + ":" + String.valueOf(tmpFromTime.getCurrentMinute()) + ":00";
+                enddate = smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour() + 1) + ":" + String.valueOf(tmpFromTime.getCurrentMinute()) + ":00";
                 RequestServer();
                 Toast.makeText(OfflineMap.this, OfflineMap.this.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
 
@@ -98,7 +94,7 @@ static String pcode="0";
     }
 
 
-    private  static  void RequestServer() {
+    private static void RequestServer() {
         w = new WebServices(MainActivity.Base);
         final HashMap<String, String> params = new HashMap<>();
         params.clear();
@@ -111,39 +107,39 @@ static String pcode="0";
         w = null;
     }
 
-    public static void backWebServicesError (int ObjectCode, String ClassName) {
+    public static void backWebServicesError(int ObjectCode, String ClassName) {
         Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.ServerError), Toast.LENGTH_LONG).show();
     }
 
-    public static void backWebServices (int ObjectCode, String Data) {
+    public static void backWebServices(int ObjectCode, String Data) {
         if (ObjectCode == 0) {
             try {
-                if ((Data == null || Data.equals("null"))&& startrow!=0) {
+                if ((Data == null || Data.equals("null")) && startrow != 0) {
                     return;
                 }
                 if (Data == null || Data.equals("null")) {
                     Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.noMarkerData), Toast.LENGTH_LONG).show();
-                return;
+                    return;
                 }
 
                 JSONObject location;
-                PolygonOptions polyOpt= new PolygonOptions();
+                PolygonOptions polyOpt = new PolygonOptions();
                 LatLng curLoc;
                 JSONArray jo = new JSONArray(Data);
-               //   Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
+                //   Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
 
                 for (int i = 0; i < jo.length(); i++) {
                     location = jo.getJSONObject(i).getJSONObject("Location");
 
                     mMap.addMarker(new MarkerOptions().position(new LatLng(location.getDouble("X"), location.getDouble("Y"))).icon(BitmapDescriptorFactory.fromResource(R.drawable.point)));
 
-                    if (i == 0 && startrow==0) {
+                    if (i == 0 && startrow == 0) {
                         curLoc = new LatLng(location.getDouble("X"), location.getDouble("Y"));
 
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 14.0f));
                     }
                 }
-                startrow+=count;
+                startrow += count;
 
                 RequestServer();
             } catch (Exception er) {
@@ -159,31 +155,15 @@ static String pcode="0";
         setUpMapIfNeeded();
     }
 
-    /**
-     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
-     * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p/>
-     * If it isn't installed {@link SupportMapFragment} (and
-     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-     * install/update the Google Play services APK on their device.
-     * <p/>
-     * A user can return to this FragmentActivity after following the prompt and correctly
-     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
-     * have been completely destroyed during this process (it is likely that it would only be
-     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
-     * method in {@link #onResume()} to guarantee that it will be called.
-     */
     private void setUpMapIfNeeded() {
-        // Do a null check to confirm that we have not already instantiated the map.
+        if (mMap != null) {
+            mMap.clear();
+            mMap = null;
+        }
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
-            // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                setUpMap();
-            }
         }
     }
 
@@ -196,8 +176,6 @@ static String pcode="0";
     private void setUpMap() {
 
     }
-
-
 
 
 }
