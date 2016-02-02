@@ -7,14 +7,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.Ringtone;
@@ -32,6 +30,7 @@ import android.view.Display;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ListView;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -62,7 +61,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class Tools {
 
     public static Boolean HasCredit = true, Mute = false,VisibleToOwnGroupMembers=true;
-
+    private static Boolean AnswerLastGetMarkers = true;
 
     public static boolean isOnline(Context context) {
         ConnectivityManager cm =
@@ -302,9 +301,16 @@ public class Tools {
     public static ListView lsvMarkers;
     public static ImageListAdapter imgAdapter;
 
+    public static void backWebServicesError(int ObjectCode, String Data) {
+        if (ObjectCode == 0) {//Markers
+            AnswerLastGetMarkers = true;
+        }
+    }
+
     public static void backWebServices(int ObjectCode, String Data) {
 
         if (ObjectCode == 0) {//Markers
+            AnswerLastGetMarkers = true;
             try {
 
                 if (MainActivity.Base == null)
@@ -344,11 +350,12 @@ public class Tools {
                         lsvMarkers = (ListView) MainActivity.Base.findViewById(R.id.lsvMarkers);
 
                     if (m == null) {
+                        Bitmap PersonImage = drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96));
                         markers.put(id,
                                 GoogleMapObj.addMarker(new MarkerOptions()
                                         .position(new LatLng(Double.valueOf(lat), Double.valueOf(lng)))
                                         .title(ja.getJSONObject(i).getString("Title"))
-                                        .icon(BitmapDescriptorFactory.fromBitmap(drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96))))));
+                                        .icon(BitmapDescriptorFactory.fromBitmap(PersonImage))));
                         imgAdapter.AddMarker(new Objects().new MarkerItem(id,
                                 LoadImage(p.image, 96),
                                 ja.getJSONObject(i).getString("Title"),
@@ -380,6 +387,8 @@ public class Tools {
     }
 
     public static Bitmap drawCustomMarker(Bitmap firstImage,Bitmap secondImage){
+        if(firstImage==null || secondImage == null)
+            return null;
         Bitmap b=Bitmap.createBitmap(128,148, Bitmap.Config.ARGB_8888);
         Canvas c=new Canvas(b);
         c.drawBitmap(firstImage,0,0,null);
@@ -388,20 +397,21 @@ public class Tools {
     }
 
     public static void getDevicesLocation(String bounds, String zoom, final Context context, final GoogleMap gmap) {
+        if(AnswerLastGetMarkers && Tools.isOnline(context)) {
+            AnswerLastGetMarkers = false;
+            bounds = bounds.replace("LatLngBounds{southwest=lat/lng: ", "(");
+            bounds = bounds.replace("northeast=lat/lng: ", "");
+            bounds = bounds.replace("}", ")");
+            HashMap<String, String> params = new HashMap<>();
+            params.put("bounds", bounds);
+            //Zoom = zoomlevel,imei
+            String zoomAndImei = new String(zoom + "," + Tools.GetImei(context));
+            params.put("zoom", zoomAndImei);
+            if (WS == null)
+                WS = new WebServices(context);
 
-        bounds = bounds.replace("LatLngBounds{southwest=lat/lng: ", "(");
-        bounds = bounds.replace("northeast=lat/lng: ", "");
-        bounds = bounds.replace("}", ")");
-        HashMap<String, String> params = new HashMap<>();
-        params.put("bounds", bounds);
-        //Zoom = zoomlevel,imei
-        String zoomAndImei = new String(zoom + "," + Tools.GetImei(context));
-        params.put("zoom", zoomAndImei);
-        if (WS == null)
-            WS = new WebServices(context);
-
-        WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 0, params, "GetMarkers");
-
+            WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 0, params, "GetMarkers");
+        }
     }
 
     public static float getBatteryLevel(Context activate) {
@@ -462,6 +472,8 @@ public class Tools {
     }
 
     public static Bitmap LoadImage(Bitmap b, int Radious) {
+        if(b == null)
+            b = BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.sample_user);
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDither = false;
         options.inPurgeable = true;

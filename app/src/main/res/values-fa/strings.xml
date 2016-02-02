@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">موقعیت یاب</string>
+    <string name="app_name">موقعیت یابی</string>
     <string name="DaysToRecharge">روز باقی مانده تا اتمام شارژ</string>
     <string name="DontTranslate1"></string>
     <string name="EnterJoinCode">کد را وارد کنید</string>
@@ -124,4 +124,5 @@
     <string name="satelliteAndInternetON">شما به اینترنت متصل هستید. برای کاهش مصرف باطری وضعیت موقعیت خود را بر روی شبکه قرار دهید.</string>
     <string name="satelliteAndInternetOFF">شما به اینترنت متصل نیستید. برای کاهش خطا وضعیت موقعیت خود را بر روی حالت ماهواره قرار دهید. </string>
     <string name ="visibilityState">وضعیت نمایش موقعیت به افراد گروهم</string>
+    <string name="ServerError">خطا سمت سرور!</string>
 </resources>
