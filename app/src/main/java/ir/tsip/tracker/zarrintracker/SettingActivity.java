@@ -14,9 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import java.util.Locale;
 import java.util.Set;
+
 
 public class SettingActivity extends AppCompatActivity {
 Button btnClearEvents;
@@ -34,13 +36,9 @@ Button btnClearEvents;
             @Override
             public void onClick(View v) {
                 WebServices w=new WebServices(SettingActivity.this);
-                w.addQueue("",0,Tools.GetImei(SettingActivity.this),"VisibilityState");
+                w.addQueue("ir.tsip.tracker.zarrintracker.SettingActivity",0,Tools.GetImei(SettingActivity.this),"VisibilityState");
                 w=null;
-                if (Tools.VisibleToOwnGroupMembers) {
-                    Tools.VisibleToOwnGroupMembers = false;
-                } else {
-                    Tools.VisibleToOwnGroupMembers = true;
-                }
+               Tools.VisibleToOwnGroupMembers=!Tools.VisibleToOwnGroupMembers;
             }
         });
 
@@ -120,7 +118,13 @@ Button btnClearEvents;
 
             }
         });
+
+
+
+
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

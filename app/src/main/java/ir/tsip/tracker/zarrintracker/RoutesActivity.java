@@ -41,6 +41,8 @@ public class RoutesActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_routes);
         setUpMapIfNeeded();
+        if(mMap==null)
+            return;
         mMap.setMyLocationEnabled(true);
 
         btnFIndroutes = (Button) findViewById(R.id.btnFindRoute);
