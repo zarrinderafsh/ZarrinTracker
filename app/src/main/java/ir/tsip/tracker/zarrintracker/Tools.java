@@ -61,11 +61,15 @@ public class Tools {
 
     public static Boolean HasCredit = true, Mute = false,VisibleToOwnGroupMembers=true;
     private static Boolean AnswerLastGetMarkers = true;
+    private static ConnectivityManager cm;
+    private static NetworkInfo netInfo;
 
     public static boolean isOnline(Context context) {
-        ConnectivityManager cm =
+        if(cm == null)
+            cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if(netInfo == null)
+            netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
