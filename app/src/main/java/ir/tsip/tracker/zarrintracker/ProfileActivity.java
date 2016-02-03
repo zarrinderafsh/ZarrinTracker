@@ -317,7 +317,7 @@ public class ProfileActivity extends ActionBarActivity {
     {
         _context=context;
         WebServices W = new WebServices(context);
-        W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",1,Tools.GetImei(context),"loadprofile");
+        W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity",1,Tools.GetImei(context),"loadprofile",1);
         W=null;
     }
 
@@ -327,7 +327,7 @@ public class ProfileActivity extends ActionBarActivity {
         if (path.length() == 0) {
             _context = context;
             WebServices W = new WebServices(context);
-            W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity", 2, Tools.GetImei(context), "loadimage");
+            W.addQueue("ir.tsip.tracker.zarrintracker.ProfileActivity", 2, Tools.GetImei(context), "loadimage",1);
             W = null;
         }
     }

@@ -24,7 +24,6 @@ import android.os.BatteryManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Display;
 import android.view.Window;
@@ -207,7 +206,7 @@ public class Tools {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     WebServices w=new WebServices(MainActivity.Base);
-                    WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 5, Tools.GetImei(MainActivity.Base), "getInfoAndroid");
+                    WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 5, Tools.GetImei(MainActivity.Base), "getInfoAndroid",1);
                     w=null;
                     if(minfo==null)
                         minfo=marker;
@@ -410,7 +409,7 @@ public class Tools {
             if (WS == null)
                 WS = new WebServices(context);
 
-            WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 0, params, "GetMarkers");
+            WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 0, params, "GetMarkers",1);
         }
     }
 

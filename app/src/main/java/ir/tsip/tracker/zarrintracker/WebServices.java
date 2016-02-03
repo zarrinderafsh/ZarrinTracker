@@ -39,7 +39,11 @@ public class WebServices {
         context = pContext;
     }
 
-    public void addQueue(String ClassName, int ObjectCode , String Data, String WebServiceName)
+    public void addQueue(String ClassName, int ObjectCode , String Data, String WebServiceName) {
+        addQueue(ClassName,ObjectCode ,Data,WebServiceName,0);
+    }
+
+    public void addQueue(String ClassName, int ObjectCode , String Data, String WebServiceName, int FailDelete)
     {
 
         ContentValues Val = new ContentValues();
@@ -51,6 +55,7 @@ public class WebServices {
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data_String,Data);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_FailDelete,FailDelete);
 
 
             db.insert(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.QueueTable.COLUMN_NAME_ID, Val);
@@ -84,8 +89,11 @@ public class WebServices {
         db.close();
         dbh.close();
     }
+    public void addQueue(String ClassName, int ObjectCode , byte[] Data, String WebServiceName) {
+        addQueue(ClassName,ObjectCode ,Data,WebServiceName,0);
+    }
 
-    public void addQueue(String ClassName, int ObjectCode , byte[] Data, String WebServiceName)
+    public void addQueue(String ClassName, int ObjectCode , byte[] Data, String WebServiceName,int FailDelete)
     {
         ContentValues Val = new ContentValues();
         DatabaseHelper dbh = new DatabaseHelper(context);
@@ -96,6 +104,7 @@ public class WebServices {
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_Data_Blob,Data);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_WebServiceName,WebServiceName);
             Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_State,0);
+            Val.put(DatabaseContracts.QueueTable.COLUMN_NAME_FailDelete,FailDelete);
 
             long id = db.insert(DatabaseContracts.QueueTable.TABLE_NAME, DatabaseContracts.QueueTable.COLUMN_NAME_ID, Val);
 //            Toast.makeText(context,"-"+id,Toast.LENGTH_SHORT).show();
@@ -106,7 +115,7 @@ public class WebServices {
     }
     public void RunSend() {
         RunSend(1000,0);
-        RunSend(1000 * 60 * 10, 2);
+        RunSend(1000 * 60 * 10, 2); // 10 MINUTE
     }
     Cursor c;
     public void RunSend(int DelaySecound, final int pState) {

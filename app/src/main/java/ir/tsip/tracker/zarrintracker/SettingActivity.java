@@ -36,7 +36,7 @@ Button btnClearEvents;
             @Override
             public void onClick(View v) {
                 WebServices w=new WebServices(SettingActivity.this);
-                w.addQueue("ir.tsip.tracker.zarrintracker.SettingActivity",0,Tools.GetImei(SettingActivity.this),"VisibilityState");
+                w.addQueue("ir.tsip.tracker.zarrintracker.SettingActivity",0,Tools.GetImei(SettingActivity.this),"VisibilityState",1);
                 w=null;
                Tools.VisibleToOwnGroupMembers=!Tools.VisibleToOwnGroupMembers;
             }
