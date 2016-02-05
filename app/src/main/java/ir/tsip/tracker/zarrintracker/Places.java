@@ -7,10 +7,9 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,11 +22,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Places extends AppCompatActivity {
 
@@ -42,7 +37,7 @@ public class Places extends AppCompatActivity {
         setContentView(R.layout.activity_places);
 _context=this;
         lsvPlaces=(ListView)findViewById(R.id.lsvPlaces);
-        GetGeofences();
+        //GetGeofences();
 
         Button btnPlaces=(Button)findViewById(R.id.btnAddNewPlace);
         btnPlaces.setOnClickListener(new View.OnClickListener() {

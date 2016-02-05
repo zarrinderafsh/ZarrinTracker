@@ -68,7 +68,7 @@ public class LocationListener  extends Service implements android.location.Locat
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 0 meters
 
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 0; // 0 Second
+    private static final long MIN_TIME_BW_UPDATES = 30; // 0 Second
 
     // Declaring a Location Manager
     public static LocationManager locationManager;
@@ -111,7 +111,7 @@ public class LocationListener  extends Service implements android.location.Locat
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                 }
-                if (isGPSEnabled ) {
+                if (isGPSEnabled) {
                     locationManager.requestLocationUpdates(
                             LocationManager.GPS_PROVIDER,
                             MIN_TIME_BW_UPDATES,
@@ -178,8 +178,7 @@ public class LocationListener  extends Service implements android.location.Locat
         if (locationManager != null) {
             try {
                 locationManager.removeUpdates(LocationListener.this);
-            }
-            catch (Exception er){
+            } catch (Exception er) {
                 Toast.makeText(LocationListener.this, er.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
@@ -235,10 +234,11 @@ public class LocationListener  extends Service implements android.location.Locat
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
+
     @Override
     public void onGpsStatusChanged(int p) {
 
-            switch (p) {
+        switch (p) {
             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                 break;
             case GpsStatus.GPS_EVENT_FIRST_FIX:
@@ -271,10 +271,13 @@ public class LocationListener  extends Service implements android.location.Locat
 
         if (PauseDate != null && (new Date()).before(PauseDate))
             return;
+        CurrentAccuracy = location.getAccuracy();
+        if (CurrentAccuracy >= 100) {
+            return;
+        }
         CurrentBearing = (int) location.getBearing();
         CurrentSpeed = (int) (location.getSpeed() * 3.6); // KM
         CurrentTime = (new Date(location.getTime()));
-        CurrentAccuracy = location.getAccuracy();
         CurrentLat = location.getLatitude();
         CurrentLon = location.getLongitude();
         CurrentLocation = location;
@@ -335,8 +338,8 @@ public class LocationListener  extends Service implements android.location.Locat
     public static void StartPause(int hour) {
         PauseDate = new Date();
         PauseDate.setTime(PauseDate.getTime() + hour * 3600 * 1000);
-        if(hour > 0)
-            (new EventManager(mContext)).AddEvevnt("Puase for " + hour + " hour.", "-3",MessageEvent.Pause_Event);
+        if (hour > 0)
+            (new EventManager(mContext)).AddEvevnt("Puase for " + hour + " hour.", "-3", MessageEvent.Pause_Event);
     }
 
     public static Location getLastLocation() {
@@ -371,8 +374,8 @@ public class LocationListener  extends Service implements android.location.Locat
         else
             isNetworkEnabled = false;
 
-        if(!isNetworkEnabled && !isGPSEnabled)
-            (new EventManager(mContext)).AddEvevnt(mContext.getResources().getString(R.string.gpsIsOff), "-3",MessageEvent.GPS_EVENT);
+        if (!isNetworkEnabled && !isGPSEnabled)
+            (new EventManager(mContext)).AddEvevnt(mContext.getResources().getString(R.string.gpsIsOff), "-3", MessageEvent.GPS_EVENT);
     }
 
     @Override
@@ -399,22 +402,23 @@ public class LocationListener  extends Service implements android.location.Locat
         Tools.setupGeofences(mContext);
         return START_STICKY;
     }
+
     MessageEvent me;
     Calendar c;
     //Get Messages
     HashMap<String, String> params2;
     WebServices W;
+
     private void StartServices() {
 
 
-        Tools.Mute=Tools.getMute(mContext);
-        if(ChatActivity._this==null) {
+        Tools.Mute = Tools.getMute(mContext);
+        if (ChatActivity._this == null) {
             ChatActivity._this = new ChatActivity();
             ChatActivity.context = mContext;
         }
-        if(me==null)
-      me=new MessageEvent(mContext);
-
+        if (me == null)
+            me = new MessageEvent(mContext);
 
 
         Timer _Timer = new Timer(true);
@@ -428,7 +432,9 @@ public class LocationListener  extends Service implements android.location.Locat
                     Date date = new Date(LastLocation.getTime());
                     SDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
                 }
-                if (isGPSEnabled || isNetworkEnabled)
+                if (!isGPSEnabled && !Tools.isOnline(mContext)){
+                    Tools.HideNotificationm();
+                } else if (isGPSEnabled || isNetworkEnabled)
                     Tools.Notificationm(mContext, mContext.getResources().getString(R.string.app_name), "Last Get Location:" + SDate, "", 0, R.drawable.notification_icon_anim);
                 else
                     Tools.HideNotificationm();
@@ -436,10 +442,10 @@ public class LocationListener  extends Service implements android.location.Locat
                 params2 = new HashMap<>();
                 params2.put("imei", Tools.GetImei(mContext));
                 params2.put("gpID", "0");
-                if(ChatActivity.AnswerLastGetMessage && Tools.isOnline(mContext)) {
+                if (ChatActivity.AnswerLastGetMessage && Tools.isOnline(mContext)) {
                     ChatActivity.AnswerLastGetMessage = false;
                     W = new WebServices(mContext);
-                    W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage" , 1);
+                    W.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 1, params2, "GetMessage", 1);
                     W = null;
                 }
                 //Show Latest Notification
@@ -453,14 +459,13 @@ public class LocationListener  extends Service implements android.location.Locat
                 //internet connectivty=true
                 //satellite state=true
                 //wireless state=false
-                    if (!ShowsatelliteAndInternetON && Tools.isOnline(mContext) && isGPSEnabled) {
-                        ShowsatelliteAndInternetON = true;
-                        MessageEvent.InsertMessage(mContext, mContext.getString(R.string.satelliteAndInternetON), MessageEvent.GPS_EVENT);
-                    }
-                    else if (!ShowsatelliteAndInternetOff && !isGPSEnabled && !Tools.isOnline(mContext)) {
-                        ShowsatelliteAndInternetOff = true;
-                        MessageEvent.InsertMessage(mContext, mContext.getString(R.string.satelliteAndInternetOFF), MessageEvent.GPS_EVENT);
-                    }
+                if (!ShowsatelliteAndInternetON && Tools.isOnline(mContext) && isGPSEnabled) {
+                    ShowsatelliteAndInternetON = true;
+                    MessageEvent.InsertMessage(mContext, mContext.getString(R.string.satelliteAndInternetON), MessageEvent.GPS_EVENT);
+                } else if (!ShowsatelliteAndInternetOff && !isGPSEnabled && !Tools.isOnline(mContext)) {
+                    ShowsatelliteAndInternetOff = true;
+                    MessageEvent.InsertMessage(mContext, mContext.getString(R.string.satelliteAndInternetOFF), MessageEvent.GPS_EVENT);
+                }
 
             }
 

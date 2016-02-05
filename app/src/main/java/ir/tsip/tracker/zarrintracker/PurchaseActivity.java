@@ -8,18 +8,14 @@ import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioButton;
-import android.widget.SimpleAdapter;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +24,7 @@ import com.android.vending.billing.IInAppBillingService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class PurchaseActivity extends AppCompatActivity {
 
@@ -206,7 +200,7 @@ int vs=0;
                 params.put("imei", Tools.GetImei(this));
 
                 WebServices w = new WebServices(this);
-                w.addQueue("ir.tsip.tracker.zarrintracker.PurchaseActivity", 0, params, "Purchase");
+                w.addQueue("ir.tsip.tracker.zarrintracker.PurchaseActivity", 0, params, "Purchase",1);
                 w = null;
 token=jo.getString("purchaseToken");
 
@@ -233,7 +227,7 @@ static String token="";
 
                     //Update credit
                     WebServices ws = new WebServices(MainActivity.Base);
-                    ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.Base), "PurhaseDetails");
+                    ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.Base), "PurhaseDetails",1);
                     ws = null;
                 }
                 catch (Exception er){

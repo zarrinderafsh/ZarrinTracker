@@ -197,7 +197,7 @@ lastLatLng=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Persons.lastlat
                 //if(GetImageFromServer.get(ID) == null)
                 GetImageFromServer.put(ID, new Date());
                 WebServices W = new WebServices();
-                W.addQueue("ir.tsip.tracker.zarrintracker.Persons", 1, String.valueOf(ID), "LoadImageById");
+                W.addQueue("ir.tsip.tracker.zarrintracker.Persons", 1, String.valueOf(ID), "LoadImageById",1);
                 W = null;
             }
         }
@@ -209,7 +209,7 @@ lastLatLng=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Persons.lastlat
 
     public void GetNameFromServer() {
         WebServices W = new WebServices();
-        W.addQueue("ir.tsip.tracker.zarrintracker.Persons", 2, String.valueOf(ID), "LoadNameById");
+        W.addQueue("ir.tsip.tracker.zarrintracker.Persons", 2, String.valueOf(ID), "LoadNameById",1);
         W = null;
     }
 

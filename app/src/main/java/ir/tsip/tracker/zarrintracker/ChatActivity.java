@@ -88,7 +88,7 @@ public class ChatActivity extends AppCompatActivity {
                     WebServices w = new WebServices(ChatActivity.this);
                     HashMap<String, String> params = new HashMap<>();
                     params.put("imei", Tools.GetImei(getApplicationContext()));
-                    w.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "GenerateJoinKey");
+                    w.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "GenerateJoinKey",1);
                     w = null;
                     builder.setView(view);
                     builder.setPositiveButton(getResources().getString(R.string.send), new DialogInterface.OnClickListener() {

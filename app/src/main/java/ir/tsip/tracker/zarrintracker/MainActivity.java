@@ -431,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
                 WebServices w = new WebServices(MainActivity.this);
                 HashMap<String, String> params = new HashMap<>();
                 params.put("imei", Tools.GetImei(getApplicationContext()));
-                w.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "GenerateJoinKey");
+                w.addQueue("ir.tsip.tracker.zarrintracker.ChatActivity", 0, params, "GenerateJoinKey",1);
                 w = null;
                 builder.setView(view);
                 builder.setPositiveButton(getResources().getString(R.string.send), new DialogInterface.OnClickListener() {
@@ -518,7 +518,7 @@ public class MainActivity extends AppCompatActivity {
         // the POST parameters:
         params.put("pData", Tools.GetImei(this) + "/");// "351520060796671");
         WebServices WS = new WebServices(getApplicationContext());
-        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 1, params, "CheckRegistration");
+        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 1, params, "CheckRegistration",1);
         ProfileActivity.GetImageFromServer(this);
         ProfileActivity.GetProfileFromServer(this);
         getGeofencesFromServer();
@@ -536,7 +536,7 @@ public class MainActivity extends AppCompatActivity {
         params.put("clientCode", "0");
         params.put("operation", "4");
         WebServices W = new WebServices(getApplicationContext());
-        W.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 4, params, "GeofenceOperations");
+        W.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 4, params, "GeofenceOperations",1);
         W = null;
     }
 
@@ -669,7 +669,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            if ((counter + 1) % 10 == 0) {
+                            if ((counter + 1) % 30 == 0) {
                                 if (mMapFragment != null)
                                     Tools.setUpMap(mMapFragment.getMap(), getApplicationContext(), isfirst);
                                 if (isfirst)
