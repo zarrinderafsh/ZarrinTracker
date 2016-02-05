@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -36,7 +37,8 @@ public class Places extends AppCompatActivity {
     static Context _context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+                 super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_places);
 _context=this;
         lsvPlaces=(ListView)findViewById(R.id.lsvPlaces);
@@ -55,13 +57,7 @@ _context=this;
                 Places.this.startActivity(myIntent);
             }
         });
-        final TextView txthelp=((TextView) findViewById(R.id.txthelp));
-        txthelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                txthelp.setVisibility(View.GONE);
-            }
-        });
+
 
     }
 
@@ -117,7 +113,8 @@ _context=this;
                 Val.put(DatabaseContracts.Geogences.COLUMN_NAME_isOwner, 1);
                 Val.put(DatabaseContracts.Geogences.COLUMN_OwnerCOde,Integer.valueOf(Data.split("~")[4]));
               int id=(int) db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val);
-
+db.close();
+                dbh.close();
                 //Add proximity alert to location manager
                 try {
                     LocationListener.locationManager.addProximityAlert(
@@ -139,25 +136,5 @@ _context=this;
             }
         }
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_places, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

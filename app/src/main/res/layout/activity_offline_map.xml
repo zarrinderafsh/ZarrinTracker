@@ -67,18 +67,19 @@
 
     <SeekBar
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:id="@+id/seekBar" />
 
 </LinearLayout>
-    <TextView
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/txthelp"
-        android:layout_centerInParent="true"
-        android:text="@string/helpOfflinemap"
-        android:padding="5dp"
-        android:background="@drawable/item_layout"
-        android:minHeight="200dp"
-        android:gravity="center_horizontal" />
+
+    <ImageButton
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:id="@+id/ibtnHelp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/faq"
+        android:background="@android:color/transparent"
+        android:layout_marginBottom="30dp" />
 </RelativeLayout>

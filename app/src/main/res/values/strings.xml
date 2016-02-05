@@ -138,8 +138,8 @@
     <string name="satelliteAndInternetOFF">You are not connected to internet. To better accuracy, put location state on satellite mode </string>
     <string name ="visibilityState">Location Visibility State To Own Group Members</string>
     <string name="ServerError">Server Error</string>
-    <string name="helpOfflinemap">Here you can see where you friends were.By setting a date(top left) and a time(top right) and click on one of friends in list, we get data from server. It takes some seconds. If data available you can use seekbar(at bottom) to see movement of selected friend animated. Click on pane to hide.</string>
-    <string name="helpChat">Here you can chat with friends.You can see group members by swiping from right edge to left.If you want to leave group, just click on Exit icon at top right.At top left you see name and picture of group.If you are in your own group you see join icon instead of leave icon.Click on join icon to generate code and share with others to join your group.</string>
-    <string name="helpGroups">Here you see all the groups which you joined.The group with the name and picture same as yours is your own group. You can have just one group.You should pay for who is in your group.But you can join others group unlimited and for free. To join a group you should click on + at top right and enter shared code.</string>
-    <string name="helpPlaces">Here you see areas who you and admin of groups that you are joined have made.You can dit or delete your own areas.If you make an area every one of your own group who enter or leave the area, a notification for you and your group members will send.Tap the text to hide.</string>
+    <string name="title_activity_introduction">IntroductionActivity</string>
+    <string name="skipit">Skip</string>
+    <string name="introduction">Introduction</string>
+    <string name="title_activity_help">HelpActivity</string>
 </resources>

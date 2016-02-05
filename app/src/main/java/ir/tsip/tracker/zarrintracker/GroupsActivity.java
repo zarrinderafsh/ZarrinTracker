@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -52,15 +53,17 @@ public class GroupsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_groups);
+                 super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setContentView(R.layout.activity_groups);
 
-        final TextView txthelp=((TextView) findViewById(R.id.txthelp));
-        txthelp.setOnClickListener(new View.OnClickListener() {
+ImageButton ibtnHelp=(ImageButton)findViewById(R.id.ibtnHelp);
+        ibtnHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txthelp.setVisibility(View.GONE);
+                Intent i=new Intent(GroupsActivity.this,HelpActivity.class);
+                i.putExtra("index",0);
+                startActivity(i);
             }
         });
 
@@ -320,22 +323,7 @@ public class GroupsActivity extends AppCompatActivity {
         dbh.close();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_groups, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

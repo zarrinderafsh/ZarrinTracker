@@ -300,6 +300,11 @@ public class MainActivity extends AppCompatActivity {
         m8.text = getResources().getString(R.string.setting);
         m8.image = BitmapFactory.decodeResource(getResources(), R.drawable.setting);
         adapter.AddItem(m8);
+        Objects.MenuItem m9 = new Objects().new MenuItem();
+        m9.id = 9;
+        m9.text = getResources().getString(R.string.introduction);
+        m9.image = BitmapFactory.decodeResource(getResources(), R.drawable.introduction);
+        adapter.AddItem(m9);
         Objects.MenuItem m5 = new Objects().new MenuItem();
         m5.id = 5;
         m5.text = getResources().getString(R.string.about);
@@ -390,6 +395,11 @@ public class MainActivity extends AppCompatActivity {
                         Base.startActivity(myIntent);
                         break;
                     case 9:
+                        myIntent = new Intent(Base, IntroductionActivity.class);
+                        myIntent.getBooleanExtra("sm",false);
+                        Base.startActivity(myIntent);
+                        break;
+                    case 10:
                         myIntent = new Intent(Base, about.class);
                         Base.startActivity(myIntent);
                         break;

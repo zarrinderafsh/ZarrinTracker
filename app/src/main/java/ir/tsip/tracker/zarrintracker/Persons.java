@@ -22,6 +22,7 @@ public class Persons {
     public boolean isme=false;
     public static Context con;
     public static HashMap<Integer,Date> GetImageFromServer;
+    public String lastLatLng;
 
 
     public Persons(){
@@ -50,7 +51,9 @@ public class Persons {
             }
             V.put(DatabaseContracts.Persons.COLUMN_is_me, (isme) ? 1 : 0);
 
-            db.insert(DatabaseContracts.Persons.TABLE_NAME, null, V);
+            V.put(DatabaseContracts.Persons.lastlatlng,this.lastLatLng);
+
+                    db.insert(DatabaseContracts.Persons.TABLE_NAME, null, V);
         } catch (Exception e) {
             return false;
         } finally {
@@ -72,6 +75,7 @@ public class Persons {
                 V.put(DatabaseContracts.Persons.COLUMN_NAME_image, b);
             }
             V.put(DatabaseContracts.Persons.COLUMN_is_me, (isme) ? 1 : 0);
+            V.put(DatabaseContracts.Persons.lastlatlng,this.lastLatLng);
             db.update(DatabaseContracts.Persons.TABLE_NAME, V, DatabaseContracts.Persons.COLUMN_NAME_ID + "=" + ID, null);
         } catch (Exception e) {
             return false;
@@ -103,6 +107,7 @@ public class Persons {
     public boolean Find(int pID, boolean pSetData) {
         DatabaseHelper dbh = new DatabaseHelper(con);
         SQLiteDatabase db=null;
+        Cursor c=null;
         try {
             db = dbh.getReadableDatabase();
             ContentValues V = new ContentValues();
@@ -113,7 +118,8 @@ public class Persons {
             }
 
             V.put(DatabaseContracts.Persons.COLUMN_is_me, (isme)?1:0);
-            Cursor c = db.query(DatabaseContracts.Persons.TABLE_NAME,
+           // V.put(DatabaseContracts.Persons.lastlatlng,this.lastLatLng);
+            c= db.query(DatabaseContracts.Persons.TABLE_NAME,
                     null,
                     DatabaseContracts.Persons.COLUMN_NAME_ID + "=" + pID,
                     null,
@@ -126,7 +132,7 @@ public class Persons {
                     name = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_name));
                     image = Tools.getBitmapFromByte(c.getBlob(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_image)));
                isme=c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_is_me))>0?true:false;
-
+lastLatLng=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Persons.lastlatlng));
                 }
                 return true;
             }
@@ -134,6 +140,7 @@ public class Persons {
             Log.e("position",e.getMessage());
             return false;
         } finally {
+            c.close();
             db.close();
             dbh.close();
         }
@@ -146,6 +153,7 @@ public class Persons {
     public boolean FindDeviceOwner() {
         DatabaseHelper dbh = new DatabaseHelper(con);
         SQLiteDatabase db = dbh.getReadableDatabase();
+        Cursor c=null;
         try {
             ContentValues V = new ContentValues();
             V.put(DatabaseContracts.Persons.COLUMN_NAME_name, name);
@@ -155,7 +163,7 @@ public class Persons {
             }
 
             V.put(DatabaseContracts.Persons.COLUMN_is_me, (isme)?1:0);
-            Cursor c = db.query(DatabaseContracts.Persons.TABLE_NAME,
+            c= db.query(DatabaseContracts.Persons.TABLE_NAME,
                     null,
                     DatabaseContracts.Persons.COLUMN_is_me + "=1",
                     null,
@@ -173,6 +181,7 @@ public class Persons {
         } catch (Exception e) {
             return false;
         } finally {
+            c.close();
             db.close();
             dbh.close();
         }

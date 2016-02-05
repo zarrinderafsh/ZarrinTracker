@@ -66,6 +66,8 @@ public class MessageEvent {
         db.insert(DatabaseContracts.Events.TABLE_NAME,DatabaseContracts.Events.COLUMN_NAME_ID,V);
         db.close();
         dbh.close();
+        db=null ;
+        dbh=null;
     }public static void InsertMessage(Context context, String Message,Bitmap image,String eventType)
     {
         DatabaseHelper dbh = new DatabaseHelper(context);
@@ -83,6 +85,8 @@ public class MessageEvent {
         db.insert(DatabaseContracts.Events.TABLE_NAME,DatabaseContracts.Events.COLUMN_NAME_ID,V);
         db.close();
         dbh.close();
+        db=null;
+        dbh=null;
     }
 
     public static void DeleteMessage(Context context, int id)
@@ -92,6 +96,8 @@ public class MessageEvent {
         db.delete(DatabaseContracts.Events.TABLE_NAME,"id="+String.valueOf(id),null);
         db.close();
         dbh.close();
+        db=null;
+        dbh=null;
     }
 
     public Date FirstDate,Lastdate;

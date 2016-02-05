@@ -328,6 +328,8 @@ public class LocationListener  extends Service implements android.location.Locat
         }
         db.close();
         dbh.close();
+        db=null;
+        dbh=null;
     }
 
     public static void StartPause(int hour) {

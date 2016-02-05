@@ -2,9 +2,11 @@ package ir.tsip.tracker.zarrintracker;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import java.io.File;
 import java.util.Locale;
 
 /**
@@ -15,34 +17,39 @@ public class SplashScreen extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-        super.onCreate(savedInstanceState);
+                 super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.splash);
 
-        Tools.Mute=Tools.getMute(this);
-Locale locale=new Locale(Tools.getLocale(this));
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getBaseContext().getResources().updateConfiguration(config,
-                getBaseContext().getResources().getDisplayMetrics());
 
 
         Thread timerThread = new Thread(){
             public void run(){
                 try{
-                    sleep(3000);
+                    sleep(1000);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }finally{
+                    Intent intent;
                     if(CheckRegister()) {
-                        Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.slid_in, R.anim.slid_out);
+                        intent = new Intent(SplashScreen.this, MainActivity.class);
                     }
                     else
                     {
+                         intent = new Intent(SplashScreen.this, IntroductionActivity.class);
 
                     }
+
+                    Tools.Mute=Tools.getMute(SplashScreen.this);
+                    Locale locale=new Locale(Tools.getLocale(SplashScreen.this));
+                    Locale.setDefault(locale);
+                    Configuration config = new Configuration();
+                    config.locale = locale;
+                    getBaseContext().getResources().updateConfiguration(config,
+                            getBaseContext().getResources().getDisplayMetrics());
+
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slid_in, R.anim.slid_out);
                 }
             }
         };
@@ -57,7 +64,8 @@ Locale locale=new Locale(Tools.getLocale(this));
 
     private boolean CheckRegister()
     {
-        return true;
+        File f=this.getDatabasePath(DatabaseHelper.DATABASE_NAME);
+        return f.exists();
     }
 
 }
