@@ -1,11 +1,10 @@
 package ir.tsip.tracker.zarrintracker;
 
 import android.graphics.BitmapFactory;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -18,7 +17,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -140,6 +138,8 @@ seekbar=(SeekBar)this.findViewById(R.id.seekBar);
 private static Marker marker;
 
     private  static  void RequestServer() {
+        if(!Tools.isOnline(MainActivity.Base))
+            return;
         w = new WebServices(MainActivity.Base);
         final HashMap<String, String> params = new HashMap<>();
         params.clear();

@@ -68,8 +68,8 @@ public class Tools {
         if(cm == null)
             cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(netInfo == null)
-            netInfo = cm.getActiveNetworkInfo();
+        netInfo = null;
+        netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 

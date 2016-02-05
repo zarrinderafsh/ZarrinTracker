@@ -46,6 +46,9 @@ public class WebServices {
     public void addQueue(String ClassName, int ObjectCode , String Data, String WebServiceName, int FailDelete)
     {
 
+        if(FailDelete == 1 && !Tools.isOnline(MainActivity.Base))
+            return;
+
         ContentValues Val = new ContentValues();
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getWritableDatabase();
@@ -72,6 +75,8 @@ public class WebServices {
     public void addQueue(String ClassName, int ObjectCode , HashMap<String,String> Data, String WebServiceName, int FailDelete)
     {
 
+        if(FailDelete == 1 && !Tools.isOnline(MainActivity.Base))
+            return;
         ContentValues Val = new ContentValues();
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getWritableDatabase();
@@ -95,6 +100,9 @@ public class WebServices {
 
     public void addQueue(String ClassName, int ObjectCode , byte[] Data, String WebServiceName,int FailDelete)
     {
+        if(FailDelete == 1 && !Tools.isOnline(MainActivity.Base))
+            return;
+
         ContentValues Val = new ContentValues();
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getWritableDatabase();

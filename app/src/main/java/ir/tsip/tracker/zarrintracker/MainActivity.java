@@ -503,6 +503,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkRegistration() {
 
+        if(!Tools.isOnline(MainActivity.Base))
+            return;
         //check if this device registered already
         params = new HashMap<>();
         // the POST parameters:
@@ -673,8 +675,10 @@ public class MainActivity extends AppCompatActivity {
                             //every hour
                             if (counter == 0) {
                                 //Update credit
+                                if(!Tools.isOnline(MainActivity.Base))
+                                    return;
                                 WebServices ws = new WebServices(MainActivity.this);
-                                ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.this), "PurhaseDetails");
+                                ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.this), "PurhaseDetails",1);
                                 ws = null;
                                 //Update persons images
                                 Persons.UpdateImages();
