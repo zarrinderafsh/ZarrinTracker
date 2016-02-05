@@ -1,10 +1,12 @@
 package ir.tsip.tracker.zarrintracker;
 
 import android.content.pm.ActivityInfo;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 public class HelpActivity extends AppCompatActivity {
 
@@ -16,21 +18,21 @@ public class HelpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_help);
 
         int index=getIntent().getIntExtra("index",-1);
-
+        ((ImageView)findViewById(R.id.imgHelpPic)).setImageBitmap(BitmapFactory.decodeResource(this.getResources(),SetbITMAP(index)));
 
     }
 
 
-    private void SetContent(int i){
+    private int SetbITMAP(int i){
         switch (i){
             case 0://groups
-                break;
+                return R.drawable.groupshelp;
             case 1://offlinemap
-                break;
-            case 2://map places activity
-                break;
+                return R.drawable.arm;//offlinehelp;
+            case 2://map placeshelp activity
+                return R.drawable.placeshelp;
             default:
-                break;
+                return R.drawable.arm;
         }
     }
 

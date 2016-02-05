@@ -142,4 +142,11 @@
     <string name="skipit">Skip</string>
     <string name="introduction">Introduction</string>
     <string name="title_activity_help">HelpActivity</string>
+    <string name="introfamily">See your family members online.</string>
+    <string name="introschool">Schools Service</string>
+    <string name="introtravel">Traveling</string>
+    <string name="intromountain">Mountain CLimbing</string>
+    <string name="intromarketing">Marketing Companies</string>
+    <string name="introdelivery">Delivery Companies</string>
+    <string name="introother">...</string>
 </resources>

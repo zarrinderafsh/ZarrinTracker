@@ -7,10 +7,8 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -21,7 +19,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,7 +26,6 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -186,7 +182,7 @@ private static Marker marker;
                 }
                 if(startrow==0) {
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latslngs.get(0), 14.0f));
-                   marker= mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(Tools.drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), Tools.LoadImage(person.image, 96), ""))).position(latslngs.get(0)));
+                   marker= mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(Tools.drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.red_marker), Tools.LoadImage(person.image, 96), ""))).position(latslngs.get(0)));
                 }
                 startrow+=count;
                 if(!seekbar.isEnabled())

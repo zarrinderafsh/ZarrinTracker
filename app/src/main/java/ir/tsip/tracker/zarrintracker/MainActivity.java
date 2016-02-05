@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 9:
                         myIntent = new Intent(Base, IntroductionActivity.class);
-                        myIntent.getBooleanExtra("sm",false);
+                        myIntent.putExtra("sm",false);
                         Base.startActivity(myIntent);
                         break;
                     case 10:
