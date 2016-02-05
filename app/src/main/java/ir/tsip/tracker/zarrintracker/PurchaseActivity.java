@@ -200,7 +200,7 @@ int vs=0;
                 params.put("imei", Tools.GetImei(this));
 
                 WebServices w = new WebServices(this);
-                w.addQueue("ir.tsip.tracker.zarrintracker.PurchaseActivity", 0, params, "Purchase",1);
+                w.addQueue("ir.tsip.tracker.zarrintracker.PurchaseActivity", 0, params, "Purchase");
                 w = null;
 token=jo.getString("purchaseToken");
 
@@ -227,7 +227,7 @@ static String token="";
 
                     //Update credit
                     WebServices ws = new WebServices(MainActivity.Base);
-                    ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.Base), "PurhaseDetails",1);
+                    ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.Base), "PurhaseDetails");
                     ws = null;
                 }
                 catch (Exception er){

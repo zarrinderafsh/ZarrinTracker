@@ -10,8 +10,8 @@ import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,17 +20,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -38,10 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.zip.Inflater;
 
 public class GroupsActivity extends AppCompatActivity {
 
@@ -109,9 +97,11 @@ ImageButton ibtnHelp=(ImageButton)findViewById(R.id.ibtnHelp);
             }
         });
 
-        WebServices ws = new WebServices(this);
-        ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(this), "GroupsList");
-        ws=null;
+        if(Tools.isOnline(MainActivity.Base)) {
+            WebServices ws = new WebServices(this);
+            ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(this), "GroupsList", 1);
+            ws = null;
+        }
         lsvGroups = (LinearLayout) findViewById(R.id.lsvGroups);
         GetGroups(context, true);
     }
@@ -232,7 +222,7 @@ ImageButton ibtnHelp=(ImageButton)findViewById(R.id.ibtnHelp);
             if (Data.equals("1")) {
 
                 WebServices ws = new WebServices(context);
-                ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(context), "GroupsList");
+                ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(context), "GroupsList",1);
                 ws=null;
                 Toast.makeText(context, context.getResources().getString(R.string.deviceREgistered), Toast.LENGTH_SHORT).show();
             } else if (Data.equals( "-1"))
