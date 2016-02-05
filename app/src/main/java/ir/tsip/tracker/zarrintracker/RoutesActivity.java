@@ -1,11 +1,13 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -35,13 +37,15 @@ public class RoutesActivity extends FragmentActivity {
     JSONObject jo;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private Button btnClearmarkers, btnFIndroutes;
+    Persons person;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_routes);
         setUpMapIfNeeded();
-        if(mMap==null)
+        if (mMap == null)
             return;
         mMap.setMyLocationEnabled(true);
 
@@ -79,38 +83,74 @@ public class RoutesActivity extends FragmentActivity {
                 if (polylineToAdd != null)
                     polylineToAdd.remove();
                 Toast.makeText(RoutesActivity.this, RoutesActivity.this.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
-                Thread t = new Thread() {
-                    public void run() {
+               RequestGoogle();
+            }
+        });
 
-                        try {
-                            jo = Request(null, "https://maps.googleapis.com/maps/api/directions/json?" + origin + destination + waypoints);
+        HorizontalListView hlsvUsers = (HorizontalListView) findViewById(R.id.hlsvUsers);
+        final ArrayList<Persons> persons = Persons.GetAll();
+        ImageListAdapter adapter = new ImageListAdapter(this);
+        adapter.UseDefaultClickListener = false;
+        if (persons.size() > 0)
+            for (Persons p : persons) {
+                adapter.AddMarker(new Objects().new MarkerItem(p.ID, p.image, p.name, "", null));
+            }
+        hlsvUsers.setAdapter(adapter);
 
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(r);
-                        } catch (Exception er) {
-                            String msg = er.getMessage();
-                        }
-                    }
-                };
-                t.start();
-                r = new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            DrawRoutes(jo);
+        hlsvUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(RoutesActivity.this, RoutesActivity.this.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
+                person=new Persons();
+                person.GetData(Integer.valueOf(view.getTag().toString()));
+                if(person.lastLatLng==null || person.lastLatLng.isEmpty()){
+                    Toast.makeText(RoutesActivity.this, RoutesActivity.this.getResources().getString(R.string.noMarkerData), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if(LocationListener.getLongitude()==0 || LocationListener.getLatitude()==0) {
+                    Toast.makeText(RoutesActivity.this, RoutesActivity.this.getResources().getString(R.string.gpsIsOff), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                origin = "origin=" + LocationListener.getLatitude()+","+LocationListener.getLongitude() + "&";
+                destination = "destination=" + person.lastLatLng;
+waypoints="";
+                RequestGoogle();
 
-                        } catch (Exception er) {
-                            String msg = er.getMessage();
-                        }
-                    }
-                };
             }
         });
 
     }
 
+    private  void RequestGoogle(){
+        Thread t = new Thread() {
+            public void run() {
+
+                try {
+                    jo = Request(null, "https://maps.googleapis.com/maps/api/directions/json?" + origin + destination + waypoints);
+
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(r);
+                } catch (Exception er) {
+                    String msg = er.getMessage();
+                }
+            }
+        };
+        t.start();
+        r = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DrawRoutes(jo);
+
+                } catch (Exception er) {
+                    String msg = er.getMessage();
+                }
+            }
+        };
+    }
 
     private void DrawRoutes(JSONObject result) throws JSONException {
+        mMap.clear();
         JSONArray routes = result.getJSONArray("routes");
         PolylineOptions polyOptions = new PolylineOptions();
         long distanceForSegment;

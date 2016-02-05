@@ -15,7 +15,7 @@ public class CircleImage {
 //    /** Called when the activity is first created. */
 //    @Override
 //    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
+//                 super.onCreate(savedInstanceState);\nsetRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 //        setContentView(R.layout.circle_layout);
 //        ImageView img1 = (ImageView) findViewById(R.id.imageView1);
 //        Bitmap bm = BitmapFactory.decodeResource(getResources(),

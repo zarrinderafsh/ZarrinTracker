@@ -194,11 +194,13 @@ public class DatabaseContracts {
         public static final String COLUMN_NAME_name = "name";
         public static final String COLUMN_is_me = "IsMe";
         public static final String COLUMN_NAME_image = "image";
+        public static final String lastlatlng = "lastLatLng";
         public static final String SQL_CREATE_Table =
                 "CREATE TABLE " + Persons.TABLE_NAME + " (" +
                         Persons.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
                         Persons.COLUMN_is_me + " INTEGER ," +
                         Persons.COLUMN_NAME_name + " nvarchar(250)," +
+                        Persons.lastlatlng + " varchar(50)," +
                         Persons.COLUMN_NAME_image + " BLOB )";
 
         public static final String SQL_DELETE_Table =

@@ -34,7 +34,13 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp" />
 </LinearLayout>
-<fragment android:id="@+id/map"
+
+    <ir.tsip.tracker.zarrintracker.HorizontalListView
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:id="@+id/hlsvUsers"></ir.tsip.tracker.zarrintracker.HorizontalListView>
+
+    <fragment android:id="@+id/map"
     tools:context="ir.tsip.tracker.zarrintracker.RoutesActivity"
     android:name="com.google.android.gms.maps.SupportMapFragment" android:layout_width="match_parent"
     android:layout_height="match_parent" />

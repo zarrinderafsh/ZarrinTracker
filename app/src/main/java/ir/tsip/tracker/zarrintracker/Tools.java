@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.Ringtone;
@@ -26,9 +27,11 @@ import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,9 +47,12 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.security.SecureRandom;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.crypto.Cipher;
@@ -173,12 +179,22 @@ public class Tools {
         HashMap<String, String> params;
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
         SQLiteDatabase db = dbh.getReadableDatabase();
-        Cursor c;
-        c = db.query(DatabaseContracts.Persons.TABLE_NAME, new String[]{DatabaseContracts.Persons.COLUMN_NAME_ID}, DatabaseContracts.Persons.COLUMN_is_me + "=1", null, "", "", "", "");
-        if (c.moveToFirst()) {
-            MyPersonId = Integer.valueOf(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID)));
+        Cursor c=null;
+        try {
+            c = db.query(DatabaseContracts.Persons.TABLE_NAME, new String[]{DatabaseContracts.Persons.COLUMN_NAME_ID}, DatabaseContracts.Persons.COLUMN_is_me + "=1", null, "", "", "", "");
+            if (c.moveToFirst()) {
+                MyPersonId = Integer.valueOf(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID)));
+            }
+            return MyPersonId;
         }
-        return MyPersonId;
+        finally {
+            c.close();
+            db.close();
+            dbh.close();
+            c=null;
+            db=null;
+            dbh=null;
+        }
     }
 
 
@@ -215,6 +231,22 @@ public class Tools {
                     if(minfo==null)
                         minfo=marker;
                     return true;
+                }
+            });
+            //set customInfoWIndo
+            GoogleMapObj.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+                @Override
+                public View getInfoWindow(Marker marker) {
+                    return null;
+                }
+
+                @Override
+                public View getInfoContents(Marker marker) {
+                    View v = MainActivity.Base.getLayoutInflater().inflate(R.layout.custom_info_window, null);
+                    ((TextView) v.findViewById(R.id.txtName)).setText(marker.getTitle().split(",")[0]);
+                    ((TextView) v.findViewById(R.id.txtDate)).setText(marker.getTitle().split(",")[1]);
+                    return v;
                 }
             });
         }
@@ -338,14 +370,15 @@ public class Tools {
                     Persons p = new Persons();
                     if (!p.GetData(Integer.valueOf(ja.getJSONObject(i).getString("PCode")))) {
                         p.ID = Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
-                        p.name = ja.getJSONObject(i).getString("Title");
+                        p.name = ja.getJSONObject(i).getString("Title").split(",")[0];
                         p.isme = false;
                         p.Save();
                     } else {
-//                        p.ID = Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
-//                        p.name = ja.getJSONObject(i).getString("Title");
-//                        p.isme = false;
-                        // p.update();
+                        p.ID = Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
+                        p.name = ja.getJSONObject(i).getString("Title").split(",")[0];
+                        p.isme = false;
+                        p.lastLatLng=lat+","+lng;
+                         p.update();
                     }
                     if (p.image == null)
                         p.GetImageFromServer();
@@ -353,7 +386,7 @@ public class Tools {
                         lsvMarkers = (ListView) MainActivity.Base.findViewById(R.id.lsvMarkers);
 
                     if (m == null) {
-                        Bitmap PersonImage = drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96));
+                        Bitmap PersonImage = drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96),ja.getJSONObject(i).getString("Title").split(",")[1]);
                         markers.put(id,
                                 GoogleMapObj.addMarker(new MarkerOptions()
                                         .position(new LatLng(Double.valueOf(lat), Double.valueOf(lng)))
@@ -361,14 +394,14 @@ public class Tools {
                                         .icon(BitmapDescriptorFactory.fromBitmap(PersonImage))));
                         imgAdapter.AddMarker(new Objects().new MarkerItem(id,
                                 LoadImage(p.image, 96),
-                                ja.getJSONObject(i).getString("Title"),
+                                ja.getJSONObject(i).getString("Title").split(",")[0],
                                 "",
                                 null));
 
                     } else {
                         m.setPosition(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
                         m.setTitle(ja.getJSONObject(i).getString("Title"));
-                        m.setIcon(BitmapDescriptorFactory.fromBitmap(drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96))));
+                        m.setIcon(BitmapDescriptorFactory.fromBitmap(drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96),ja.getJSONObject(i).getString("Title").split(",")[1])));
                         imgAdapter.GetItemByID(id)._image = LoadImage(p.image, 96);
                         imgAdapter.GetItemByID(id)._name = p.name;
                     }//Add icon for each marker at bottom of map, and when click on it, go to marker location
@@ -389,13 +422,17 @@ public class Tools {
         }
     }
 
-    public static Bitmap drawCustomMarker(Bitmap firstImage,Bitmap secondImage){
+    public static Bitmap drawCustomMarker(Bitmap firstImage,Bitmap secondImage,String text){
         if(firstImage==null || secondImage == null)
             return null;
         Bitmap b=Bitmap.createBitmap(128,148, Bitmap.Config.ARGB_8888);
         Canvas c=new Canvas(b);
-        c.drawBitmap(firstImage,0,0,null);
-        c.drawBitmap(secondImage,new Rect(0,0,96,96),new Rect(25,6,121,102),null);
+        c.drawBitmap(firstImage, 0, 0, null);
+        c.drawBitmap(secondImage, new Rect(0, 0, 96, 96), new Rect(25, 6, 121, 102), null);
+        Paint p=new Paint();
+        p.setColor(Color.BLACK);
+        p.setTextSize(15f);
+        c.drawText(text,55,115,p);
         return  b;
     }
 
@@ -435,7 +472,7 @@ public class Tools {
             if (bitmap == null)
                 return null;
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 10, stream);
             Bitmap bTemp = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.toByteArray().length);
             return stream.toByteArray();
         } catch (Exception e) {
@@ -655,8 +692,12 @@ public class Tools {
         if (c.moveToFirst()) {
             key=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COLUMN_NAME_key));
         }
+        c.close();
+         db.close();
         dbh.close();
-        db.close();
+        c=null;
+        db=null;
+        dbh=null;
 
         try {
             byte[] en= Tools.encrypt(new byte[]{1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6}, key.getBytes());

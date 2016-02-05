@@ -64,7 +64,7 @@ public class SendDataService extends Service {
         DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = dbh.getWritableDatabase();
         String[] columns = {DatabaseContracts.AVLData.COLUMN_NAME_ID, DatabaseContracts.AVLData.COLUMN_NAME_Data};
-        Cursor c;
+        Cursor c=null;
         int Counter = 0;
         String Data = "";
         while (_SeriveStart) {
@@ -109,6 +109,7 @@ public class SendDataService extends Service {
                 IDSend="";
             }
         }
+        c.close();
         db.close();
         dbh.close();
         IDSend="";

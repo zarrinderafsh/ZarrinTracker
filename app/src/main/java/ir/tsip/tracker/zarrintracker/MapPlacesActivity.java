@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -46,7 +47,8 @@ public class MapPlacesActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+                 super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_map_places);
         setUpMapIfNeeded();
         mMap.setMyLocationEnabled(true);
@@ -124,6 +126,7 @@ public class MapPlacesActivity extends FragmentActivity {
                                 params.put("clientCode", String.valueOf(id + 1));
                                 params.put("operation", "1");
                                 objectcode = 0;
+                                c.close();
 
                             } else {
                                 ContentValues Val = new ContentValues();
@@ -147,8 +150,7 @@ public class MapPlacesActivity extends FragmentActivity {
                             dbh = null;
                             W = null;
                             MapPlacesActivity.this.finish();
-                        } catch (Exception er)
-                        {
+                        } catch (Exception er) {
 
                         }
                     }
@@ -176,6 +178,18 @@ public class MapPlacesActivity extends FragmentActivity {
                 circle.setRadius(circle.getRadius() + 100);
             }
         });
+
+
+        ImageButton ibtnHelp=(ImageButton)findViewById(R.id.ibtnHelp);
+        ibtnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(MapPlacesActivity.this,HelpActivity.class);
+                i.putExtra("index",2);
+                startActivity(i);
+            }
+        });
+
     }
 
     @Override

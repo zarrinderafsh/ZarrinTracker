@@ -1,12 +1,15 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
+os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -16,8 +19,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
+import com.google.android.gms.maps.model.Marker
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -45,7 +47,8 @@ private HorizontalListView hlsvUsers;
 static  Persons person;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+                 super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_offline_map);
 
 
@@ -127,11 +130,14 @@ seekbar=(SeekBar)this.findViewById(R.id.seekBar);
 
             }
         });
-        final TextView txthelp=((TextView) findViewById(R.id.txthelp));
-        txthelp.setOnClickListener(new View.OnClickListener() {
+
+        ImageButton ibtnHelp=(ImageButton)findViewById(R.id.ibtnHelp);
+        ibtnHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txthelp.setVisibility(View.GONE);
+                Intent i = new Intent(OfflineMap.this, HelpActivity.class);
+                i.putExtra("index", 1);
+                startActivity(i);
             }
         });
     }
@@ -178,7 +184,7 @@ private static Marker marker;
                 }
                 if(startrow==0) {
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latslngs.get(0), 14.0f));
-                   marker= mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(Tools.drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), Tools.LoadImage(person.image, 96)))).position(latslngs.get(0)));
+                   marker= mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(Tools.drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), Tools.LoadImage(person.image, 96), ""))).position(latslngs.get(0)));
                 }
                 startrow+=count;
                 if(!seekbar.isEnabled())
