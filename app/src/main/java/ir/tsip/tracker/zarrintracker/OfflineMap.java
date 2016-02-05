@@ -1,10 +1,8 @@
 package ir.tsip.tracker.zarrintracker;
-
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
-os.Bundle;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,23 +10,20 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
-
 import ir.tsip.tracker.zarrintracker.persindatepicker.util.PersianCalendar;
 
 public class OfflineMap extends FragmentActivity {
