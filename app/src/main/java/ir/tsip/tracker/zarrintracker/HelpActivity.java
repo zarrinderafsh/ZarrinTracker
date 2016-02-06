@@ -28,9 +28,15 @@ public class HelpActivity extends AppCompatActivity {
             case 0://groups
                 return R.drawable.groupshelp;
             case 1://offlinemap
-                return R.drawable.arm;//offlinehelp;
+                return R.drawable.helpofflinemap;//offlinehelp;
             case 2://map placeshelp activity
                 return R.drawable.placeshelp;
+            case 3://Main activity
+                return R.drawable.helpmain;
+            case 4://map places activity
+                return R.drawable.helpmapplaces;
+            case 5://routes
+                return R.drawable.helproutes;
             default:
                 return R.drawable.arm;
         }

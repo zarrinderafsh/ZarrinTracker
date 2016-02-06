@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +55,15 @@ _context=this;
         });
 
 
+        ImageButton ibtnHelp=(ImageButton)findViewById(R.id.ibtnHelp);
+        ibtnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Places.this, HelpActivity.class);
+                i.putExtra("index", 2);
+                startActivity(i);
+            }
+        });
     }
 
     @Override

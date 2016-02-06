@@ -248,6 +248,17 @@ public class MainActivity extends AppCompatActivity {
         }
         lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
 
+
+        ImageButton ibtnHelp=(ImageButton)findViewById(R.id.ibtnHelp);
+        ibtnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, HelpActivity.class);
+                i.putExtra("index", 3);
+                startActivity(i);
+            }
+        });
+
     }
 
     private void initializeDrawer() {

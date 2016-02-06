@@ -39,10 +39,29 @@ public class EditProfileActivity extends ActionBarActivity {
         setContentView(R.layout.activity_edit_profile);
         mContext = this;
 
+        final EditText tvName = (EditText) findViewById(R.id.etName);
+
+        tvName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    if(tvName.getText().toString().equals("نام خود را وارد کنید")){
+                        tvName.setText("");
+                    }
+                }
+                else{
+                    if(tvName.getText().toString().equals("")){
+                        tvName.setText("نام خود را وارد کنید");
+                    }
+                }
+
+            }
+        });
+
+
         String Data = ShareSettings.getValue("Profile");
         String[] DataP = Data.split(";;;");
         if(DataP.length > 3) {
-            EditText tvName = (EditText) findViewById(R.id.etName);
             EditText tvPhone = (EditText) findViewById(R.id.etPhone);
             EditText tvEmail = (EditText) findViewById(R.id.etEmail);
             EditText tvActiveCode = (EditText) findViewById(R.id.etActiveCode);

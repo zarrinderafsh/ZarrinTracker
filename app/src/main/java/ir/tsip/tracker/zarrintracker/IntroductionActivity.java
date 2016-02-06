@@ -2,9 +2,11 @@ package ir.tsip.tracker.zarrintracker;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.LayerDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +17,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.Locale;
 
 public class IntroductionActivity extends AppCompatActivity {
 
@@ -35,6 +39,12 @@ public class IntroductionActivity extends AppCompatActivity {
         lyt=(RelativeLayout)findViewById(R.id.lyt);
 txtcaption=(TextView)findViewById(R.id.txtCpation);
         txtcaption.setText(getResources().getString(R.string.introfamily));
+        AssetManager am = this.getApplicationContext().getAssets();
+
+       Typeface typeface = Typeface.createFromAsset(am,
+               String.format(Locale.US, "fonts/%s", "nazli.ttf"));
+
+       txtcaption.setTypeface(typeface);
 
         startMain=getIntent().getBooleanExtra("sm",true);
 

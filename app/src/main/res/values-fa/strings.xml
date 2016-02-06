@@ -128,15 +128,17 @@
     <string name="skipit">بی خیال</string>
     <string name="introduction">معرفی</string>
 
-    <string name="introfamily">موقعیت عزیزان خود را بر روی نقشه ببینید
+    <string name="introfamily">موقعیت عزیزان خود را بر روی نقشه ببینید.
     \n ------</string>
     <string name="introschool">
-        د        وست داری مسیر حرکت سرویس مدرسه دلبندت رو بدونی</string>
+        دوست داری مسیر حرکت سرویس مدرسه دلبندت رو بدونی.
+    \n- -----
+    </string>
     <string name="introtravel">
         چند بار تو مسافرتهای گروهی هم دیگه را گم کردی؟!
     \n-- ----</string>
     <string name="intromountain">
-        دیگه اعضای گروهت رو گم نمی کنی
+        موقعیت اعضا گروهت را در کوه زیر نظر داشته باش.
     \n--- ---</string>
     <string name="intromarketing">
         مطمئن هستی بازاریاب ها به جاهایی که گفتی سر زدند؟!
@@ -144,6 +146,6 @@
     <string name="introdelivery">
         مشتری هات خیلی دوست دارند که بدونن محصولشون کجاست!!
     \n----- -</string>
-    <string name="introother">؟؟؟؟
+    <string name="introother">...
     \n------ </string>
 </resources>

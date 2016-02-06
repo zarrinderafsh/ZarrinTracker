@@ -2,6 +2,7 @@ package ir.tsip.tracker.zarrintracker;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -77,9 +78,16 @@ static  Persons person;
 
         Calendar c=Calendar.getInstance();
         tmpFromTime=(TimePicker)findViewById(R.id.tmpFromTime);
-        tmpFromTime.setCurrentHour(c.get(Calendar.HOUR_OF_DAY) - 1);
-        tmpFromTime.setCurrentMinute(c.get(Calendar.MINUTE));
+
         tmpFromTime.setIs24HourView(true);
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion >= Build.VERSION_CODES.M){
+            tmpFromTime.setHour(c.get(Calendar.HOUR_OF_DAY) - 1);
+            tmpFromTime.setMinute(c.get(Calendar.MINUTE));
+        } else {
+            tmpFromTime.setCurrentHour(c.get(Calendar.HOUR_OF_DAY) - 1);
+            tmpFromTime.setCurrentMinute(c.get(Calendar.MINUTE));
+        }
 
 
           hlsvUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {

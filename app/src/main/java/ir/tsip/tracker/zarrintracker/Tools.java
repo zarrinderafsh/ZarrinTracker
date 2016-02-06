@@ -25,6 +25,7 @@ import android.os.BatteryManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -422,14 +423,17 @@ public class Tools {
     public static Bitmap drawCustomMarker(Bitmap firstImage,Bitmap secondImage,String text){
         if(firstImage==null || secondImage == null)
             return null;
-        Bitmap b=Bitmap.createBitmap(128,148, Bitmap.Config.ARGB_8888);
+        Bitmap b=Bitmap.createBitmap(170, 180, Bitmap.Config.ARGB_8888);
         Canvas c=new Canvas(b);
-        c.drawBitmap(firstImage, 0, 0, null);
-        c.drawBitmap(secondImage, new Rect(0, 0, 96, 96), new Rect(25, 6, 121, 102), null);
+
+        c.drawBitmap(Bitmap.createScaledBitmap(firstImage, 170, 180, true), 0, 0, null);
+        int Left = 39;
+        int Top = 19;
+        c.drawBitmap(secondImage, new Rect(0, 0, 96, 96), new Rect(Left, Top, Left+96, Top+96), null);
         Paint p=new Paint();
-        p.setColor(Color.BLACK);
-        p.setTextSize(15f);
-        c.drawText(text,55,115,p);
+        p.setColor(Color.WHITE);
+        p.setTextSize(20f);
+        c.drawText(text,Left + 19, Top + 96+26,p);
         return  b;
     }
 

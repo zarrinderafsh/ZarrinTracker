@@ -185,7 +185,7 @@ public class MapPlacesActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 Intent i=new Intent(MapPlacesActivity.this,HelpActivity.class);
-                i.putExtra("index",2);
+                i.putExtra("index",4);
                 startActivity(i);
             }
         });

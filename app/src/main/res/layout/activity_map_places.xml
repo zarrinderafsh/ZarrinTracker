@@ -1,3 +1,7 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -47,3 +51,13 @@
         tools:context="ir.tsip.tracker.zarrintracker.MapPlacesActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
 </LinearLayout>
+    <ImageButton
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:id="@+id/ibtnHelp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/faq"
+        android:background="@android:color/transparent" />
+</RelativeLayout>

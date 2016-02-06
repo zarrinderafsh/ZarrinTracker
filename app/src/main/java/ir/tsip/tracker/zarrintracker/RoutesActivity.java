@@ -1,6 +1,8 @@
 package ir.tsip.tracker.zarrintracker;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,11 +11,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -49,6 +53,16 @@ public class RoutesActivity extends FragmentActivity {
             return;
         mMap.setMyLocationEnabled(true);
 
+        ImageButton ibtnHelp=(ImageButton)findViewById(R.id.ibtnHelp);
+        ibtnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(RoutesActivity.this, HelpActivity.class);
+                i.putExtra("index", 5);
+                startActivity(i);
+            }
+        });
+
         btnFIndroutes = (Button) findViewById(R.id.btnFindRoute);
         btnClearmarkers = (Button) findViewById(R.id.btnClearmarkers);
 
@@ -83,6 +97,7 @@ public class RoutesActivity extends FragmentActivity {
                 if (polylineToAdd != null)
                     polylineToAdd.remove();
                 Toast.makeText(RoutesActivity.this, RoutesActivity.this.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
+
                RequestGoogle();
             }
         });
@@ -114,6 +129,8 @@ public class RoutesActivity extends FragmentActivity {
                 origin = "origin=" + LocationListener.getLatitude()+","+LocationListener.getLongitude() + "&";
                 destination = "destination=" + person.lastLatLng;
 waypoints="";
+                mMap.clear();
+                markers.clear();
                 RequestGoogle();
 
             }
@@ -150,7 +167,6 @@ waypoints="";
     }
 
     private void DrawRoutes(JSONObject result) throws JSONException {
-        mMap.clear();
         JSONArray routes = result.getJSONArray("routes");
         PolylineOptions polyOptions = new PolylineOptions();
         long distanceForSegment;
@@ -170,6 +186,12 @@ waypoints="";
                     }
                 }
             }
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(Double.valueOf(person.lastLatLng.split(",")[0]), Double.valueOf(person.lastLatLng.split(",")[1])))
+                    .title(person.name)
+                    .icon(BitmapDescriptorFactory.fromBitmap(Tools.drawCustomMarker(BitmapFactory.decodeResource( RoutesActivity.this.getResources(),R.drawable.red_marker),Tools.LoadImage(person.image,96),person.name))));
+
+
         }
 
         polylineToAdd = mMap.addPolyline(polyOptions.addAll(lines).width(3).color(Color.RED));
