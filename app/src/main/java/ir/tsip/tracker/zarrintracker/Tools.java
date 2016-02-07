@@ -224,7 +224,7 @@ public class Tools {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     WebServices w=new WebServices(MainActivity.Base);
-                    WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 5, Tools.GetImei(MainActivity.Base), "getInfoAndroid",1);
+                    WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 5,marker.getTitle().split(",")[2], "getInfoAndroid",1);
                     w=null;
                     if(minfo==null)
                         minfo=marker;
@@ -244,6 +244,7 @@ public class Tools {
                     View v = MainActivity.Base.getLayoutInflater().inflate(R.layout.custom_info_window, null);
                     ((TextView) v.findViewById(R.id.txtName)).setText(marker.getTitle().split(",")[0]);
                     ((TextView) v.findViewById(R.id.txtDate)).setText(marker.getTitle().split(",")[1]);
+
                     return v;
                 }
             });
@@ -388,7 +389,7 @@ public class Tools {
                         markers.put(id,
                                 GoogleMapObj.addMarker(new MarkerOptions()
                                         .position(new LatLng(Double.valueOf(lat), Double.valueOf(lng)))
-                                        .title(ja.getJSONObject(i).getString("Title"))
+                                        .title(ja.getJSONObject(i).getString("Title")+","+id)
                                         .icon(BitmapDescriptorFactory.fromBitmap(PersonImage))));
                         imgAdapter.AddMarker(new Objects().new MarkerItem(id,
                                 LoadImage(p.image, 96),
@@ -398,7 +399,7 @@ public class Tools {
 
                     } else {
                         m.setPosition(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
-                        m.setTitle(ja.getJSONObject(i).getString("Title"));
+                        m.setTitle(ja.getJSONObject(i).getString("Title")+","+id);
                         m.setIcon(BitmapDescriptorFactory.fromBitmap(drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96),ja.getJSONObject(i).getString("Title").split(",")[1])));
                         imgAdapter.GetItemByID(id)._image = LoadImage(p.image, 96);
                         imgAdapter.GetItemByID(id)._name = p.name;
@@ -416,6 +417,7 @@ public class Tools {
           {
               minfo.setTitle(Data);
               minfo.showInfoWindow();
+              minfo=null;
           }
         }
     }
