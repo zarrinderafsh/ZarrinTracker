@@ -206,9 +206,11 @@ public class ChatActivity extends AppCompatActivity {
                 continue;
             m = new Objects().new MenuItem();
             m.id = indexer;
-            m.text = s.replace("+", "").split("-")[1];
-            m.customTag = s.split("-")[0];
-            adapter.AddItem(m);
+            if(s.replace("+", "").split("-").length >= 2) {
+                m.text = s.replace("+", "").split("-")[1];
+                m.customTag = s.split("-")[0];
+                adapter.AddItem(m);
+            }
             indexer++;
         }
         lsvMembers.setAdapter(adapter);
