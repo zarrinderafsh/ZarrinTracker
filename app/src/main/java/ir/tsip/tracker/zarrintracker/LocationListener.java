@@ -68,7 +68,7 @@ public class LocationListener  extends Service implements android.location.Locat
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 0 meters
 
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 30; // 0 Second
+    private static final long MIN_TIME_BW_UPDATES = 0; // 0 Second
 
     // Declaring a Location Manager
     public static LocationManager locationManager;
