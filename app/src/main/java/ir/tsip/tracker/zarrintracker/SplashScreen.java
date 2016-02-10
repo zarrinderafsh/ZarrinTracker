@@ -18,14 +18,6 @@ public class SplashScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
                  super.onCreate(savedInstanceState);
-
-        Locale locale=new Locale(Tools.getLocale(SplashScreen.this));
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getBaseContext().getResources().updateConfiguration(config,
-                getBaseContext().getResources().getDisplayMetrics());
-
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.splash);
 
@@ -49,6 +41,12 @@ public class SplashScreen extends Activity {
                     }
 
                     Tools.Mute=Tools.getMute(SplashScreen.this);
+                    Locale locale=new Locale(Tools.getLocale(SplashScreen.this));
+                    Locale.setDefault(locale);
+                    Configuration config = new Configuration();
+                    config.locale = locale;
+                    getBaseContext().getResources().updateConfiguration(config,
+                            getBaseContext().getResources().getDisplayMetrics());
 
                     startActivity(intent);
                     overridePendingTransition(R.anim.slid_in, R.anim.slid_out);

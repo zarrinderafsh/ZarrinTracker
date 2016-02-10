@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">موقعیت یابی(نسخه خانواده)</string>
+    <string name="app_name">موقعیت یابی</string>
     <string name="DaysToRecharge">روز باقی مانده تا اتمام شارژ</string>
     <string name="DontTranslate1"></string>
     <string name="EnterJoinCode">کد را وارد کنید</string>

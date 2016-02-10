@@ -815,6 +815,7 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvPersonName)).setText(EditProfileActivity.getName(this.getBaseContext()));
         ProfileActivity.setProfileImage(ivPersonImage, 96, Base);
         ShowMessage();
+        Tools.SetLocal();
     }
 
     @Override
