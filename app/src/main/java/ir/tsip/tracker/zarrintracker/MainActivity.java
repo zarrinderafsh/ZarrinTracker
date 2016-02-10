@@ -80,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setContentView(R.layout.activity_main);
         Base = this;
+
+        Tools.SetLocal();
+
         if(Persons.con==null){
             if(LocationListener.mContext==null)
                 Persons.con=MainActivity.Base;
@@ -97,11 +100,11 @@ public class MainActivity extends AppCompatActivity {
         Tools.lsvMarkers = (ListView) MainActivity.Base.findViewById(R.id.lsvMarkers);
 
         Tools.setTitleColor(this);
+        StartServices();
         checkRegistration();
 
         GroupsActivity.GetGroups(Base, false);
         ShowMessage();
-        StartServices();
 
 
         ivPause = (ImageView) findViewById(R.id.ivPause);
