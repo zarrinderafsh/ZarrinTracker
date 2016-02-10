@@ -26,8 +26,8 @@
     <string name="chooseFromLibrary">انتخاب از گالری</string>
     <string name="chooseName">یک نام انتخاب کنید</string>
     <string name="clickBackAgain">برای خروج دوبار back را بزنید</string>
-    <string name="close">بستن</string>
-    <string name="codeDuration">کد شما برای ۱۵ دقیقه معتبر است</string>
+    <string name="close">بستن</string>xc
+    <string name="codeDuration">این کد برای ۱۵ دقیقه معتبر است</string>
     <string name="copy">کپی</string>
     <string name="creditAmount">شارژ شما برابر</string>
     <string name="delete">حذف</string>
@@ -36,7 +36,7 @@
     <string name="devicesAlreadyRegistered">دستگاه قبلا ثبت شده است</string>
     <string name="dummy_button"></string>
     <string name="email">ایمیل</string>
-    <string name="gpsIsOff">gps خاموش است. برای گرفتن موقعیت مکانی باید gps روشن باشد</string>
+    <string name="gpsIsOff">جی پی اس  خاموش است. برای گرفتن موقعیت مکانی باید جی پی اس روشن باشد</string>
     <string name="groupCOunts">فرد در گروه شماست</string>
     <string name="groups">گروه ها</string>
     <string name="groupsToChat">گروه های چت</string>
@@ -119,7 +119,7 @@
     <string name="sosMessage">لطفا با من تماس بگیرید. من نیاز به کمک دارم.</string>
     <string name="maphint">برای دیدن نقشه کلیک کنید</string>
     <string name="successfulCahrge">اکانت شما شارژ شد.</string>
-    <string name="failedCahrge">مشکلی در ارسال الاعات پیش آمده است.</string>
+    <string name="failedCahrge">مشکلی در ارسال اطلاعات پیش آمده است.</string>
     <string name="rial">ریال</string>
     <string name="satelliteAndInternetON">شما به اینترنت متصل هستید. برای کاهش مصرف باطری وضعیت موقعیت خود را بر روی شبکه قرار دهید.</string>
     <string name="satelliteAndInternetOFF">شما به اینترنت متصل نیستید. برای کاهش خطا وضعیت موقعیت خود را بر روی حالت ماهواره قرار دهید. </string>

@@ -6,7 +6,8 @@
     <TextView android:text="@string/InvetionDescription" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp" />
 
     <TextView
         android:text="@string/codeDuration"
@@ -14,8 +15,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView2"
         android:gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20dp"
+        android:textColor="@android:color/holo_red_dark" />
 
     <ImageView
         android:layout_width="wrap_content"

@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -25,7 +26,6 @@ import android.os.BatteryManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -51,6 +51,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.crypto.Cipher;
@@ -585,7 +586,15 @@ public class Tools {
         context.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
     }
 
+    public static void SetLocal() {
+        Locale locale = new Locale(Tools.getLocale(MainActivity.Base));
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        MainActivity.Base.getResources().updateConfiguration(config,
+                MainActivity.Base.getResources().getDisplayMetrics());
 
+    }
     public static String getLocale(Context context) {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
