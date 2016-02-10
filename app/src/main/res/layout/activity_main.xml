@@ -221,7 +221,7 @@
                         android:background="@android:color/transparent"
                         android:layout_marginTop="60dp"
                         android:scaleType="fitXY"
-                        android:layout_marginRight="10dp" />
+                        android:layout_marginRight="15dp" />
                 </RelativeLayout>
                 <TextView
                     android:layout_width="match_parent"
