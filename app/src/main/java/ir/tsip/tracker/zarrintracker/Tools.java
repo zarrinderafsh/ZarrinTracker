@@ -67,6 +67,7 @@ public class Tools {
     private static Boolean AnswerLastGetMarkers = true;
     private static ConnectivityManager cm;
     private static NetworkInfo netInfo;
+    public  static String ptype="0";
 
     public static boolean isOnline(Context context) {
         if(cm == null)

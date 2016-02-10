@@ -567,6 +567,8 @@ public class MainActivity extends AppCompatActivity {
             site = jo.getString("site");
             tell = jo.getString("tell");
             purchaseMsg= jo.getString("pmsg");
+           Tools.ptype=jo.getString("ptype");
+
             if(jo.getString("visibility").equals("1"))
                 Tools.VisibleToOwnGroupMembers=true;
             else
@@ -597,6 +599,8 @@ public class MainActivity extends AppCompatActivity {
             long newRowId = db.insert(DatabaseContracts.Settings.TABLE_NAME, "", values);
             if (newRowId > 0) {
             }
+            else
+                newRowId = db.update(DatabaseContracts.Settings.TABLE_NAME, values, "",null);
             db.close();
             dh.close();
         }

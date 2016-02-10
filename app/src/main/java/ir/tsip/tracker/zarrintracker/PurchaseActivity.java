@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -64,6 +65,13 @@ HashMap<String,String> products=new HashMap<>();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_purchase);
 
+        if(Tools.ptype.equals("1"))
+        {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.tstracker.ir"));
+            startActivity(browserIntent);
+            this.finish();
+            return;
+        }
 
         rdb5=(RadioButton)findViewById(R.id.rdb5);
         rdb10=(RadioButton)findViewById(R.id.rdb10);
