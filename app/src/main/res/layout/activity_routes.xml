@@ -23,9 +23,8 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:layout_weight=".7"
-        android:allowUndo="false" />
+        android:id="@+id/editText"
+        android:layout_weight=".7" />
 
     <Button
         android:layout_width="wrap_content"
@@ -39,10 +38,34 @@
         android:paddingRight="10dp" />
 </LinearLayout>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/findaddress"
+            android:id="@+id/btnFindAddress"
+            android:background="#8CC739"
+            android:textColor="#ffffff" />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/txtfindAddress"
+            android:layout_weight=".7"
+            android:allowUndo="false"
+            android:contextClickable="false" />
+    </LinearLayout>
+
     <ir.tsip.tracker.zarrintracker.HorizontalListView
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:id="@+id/hlsvUsers"></ir.tsip.tracker.zarrintracker.HorizontalListView>
+    android:layout_height="70dp"
+    android:id="@+id/hlsvUsers"
+        android:layout_marginTop="3dp"></ir.tsip.tracker.zarrintracker.HorizontalListView>
 
     <fragment android:id="@+id/map"
     tools:context="ir.tsip.tracker.zarrintracker.RoutesActivity"

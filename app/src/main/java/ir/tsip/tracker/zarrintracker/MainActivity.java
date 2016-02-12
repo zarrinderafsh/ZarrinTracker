@@ -12,6 +12,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -314,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
         m8.text = getResources().getString(R.string.setting);
         m8.image = BitmapFactory.decodeResource(getResources(), R.drawable.setting);
         adapter.AddItem(m8);
+
         Objects.MenuItem m9 = new Objects().new MenuItem();
         m9.id = 9;
         m9.text = getResources().getString(R.string.introduction);
@@ -576,6 +578,10 @@ public class MainActivity extends AppCompatActivity {
                 Tools.VisibleToOwnGroupMembers=true;
             else
                 Tools.VisibleToOwnGroupMembers=false;
+            if(jo.getString("justadminsee").equals("1"))
+                Tools.justadminsee=true;
+            else
+                Tools.justadminsee=false;
         }
         DatabaseHelper dh;
         SQLiteDatabase db;
@@ -703,10 +709,10 @@ public class MainActivity extends AppCompatActivity {
                             //every hour
                             if (counter == 0) {
                                 //Update credit
-                                if(!Tools.isOnline(MainActivity.Base))
+                                if (!Tools.isOnline(MainActivity.Base))
                                     return;
                                 WebServices ws = new WebServices(MainActivity.this);
-                                ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.this), "PurhaseDetails",1);
+                                ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.this), "PurhaseDetails", 1);
                                 ws = null;
                                 //Update persons images
                                 Persons.UpdateImages();
@@ -785,13 +791,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     boolean doubleBackToExitPressedOnce = false;
-
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
+
             super.onBackPressed();
             return;
         }
+
+
+        if(GroupsActivity.GroupList.size()>1&& !Tools.getRate(this))
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle(getResources().getString(R.string.DoYouWantRateUs));
+
+            builder.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Rate application
+                    Intent intent = new Intent(Intent.ACTION_EDIT);
+                    intent.setData(Uri.parse("bazaar://details?id=" + MainActivity.this.getPackageName()));
+                    intent.setPackage("com.farsitel.bazaar");
+                    startActivity(intent);
+                    Tools.SetRate(true);
+                }
+            });
+            builder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    dialog.cancel();
+
+                }
+            });
+            builder.show();
+        }
+
 
         this.doubleBackToExitPressedOnce = true;
         Toast.makeText(this, getResources().getString(R.string.clickBackAgain), Toast.LENGTH_SHORT).show();
@@ -804,6 +839,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 2000);
     }
+
+
 
     public static Boolean IsPaused = false;
 

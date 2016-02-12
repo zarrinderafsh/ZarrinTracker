@@ -64,7 +64,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class Tools {
 
-    public static Boolean HasCredit = true, Mute = false,VisibleToOwnGroupMembers=true;
+    public static Boolean HasCredit = true,justadminsee=false, Mute = false,VisibleToOwnGroupMembers=true;
     private static Boolean AnswerLastGetMarkers = true;
     private static ConnectivityManager cm;
     private static NetworkInfo netInfo;
@@ -622,6 +622,48 @@ public class Tools {
             dbh.close();
         }
         return locale;
+    }
+    public static void SetRate(Boolean rate) {
+        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        try {
+            ContentValues V = new ContentValues();
+            V.put(DatabaseContracts.Settings.COlumn_Rate, rate?1:0);
+            db.update(DatabaseContracts.Settings.TABLE_NAME, V, "", null);
+        } catch (Exception e) {
+            String k=e.getMessage();
+        } finally {
+            db.close();
+            dbh.close();
+        }
+    }
+
+    public static Boolean getRate(Context context) {
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+
+        Cursor c=null;
+        try {
+            c = db.query(DatabaseContracts.Settings.TABLE_NAME,
+                    null,
+                    "",
+                    null,
+                    null,
+                    null,
+                    null);
+            if (c.moveToFirst()) {
+
+                return  (c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COlumn_Rate))>0)? true: false;
+
+
+            }
+        } catch (Exception e) {
+        } finally {
+            c.close();
+            db.close();
+            dbh.close();
+        }
+        return false;
     }
 
     public static void SetMute(Boolean mut) {

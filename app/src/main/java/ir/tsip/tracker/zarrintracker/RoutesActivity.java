@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -40,8 +41,9 @@ public class RoutesActivity extends FragmentActivity {
     Runnable r;
     JSONObject jo;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private Button btnClearmarkers, btnFIndroutes;
+    private Button btnClearmarkers, btnFIndroutes,btnfindaddress;
     Persons person;
+    EditText txtaddres;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,26 @@ public class RoutesActivity extends FragmentActivity {
 
         btnFIndroutes = (Button) findViewById(R.id.btnFindRoute);
         btnClearmarkers = (Button) findViewById(R.id.btnClearmarkers);
+        txtaddres=(EditText)findViewById(R.id.txtfindAddress);
+        btnfindaddress=(Button)findViewById(R.id.btnFindAddress);
+        btnfindaddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(LocationListener.getLongitude()==0 || LocationListener.getLatitude()==0) {
+                    Toast.makeText(RoutesActivity.this, RoutesActivity.this.getResources().getString(R.string.gpsIsOff), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                origin = "origin=" + LocationListener.getLatitude()+","+LocationListener.getLongitude() + "&";
+                destination = "destination=" + txtaddres.getText().toString();
+
+                if (polylineToAdd != null)
+                    polylineToAdd.remove();
+                Toast.makeText(RoutesActivity.this, RoutesActivity.this.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
+
+                RequestGoogle();
+            }
+        });
+
 
         btnClearmarkers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,6 +194,10 @@ waypoints="";
         long distanceForSegment;
         List<LatLng> lines = new ArrayList<LatLng>();
 
+        if(routes.length()==0) {
+            Toast.makeText(RoutesActivity.this, RoutesActivity.this.getResources().getString(R.string.noROute), Toast.LENGTH_LONG).show();
+            return;
+        }
         for (int j = 0; j < routes.length(); j++) {
             distanceForSegment = routes.getJSONObject(j).getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getInt("value");
             JSONArray legs = routes.getJSONObject(j).getJSONArray("legs");
@@ -186,6 +212,8 @@ waypoints="";
                     }
                 }
             }
+
+            if(person!=null)
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(Double.valueOf(person.lastLatLng.split(",")[0]), Double.valueOf(person.lastLatLng.split(",")[1])))
                     .title(person.name)

@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class SettingActivity extends AppCompatActivity {
 Button btnClearEvents;
-    Switch swchMute,swchVisibilityState;
+    Switch swchMute,swchVisibilityState,swchmygroupmembercantseeeachother;
     RadioGroup rdgp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +37,10 @@ Button btnClearEvents;
         swchVisibilityState.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WebServices w=new WebServices(SettingActivity.this);
-                w.addQueue("ir.tsip.tracker.zarrintracker.SettingActivity",0,Tools.GetImei(SettingActivity.this),"VisibilityState",1);
-                w=null;
-               Tools.VisibleToOwnGroupMembers=!Tools.VisibleToOwnGroupMembers;
+                WebServices w = new WebServices(SettingActivity.this);
+                w.addQueue("ir.tsip.tracker.zarrintracker.SettingActivity", 0, Tools.GetImei(SettingActivity.this), "VisibilityState", 1);
+                w = null;
+                Tools.VisibleToOwnGroupMembers = !Tools.VisibleToOwnGroupMembers;
             }
         });
 
@@ -71,6 +71,26 @@ Button btnClearEvents;
                 }
             }
         });
+
+
+        swchmygroupmembercantseeeachother=(Switch)findViewById(R.id.swchjustadminsee);
+        swchmygroupmembercantseeeachother.setChecked(Tools.justadminsee);
+        swchmygroupmembercantseeeachother.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                WebServices w = new WebServices(SettingActivity.this);
+                w.addQueue("ir.tsip.tracker.zarrintracker.SettingActivity", 1, Tools.GetImei(SettingActivity.this), "justadminsee", 1);
+                w = null;
+                Tools.justadminsee = !Tools.justadminsee;
+            }
+        });
+
+        if(!Tools.isOnline(this))
+        {
+            swchVisibilityState.setEnabled(false);
+            swchmygroupmembercantseeeachother.setEnabled(false);
+        }
 
         rdgp=(RadioGroup)findViewById(R.id.rdbgLanguage);
         RadioButton r = new RadioButton(this);

@@ -61,6 +61,8 @@
     <string name="close">Close</string>
     <string name="successful">Successful</string>
     <string name="ok">Okay</string>
+    <string name="justadminsee">My group members can not see each other.</string>
+    <string name="noROute">Route not found.Give Address like this (iran,tehran,tehran,milad)</string>
     <string name="userProfile">User Profile</string>
     <string name="NoCredit">You have no credit. Please recharge to use application.</string>
     <string name="internetConnectivityError">No Internet Connection. Please check your internet connection.</string>
@@ -149,4 +151,9 @@
     <string name="intromarketing">Marketing Companies</string>
     <string name="introdelivery">Delivery Companies</string>
     <string name="introother">...</string>
+    <string name="rateapp">Rate</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="DoYouWantRateUs">Do you want to rate this application?</string>
+    <string name="findaddress">Find Address</string>
 </resources>
