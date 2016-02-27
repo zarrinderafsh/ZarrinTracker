@@ -192,6 +192,15 @@
                         android:id="@+id/llMapLoad">
                     </LinearLayout>
 
+                    <WebView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:id="@+id/webView"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="100dp"
+                        android:visibility="invisible"
+                        android:background="@android:color/transparent" />
+
                     <LinearLayout
                         android:layout_width="50dp"
                         android:layout_height="match_parent"

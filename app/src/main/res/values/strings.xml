@@ -156,4 +156,6 @@
     <string name="no">No</string>
     <string name="DoYouWantRateUs">Do you want to rate this application?</string>
     <string name="findaddress">Find Address</string>
+    <string name="dontaskagain">Do not ask me again!</string>
+
 </resources>

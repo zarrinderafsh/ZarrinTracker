@@ -12,7 +12,7 @@
     <string name="JoinGroup">عضو گروه شوید</string>
     <string name="LeaveGroupMessage">مطمئنید می خواهید از گروه خارج شوید؟ تمام پیام ها پاک می شوند</string>
     <string name="NewMessage">پیام جدید از </string>
-    <string name="NoCredit">شارژ‌شما صفر است</string>
+    <string name="NoCredit">شما شارژ کافی برای استفاده از برنامه ندارید</string>
     <string name="PersonImage"></string>
     <string name="SwipeToRight">به راست لمس کنید تا منو را ببینید</string>
     <string name="abou">راهنما</string>
@@ -156,4 +156,6 @@
     <string name="DoYouWantRateUs">می خوای به برنامه امتیاز بدی؟</string>
     <string name="findaddress">پیدا کردن آدرس</string>
     <string name="justadminsee">اعضای گروهم همدیگه رو نبینن</string>
+
+    <string name="dontaskagain">دوباره نپرس!</string>
 </resources>

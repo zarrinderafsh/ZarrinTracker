@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Movie;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -30,6 +32,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -64,7 +67,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class Tools {
 
-    public static Boolean HasCredit = true,justadminsee=false, Mute = false,VisibleToOwnGroupMembers=true;
+    public static Boolean HasCredit = true,showrating=false,justadminsee=false, Mute = false,VisibleToOwnGroupMembers=true;
     private static Boolean AnswerLastGetMarkers = true;
     private static ConnectivityManager cm;
     private static NetworkInfo netInfo;
@@ -346,6 +349,7 @@ public class Tools {
     public static void backWebServices(int ObjectCode, String Data) {
 
         if (ObjectCode == 0) {//Markers
+           MainActivity.Base.webView.setVisibility(View.INVISIBLE);
             AnswerLastGetMarkers = true;
             try {
 
@@ -409,6 +413,8 @@ public class Tools {
 
                 }
                 lsvMarkers.setAdapter(imgAdapter);
+                if(markers.size()>1)
+                    showrating=true;
 //                imgAdapter.notifyDataSetChanged();
             } catch (Exception er) {
                 er.getMessage();
@@ -423,6 +429,8 @@ public class Tools {
           }
         }
     }
+
+
 
     public static Bitmap drawCustomMarker(Bitmap firstImage,Bitmap secondImage,String text){
         if(firstImage==null || secondImage == null)

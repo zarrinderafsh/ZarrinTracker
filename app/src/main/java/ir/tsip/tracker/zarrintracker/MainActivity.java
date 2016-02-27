@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     ActionBarDrawerToggle mDrawerToggle;
     MapFragment mMapFragment;
     private HashMap params;
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+webView=(WebView)findViewById(R.id.webView);
+        webView .loadUrl("file:///android_asset/loding.gif");
+        webView.setVisibility(View.VISIBLE);
 
         lytProfile = (LinearLayout) findViewById(R.id.lytProfile);
         lytHeaderTop = (LinearLayout) findViewById(R.id.lytTopHeader);
@@ -487,7 +492,11 @@ public class MainActivity extends AppCompatActivity {
                 MessageEvent.InsertMessage(MainActivity.Base, msg, MessageEvent.CREADIT_EVENT);
                 Tools.HasCredit = true;
             } else {
-                MessageEvent.InsertMessage(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.NoCredit), MessageEvent.CREADIT_EVENT);
+              Intent  myIntent = new Intent(Base, PurchaseActivity.class);
+                myIntent.putExtra("msg", "Charge Account");
+                Base.startActivity(myIntent);
+                MessageEvent.InsertMessage(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.NoCredit)
+                        + " (" + Data.split(",")[2].replace(".0000","")+")", MessageEvent.CREADIT_EVENT);
                 Tools.HasCredit = false;
             }
         } else if (ObjectCode == 4) {
@@ -800,11 +809,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        if(GroupsActivity.GroupList.size()>1&& !Tools.getRate(this))
+        if(Tools.showrating && !Tools.getRate(this))
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(getResources().getString(R.string.DoYouWantRateUs));
-
+            builder.setNeutralButton(getResources().getString(R.string.dontaskagain), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Tools.SetRate(true);
+                    dialog.cancel();
+                }
+            });
             builder.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

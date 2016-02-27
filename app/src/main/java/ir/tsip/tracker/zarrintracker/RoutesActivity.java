@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,6 +45,7 @@ public class RoutesActivity extends FragmentActivity {
     private Button btnClearmarkers, btnFIndroutes,btnfindaddress;
     Persons person;
     EditText txtaddres;
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +136,7 @@ public class RoutesActivity extends FragmentActivity {
             }
         hlsvUsers.setAdapter(adapter);
 
+        webView=  ((WebView)this.findViewById(R.id.webView));
         hlsvUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -161,6 +164,8 @@ waypoints="";
     }
 
     private  void RequestGoogle(){
+        webView .loadUrl("file:///android_asset/loding.gif");
+        webView.setVisibility(View.VISIBLE);
         Thread t = new Thread() {
             public void run() {
 
@@ -194,6 +199,7 @@ waypoints="";
         long distanceForSegment;
         List<LatLng> lines = new ArrayList<LatLng>();
 
+        webView.setVisibility(View.INVISIBLE);
         if(routes.length()==0) {
             Toast.makeText(RoutesActivity.this, RoutesActivity.this.getResources().getString(R.string.noROute), Toast.LENGTH_LONG).show();
             return;

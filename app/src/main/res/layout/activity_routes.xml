@@ -42,7 +42,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp">
+        android:layout_marginTop="3dp"
+        android:visibility="gone">
 
         <Button
             android:layout_width="wrap_content"
@@ -72,6 +73,15 @@
     android:name="com.google.android.gms.maps.SupportMapFragment" android:layout_width="match_parent"
     android:layout_height="match_parent" />
 </LinearLayout>
+
+    <WebView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/webView"
+        android:layout_centerInParent="true"
+        android:background="@android:color/transparent"
+        android:visibility="invisible" />
+
     <ImageButton
         android:layout_width="64dp"
         android:layout_height="64dp"

@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -36,7 +37,7 @@ private HorizontalListView hlsvUsers;
     private TimePicker tmpFromTime;
     static WebServices w;
      final SimpleDateFormat smplDate=new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
+    static WebView webView;
 
     private static int startrow,count;
     private static  String startdate,enddate;
@@ -89,7 +90,7 @@ static  Persons person;
             tmpFromTime.setCurrentMinute(c.get(Calendar.MINUTE));
         }
 
-
+webView=  ((WebView)OfflineMap.this.findViewById(R.id.webView));
           hlsvUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
               @Override
               public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -103,6 +104,8 @@ static  Persons person;
                   count = 20;
                   startdate = smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour()) + ":" + String.valueOf(tmpFromTime.getCurrentMinute()) + ":00";
                   enddate = smplDate.format(dtpDate.getDisplayDate()) + " " + String.valueOf(tmpFromTime.getCurrentHour() + 1) + ":" + String.valueOf(tmpFromTime.getCurrentMinute()) + ":00";
+               webView .loadUrl("file:///android_asset/loding.gif");
+                  webView.setVisibility(View.VISIBLE);
                   RequestServer();
                   Toast.makeText(OfflineMap.this, OfflineMap.this.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
 
@@ -174,6 +177,7 @@ private static Marker marker;
                 if ((Data == null || Data.equals("null"))&& startrow!=0) {
                     return;
                 }
+                webView.setVisibility(View.GONE);
                 if (Data == null || Data.equals("null")) {
                     Toast.makeText(MainActivity.Base, MainActivity.Base.getResources().getString(R.string.noMarkerData), Toast.LENGTH_LONG).show();
                 return;

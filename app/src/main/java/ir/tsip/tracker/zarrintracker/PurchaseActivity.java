@@ -157,8 +157,8 @@ HashMap<String,String> products=new HashMap<>();
                         plan = "family2";
                         code=1001;
                     }
-//                    plan="test";
-//                    code=1003;
+                    plan="test";
+                    code=1003;
                     Bundle bundle = mService.getBuyIntent(3,   PurchaseActivity.this.getPackageName(), plan, "inapp", "developerPayload");
 
                     PendingIntent pendingIntent = bundle.getParcelable("BUY_INTENT");
