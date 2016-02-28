@@ -268,6 +268,10 @@ webView=(WebView)findViewById(R.id.webView);
             }
         });
 
+
+        Tools.justadminsee = Tools.getBoleanColumn(this,DatabaseContracts.Settings.TABLE_NAME, DatabaseContracts.Settings.COlumn_justAdminsee);
+        Tools.VisibleToOwnGroupMembers = Tools.getBoleanColumn(this,DatabaseContracts.Settings.TABLE_NAME, DatabaseContracts.Settings.Column_visibility);
+
     }
 
     private void initializeDrawer() {
@@ -583,14 +587,22 @@ webView=(WebView)findViewById(R.id.webView);
             purchaseMsg= jo.getString("pmsg");
            Tools.ptype=jo.getString("ptype");
 
-            if(jo.getString("visibility").equals("1"))
-                Tools.VisibleToOwnGroupMembers=true;
-            else
-                Tools.VisibleToOwnGroupMembers=false;
-            if(jo.getString("justadminsee").equals("1"))
-                Tools.justadminsee=true;
-            else
-                Tools.justadminsee=false;
+            if(jo.getString("visibility").equals("1")) {
+                Tools.VisibleToOwnGroupMembers = true;
+                Tools.SetBoleanColumn(DatabaseContracts.Settings.TABLE_NAME,DatabaseContracts.Settings.Column_visibility,true);
+            }
+            else {
+                Tools.VisibleToOwnGroupMembers = false;
+                Tools.SetBoleanColumn(DatabaseContracts.Settings.TABLE_NAME,DatabaseContracts.Settings.Column_visibility,false);
+            }
+            if(jo.getString("justadminsee").equals("1")) {
+                Tools.justadminsee = true;
+                Tools.SetBoleanColumn(DatabaseContracts.Settings.TABLE_NAME,DatabaseContracts.Settings.COlumn_justAdminsee,true);
+            }
+            else {
+                Tools.justadminsee = false;
+                Tools.SetBoleanColumn(DatabaseContracts.Settings.TABLE_NAME,DatabaseContracts.Settings.COlumn_justAdminsee,false);
+            }
         }
         DatabaseHelper dh;
         SQLiteDatabase db;
@@ -718,13 +730,13 @@ webView=(WebView)findViewById(R.id.webView);
                             //every hour
                             if (counter == 0) {
                                 //Update credit
-                                if (!Tools.isOnline(MainActivity.Base))
-                                    return;
-                                WebServices ws = new WebServices(MainActivity.this);
-                                ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.this), "PurhaseDetails", 1);
-                                ws = null;
-                                //Update persons images
-                                Persons.UpdateImages();
+                                if (Tools.isOnline(MainActivity.Base)) {
+                                    WebServices ws = new WebServices(MainActivity.this);
+                                    ws.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 5, Tools.GetImei(MainActivity.this), "PurhaseDetails", 1);
+                                    ws = null;
+                                    //Update persons images
+                                    Persons.UpdateImages();
+                                }
                             }
                             //Counter repeat every one hour
                             if (counter >= 60 * 60 * 60) {

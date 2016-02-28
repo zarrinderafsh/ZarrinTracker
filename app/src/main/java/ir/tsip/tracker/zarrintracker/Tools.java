@@ -50,6 +50,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Type;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -631,6 +632,52 @@ public class Tools {
         }
         return locale;
     }
+
+    public static void SetBoleanColumn(String table,String column,Boolean value) {
+
+        DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+        try {
+            ContentValues V = new ContentValues();
+            V.put(column, value?1:0);
+            db.update(table, V, "", null);
+        } catch (Exception e) {
+            String k=e.getMessage();
+        } finally {
+            db.close();
+            dbh.close();
+        }
+    }
+
+    public static Boolean getBoleanColumn(Context context,String table,String column) {
+        DatabaseHelper dbh = new DatabaseHelper(context);
+        SQLiteDatabase db = dbh.getReadableDatabase();
+
+        Cursor c=null;
+        try {
+            c = db.query(table,
+                    null,
+                    "",
+                    null,
+                    null,
+                    null,
+                    null);
+            if (c.moveToFirst()) {
+
+                return  (c.getInt(c.getColumnIndexOrThrow(column))>0)? true: false;
+
+
+            }
+        } catch (Exception e) {
+        } finally {
+            c.close();
+            db.close();
+            dbh.close();
+        }
+        return false;
+    }
+
+
     public static void SetRate(Boolean rate) {
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
         SQLiteDatabase db = dbh.getReadableDatabase();

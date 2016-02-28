@@ -25,6 +25,8 @@ public class DatabaseContracts {
         public static final String COLUMN_locale = "locale";
         public static final String COLUMN_mute = "mute";
         public static final String COlumn_Rate = "rate";
+        public static final String Column_visibility = "visibility";
+        public static final String COlumn_justAdminsee = "justadminsee";
         public  static final String Column_purchase_message="purcahseMsg";
 
         private static final String COMMA_SEP = ",";
@@ -43,6 +45,8 @@ public class DatabaseContracts {
                         Settings.COLUMN_locale + " char(2) " + COMMA_SEP +
                         Settings.COLUMN_mute + " INTEGER " + COMMA_SEP +
                         Settings.COlumn_Rate + " INTEGER " + COMMA_SEP +
+                        Settings.Column_visibility + " INTEGER " + COMMA_SEP +
+                        Settings.COlumn_justAdminsee + " INTEGER " + COMMA_SEP +
                         Settings.COLUMN_NAME_RunningAlarm + " INTEGER " + COMMA_SEP +
                         Settings.COLUMN_NAME_interval + " varchar(20) " +  " )";
 

@@ -41,6 +41,7 @@ Button btnClearEvents;
                 w.addQueue("ir.tsip.tracker.zarrintracker.SettingActivity", 0, Tools.GetImei(SettingActivity.this), "VisibilityState", 1);
                 w = null;
                 Tools.VisibleToOwnGroupMembers = !Tools.VisibleToOwnGroupMembers;
+                Tools.SetBoleanColumn(DatabaseContracts.Settings.TABLE_NAME,DatabaseContracts.Settings.Column_visibility,Tools.VisibleToOwnGroupMembers);
             }
         });
 
@@ -83,6 +84,7 @@ Button btnClearEvents;
                 w.addQueue("ir.tsip.tracker.zarrintracker.SettingActivity", 1, Tools.GetImei(SettingActivity.this), "justadminsee", 1);
                 w = null;
                 Tools.justadminsee = !Tools.justadminsee;
+                Tools.SetBoleanColumn(DatabaseContracts.Settings.TABLE_NAME,DatabaseContracts.Settings.COlumn_justAdminsee,Tools.justadminsee);
             }
         });
 
@@ -142,10 +144,10 @@ Button btnClearEvents;
         });
 
 
-WebServices w =new WebServices();
-       byte[] k= w.EncryptData("hi");
-        byte[] v=w.DecryptData(k.toString());
-String h=v.toString();
+//WebServices w =new WebServices();
+//       byte[] k= w.EncryptData("hi");
+//        byte[] v=w.DecryptData(k.toString());
+//String h=v.toString();
 
     }
 
