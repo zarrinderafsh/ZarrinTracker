@@ -61,6 +61,7 @@
     <string name="close">Close</string>
     <string name="successful">Successful</string>
     <string name="ok">Okay</string>
+    <string name="duplicatename">Duplicated name</string>
     <string name="justadminsee">My group members can not see each other.</string>
     <string name="noROute">Route not found.Give Address like this (iran,tehran,tehran,milad)</string>
     <string name="userProfile">User Profile</string>

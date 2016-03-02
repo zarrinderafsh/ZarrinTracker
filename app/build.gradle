@@ -1,17 +1,26 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        ztKEY {
+            keyAlias 'zarrintracker'
+            keyPassword '123456'
+            storeFile file('/home/ali/Projects/AndroidStudio/ZarrinTracker/ztKEY.jks')
+            storePassword '123456'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion '23.0.1'
     defaultConfig {
         applicationId "ir.tsip.tracker.zarrintracker"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 9
-        versionName "1.5.2"
+        versionCode 12
+        versionName "1.5.5"
+        signingConfig signingConfigs.ztKEY
     }
     buildTypes {
-        release {
+        release{
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -26,4 +35,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:support-v4:23.0.1'
     compile 'com.google.android.gms:play-services-maps:7.0.0'
- }
+}

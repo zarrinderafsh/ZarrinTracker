@@ -100,6 +100,12 @@ public class MapPlacesActivity extends FragmentActivity {
                                 Toast.makeText(MapPlacesActivity.this, MapPlacesActivity.this.getResources().getString(R.string.internetConnectivityError), Toast.LENGTH_LONG).show();
                                 return;
                             }
+                            for (Objects.GeofenceItem g:Places.geos) {
+                                if(g.name.equals( txtCirleName.getText().toString())){
+                                    Toast.makeText(MapPlacesActivity.this, MapPlacesActivity.this.getResources().getString(R.string.duplicatename), Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            }
 
                             DatabaseHelper dbh = new DatabaseHelper(MapPlacesActivity.this);
                             SQLiteDatabase db = dbh.getWritableDatabase();
@@ -112,21 +118,21 @@ public class MapPlacesActivity extends FragmentActivity {
                             params.put("name", txtCirleName.getText().toString());
                             int objectcode;
                             if (id == 0) {
-                                db = dbh.getReadableDatabase();
-                                String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID};
-                                Cursor c;
-                                c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
-                                c.moveToLast();
-                                while (true && c.getCount() > 0) {
-                                    id = c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID));
-                                    break;
-                                }
+//                                db = dbh.getReadableDatabase();
+//                                String[] columns = {DatabaseContracts.Geogences.COLUMN_NAME_ID};
+//                                Cursor c;
+//                                c = db.query(DatabaseContracts.Geogences.TABLE_NAME, columns, "", null, "", "", "");
+//                                c.moveToLast();
+//                                while (true && c.getCount() > 0) {
+//                                    id = 1+c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Geogences.COLUMN_NAME_ID));
+//                                    break;
+//                                }
+//                                c.close();
 
                                 //add new
-                                params.put("clientCode", String.valueOf(id + 1));
+                                params.put("clientCode", String.valueOf(id ));
                                 params.put("operation", "1");
                                 objectcode = 0;
-                                c.close();
 
                             } else {
                                 ContentValues Val = new ContentValues();

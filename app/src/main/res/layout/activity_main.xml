@@ -193,8 +193,8 @@
                     </LinearLayout>
 
                     <WebView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
                         android:id="@+id/webView"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="100dp"

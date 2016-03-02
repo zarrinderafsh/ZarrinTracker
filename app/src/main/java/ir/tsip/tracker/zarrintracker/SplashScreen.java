@@ -37,7 +37,8 @@ public class SplashScreen extends Activity {
                     else
                     {
                          intent = new Intent(SplashScreen.this, IntroductionActivity.class);
-
+                        DatabaseHelper s=new DatabaseHelper(SplashScreen.this);
+                        s.onDowngrade(s.getWritableDatabase(),0,1);
                     }
 
                     Tools.Mute=Tools.getMute(SplashScreen.this);

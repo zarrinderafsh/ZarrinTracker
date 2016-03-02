@@ -34,7 +34,7 @@ public class DatabaseHelper extends android.database.sqlite.SQLiteOpenHelper {
         db.execSQL(DatabaseContracts.Groups.SQL_DELETE_Table);
         db.execSQL(DatabaseContracts.Temp.SQL_DELETE_Table);
         db.execSQL(DatabaseContracts.Geogences.SQL_DELETE_Table);
-        db.execSQL(DatabaseContracts.Persons.SQL_CREATE_Table);
+        db.execSQL(DatabaseContracts.Persons.SQL_DELETE_Table);
         onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {

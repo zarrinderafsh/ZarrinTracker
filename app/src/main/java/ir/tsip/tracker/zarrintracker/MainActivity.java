@@ -521,7 +521,7 @@ webView=(WebView)findViewById(R.id.webView);
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_name, g.split("~")[0]);
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_center, g.split("~")[1]);
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_radius, g.split("~")[2]);
-                        Val.put(DatabaseContracts.Geogences.COLUMN_NAME_ID, g.split("~")[3]);
+                        //Val.put(DatabaseContracts.Geogences.COLUMN_NAME_ID, g.split("~")[3]);
                         Val.put(DatabaseContracts.Geogences.COLUMN_NAME_isOwner, Integer.valueOf(g.split("~")[4]));
                         Val.put(DatabaseContracts.Geogences.COLUMN_OwnerCOde, Integer.valueOf(g.split("~")[5]));
                         if (db.insert(DatabaseContracts.Geogences.TABLE_NAME, DatabaseContracts.Geogences.COLUMN_NAME_ID, Val) > 0) {

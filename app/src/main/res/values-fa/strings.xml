@@ -44,6 +44,7 @@
     <string name="haveNoLocationData">در حال حاضر اطلاعات مکانی وجود ندارد.</string>
     <string name="hello_world"></string>
     <string name="hour">ساعت</string>
+    <string name="duplicatename">نام تکراری است. لطفا نام دیگری انتخاب کنید.</string>
     <string name="imageDidntLoad">تصویر بارگذاری نشد</string>
     <string name="imageUploaded">تصویر در سرور بارگذاری شد</string>
     <string name="internetConnectivityError">لطفا به اینترنت متصل شوید.</string>

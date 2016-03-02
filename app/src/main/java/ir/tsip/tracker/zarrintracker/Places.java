@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 public class Places extends AppCompatActivity {
 
-    ArrayList<Objects.GeofenceItem> geos=new ArrayList<>();
+    static ArrayList<Objects.GeofenceItem> geos=new ArrayList<>();
     GeofenceItemAdapter geoAdapter;
     ListView lsvPlaces;
     static Context _context;
@@ -44,6 +44,11 @@ _context=this;
         btnPlaces.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if( LocationListener.getLatitude()<=0)
+                {
+                    Toast.makeText(Places.this, "GPS Off", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent myIntent = new Intent(Places.this, MapPlacesActivity.class);
                 myIntent.putExtra("lat", LocationListener.getLatitude());
                 myIntent.putExtra("lng", LocationListener.getLongitude());
