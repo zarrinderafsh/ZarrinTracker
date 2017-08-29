@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.Locale;
 
 /**
- * Created by vamsikrishna on 12-Feb-15.
+ * Created by ali heidari
  */
 public class SplashScreen extends Activity {
 
