@@ -469,7 +469,7 @@ public class LocationListener  extends Service implements android.location.Locat
 
             }
 
-        }, 0, 10000);
+        }, 0, 60000);
     }
 
 }

@@ -71,6 +71,7 @@ public class ChatActivity extends AppCompatActivity {
         _this = null;
         _this = this;
         svChatView = (ScrollView) _this.findViewById(R.id.svChatView);
+        ImageView imgLeave = (ImageView) findViewById(R.id.imgLeaveGroup);
         context = getApplicationContext();
         inInvite = (ImageView) findViewById(R.id.ivInvite);
         _isOwner = getIntent().getBooleanExtra("myGroup", false);
@@ -116,9 +117,9 @@ public class ChatActivity extends AppCompatActivity {
                 }
             });
             inInvite.setVisibility(View.VISIBLE);
+            imgLeave.setVisibility(View.GONE);
             ((TextView) findViewById(R.id.txtInvitetoGroup)).setVisibility(View.VISIBLE);
         } else {
-            ImageView imgLeave = (ImageView) findViewById(R.id.imgLeaveGroup);
             imgLeave.setVisibility(View.VISIBLE);
             imgLeave.setOnClickListener(new View.OnClickListener() {
                 @Override

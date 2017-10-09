@@ -11,7 +11,7 @@
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
             android:orientation="horizontal"
             android:background="#ff0a86cd"
             android:id="@+id/lytTopHeader"
@@ -182,8 +182,7 @@
                 android:orientation="vertical">
                 <RelativeLayout
                     android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight=".9">
+                    android:layout_height="fill_parent">
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -202,11 +201,13 @@
                         android:background="@android:color/transparent" />
 
                     <LinearLayout
-                        android:layout_width="50dp"
-                        android:layout_height="match_parent"
+                        android:layout_width="72dp"
+                        android:layout_height="fill_parent"
                         android:orientation="vertical"
                         android:layout_alignParentLeft="true"
-                        android:background="@android:color/transparent">
+                        android:background="@android:color/transparent"
+                        android:layout_marginBottom="80dp"
+                        android:gravity="center_horizontal">
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -214,6 +215,14 @@
                             android:src="@drawable/person_white_add"
                             android:clickable="true"
                             android:layout_marginRight="10dp" />
+
+                        <Spinner
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/spnrChooseGroup"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp" />
+
                         <ListView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -244,7 +253,7 @@
                 android:id="@+id/lytEventsAndProfile">
                 <LinearLayout
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="80dp"
                     android:background="#adb6b5"
                     android:padding="5dp"
                     android:orientation="horizontal"
@@ -287,7 +296,8 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:orientation="vertical"
-                                    android:layout_marginRight="15dp">
+                                    android:layout_marginRight="15dp"
+                                    android:visibility="invisible">
                                     <ImageView
                                         android:layout_width="28dp"
                                         android:layout_height="28dp"
@@ -381,11 +391,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1">
+                    <ir.adad.client.Banner
+                        android:id="@+id/banner_ad_view"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="0dp"/>
                     <ScrollView
                         android:layout_width="match_parent"
                         android:layout_height="fill_parent"
                         android:background="#ffffff"
                         android:id="@+id/svEvent"
+                        android:layout_below="@id/banner_ad_view"
                         android:layout_gravity="center_horizontal"
                         android:fillViewport="false" >
                         <LinearLayout

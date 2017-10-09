@@ -104,7 +104,7 @@
     <string name="help">Every phone has a group and owner should pay for group members. You can charge your account.To join a group, owner should create a code using chat activity(In his/her group) with + button and share it using any social application. Then by entering code in group activity by + button (Note the generated code is valid for 15 min). \n You can see yourself and others on map(Note group memebers should be connected to internet). Here every marker shows latest user location sent to our servers. \n You can define an area by going Menu>Area And Geofences and click on add. In map you click on center of your desired location then specify circle radius by tapping on + and - buttons. By clicking Save you will asked for a name. By defining an area if your group members enter or leave area you will be informed.
         \n You can chat in groups.
     \n Its all free for geofence(entering and leaving area), and see user location(speed,curse,latitude,longitude and accuracy). </string>
-    <string name="title_activity_routes">Map</string>
+    <string name="title_activity_routes" translatable="false">Map</string>
     <string name="routes">Routes</string>
     <string name="cantaddmoremarkers">Can not add more marker.</string>
     <string name="findroute">Find Route</string>
@@ -121,12 +121,12 @@
     <string name="gpsState">GPS state</string>
     <string name="offlinetracking2">Tracking</string>
     <string name="pausetracking">Tracking Paused </string>
-    <string name="title_activity_offline_map">Map</string>
+    <string name="title_activity_offline_map" translatable="false">Map</string>
     <string name="offlinemap">Movement Direction</string>
     <string name="noMarkerData">No User Data, Please Try Again</string>
     <string name="offlinetrackingdescription">You can track your group mates in from choosed hour until next 1 hour.</string>
     <string name="nocreadit">You have no charge. Please recharge to use application.</string>
-    <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_setting" translatable="false">SettingActivity</string>
     <string name="sos">SOS</string>
     <string name="entered">Entered</string>
     <string name="exited">Exited</string>
@@ -141,10 +141,10 @@
     <string name="satelliteAndInternetOFF">You are not connected to internet. To better accuracy, put location state on satellite mode </string>
     <string name ="visibilityState">Location Visibility State To Own Group Members</string>
     <string name="ServerError">Server Error</string>
-    <string name="title_activity_introduction">IntroductionActivity</string>
+    <string name="title_activity_introduction" translatable="false">IntroductionActivity</string>
     <string name="skipit">Skip</string>
     <string name="introduction">Introduction</string>
-    <string name="title_activity_help">HelpActivity</string>
+    <string name="title_activity_help" translatable="false">HelpActivity</string>
     <string name="introfamily">See your family members online.</string>
     <string name="introschool">Schools Service</string>
     <string name="introtravel">Traveling</string>
@@ -158,5 +158,7 @@
     <string name="DoYouWantRateUs">Do you want to rate this application?</string>
     <string name="findaddress">Find Address</string>
     <string name="dontaskagain">Do not ask me again!</string>
-
+    <string name="eventscleared">Event history is clean now.</string>
+    <string name="radioen" translatable="false">1</string>
+    <string name="radiofa" translatable="false">0</string>
 </resources>

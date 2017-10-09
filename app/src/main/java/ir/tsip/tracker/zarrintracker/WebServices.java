@@ -25,7 +25,7 @@ import java.util.TimerTask;
  */
 public class WebServices {
 
-    private static String url = "http://tstracker.ir/services/webbasedefineservice.asmx/";
+    private static String url = "http://www.fardyabi.ir:8081/services/webbasedefineservice.asmx/";
     private static com.android.volley.RequestQueue queue;
     private Context context;
 
@@ -46,7 +46,7 @@ public class WebServices {
     public void addQueue(String ClassName, int ObjectCode , String Data, String WebServiceName, int FailDelete)
     {
 
-        if(FailDelete == 1 && !Tools.isOnline(MainActivity.Base))
+        if(FailDelete == 1 && !Tools.isOnline(context))
             return;
 
         ContentValues Val = new ContentValues();
@@ -122,7 +122,7 @@ public class WebServices {
         dbh.close();
     }
     public void RunSend() {
-        RunSend(1000,0);
+        RunSend(10000,0);
         RunSend(1000 * 60 * 10, 2); // 10 MINUTE
     }
     Cursor c;

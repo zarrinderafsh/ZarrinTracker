@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">موقعیت یابی</string>
     <string name="DaysToRecharge">روز باقی مانده تا اتمام شارژ</string>
-    <string name="DontTranslate1"></string>
     <string name="EnterJoinCode">کد را وارد کنید</string>
     <string name="GroupLabel">گروه</string>
     <string name="InvalidCOde">کد نامعتبر</string>
@@ -13,9 +12,8 @@
     <string name="LeaveGroupMessage">مطمئنید می خواهید از گروه خارج شوید؟ تمام پیام ها پاک می شوند</string>
     <string name="NewMessage">پیام جدید از </string>
     <string name="NoCredit">شما شارژ کافی برای استفاده از برنامه ندارید</string>
-    <string name="PersonImage"></string>
     <string name="SwipeToRight">به راست لمس کنید تا منو را ببینید</string>
-    <string name="abou">راهنما</string>
+    <string name="about">راهنما</string>
     <string name="action_settings">تنظیمات</string>
     <string name="add">اضافه کردن</string>
     <string name="appShortDescribe">موقعیت یاب</string>
@@ -35,20 +33,17 @@
     <string name="details">مشخصات</string>
     <string name="deviceREgistered">دستگاه ثبت شد</string>
     <string name="devicesAlreadyRegistered">دستگاه قبلا ثبت شده است</string>
-    <string name="dummy_button"></string>
     <string name="email">ایمیل</string>
     <string name="gpsIsOff">جی پی اس  خاموش است. برای گرفتن موقعیت مکانی باید جی پی اس روشن باشد</string>
     <string name="groupCOunts">فرد در گروه شماست</string>
     <string name="groups">گروه ها</string>
     <string name="groupsToChat">گروه های چت</string>
     <string name="haveNoLocationData">در حال حاضر اطلاعات مکانی وجود ندارد.</string>
-    <string name="hello_world"></string>
     <string name="hour">ساعت</string>
     <string name="duplicatename">نام تکراری است. لطفا نام دیگری انتخاب کنید.</string>
     <string name="imageDidntLoad">تصویر بارگذاری نشد</string>
     <string name="imageUploaded">تصویر در سرور بارگذاری شد</string>
     <string name="internetConnectivityError">لطفا به اینترنت متصل شوید.</string>
-    <string name="ivCloseMapString"></string>
     <string name="ivGPS">مکان</string>
     <string name="ivNetLocation">مکان شبکه</string>
     <string name="joinGroups">عضویت در گروه</string>
@@ -69,7 +64,6 @@
     <string name="somethingWrong">مشکلی رخ داده است.</string>
     <string name="successful">موفقیت</string>
     <string name="takephoto">گرفتن عکس</string>
-    <string name="title_activity_chat"></string>
     <string name="userProfile">پروفایل کاربر</string>
     <string name="txtPurchaseMessage">اکانت خودرا برای استفاده از امکانات نرم افزار برای مدت بیشتر شارژ کنید.</string>
     <string name="charge">شارژ</string>
@@ -159,4 +153,5 @@
     <string name="justadminsee">اعضای گروهم همدیگه رو نبینن</string>
 
     <string name="dontaskagain">دوباره نپرس!</string>
+    <string name="eventscleared">تاریخچه رویدادها پاک شد.</string>
 </resources>

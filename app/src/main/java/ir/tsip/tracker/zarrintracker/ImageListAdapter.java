@@ -45,6 +45,7 @@ public class ImageListAdapter extends ArrayAdapter<Objects.MarkerItem> {
         TextView txtname=(TextView)convertView.findViewById(R.id.txtName);
         ImageView imgphoto=(ImageView)convertView.findViewById(R.id.imgPhoto);
         final Objects.MarkerItem marker=(Objects.MarkerItem)getItem(position);
+
         if(marker._image==null)
             marker._image= BitmapFactory.decodeResource(_activity.getResources(), R.drawable.sample_user);
         convertView.setTag(marker._id);

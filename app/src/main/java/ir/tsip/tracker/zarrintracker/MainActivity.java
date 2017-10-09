@@ -1,6 +1,7 @@
 package ir.tsip.tracker.zarrintracker;
 
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
@@ -28,7 +30,9 @@ import android.view.View;
 import android.view.Window;
 import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,6 +40,9 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +56,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import ir.adad.client.Adad;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -77,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
     private HashMap params;
     WebView webView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,13 +94,24 @@ public class MainActivity extends AppCompatActivity {
         this.setContentView(R.layout.activity_main);
         Base = this;
 
+        //advertise initialization
+        Adad.initialize(getApplicationContext());
+
+
+        if (!SplashScreen.isnotFirstTIme) {
+
+            Intent intent2 = new Intent(this, EditProfileActivity.class);
+            startActivity(intent2);
+        }
+
         Tools.SetLocal();
 
-        if(Persons.con==null){
-            if(LocationListener.mContext==null)
-                Persons.con=MainActivity.Base;
+
+        if (Persons.con == null) {
+            if (LocationListener.mContext == null)
+                Persons.con = MainActivity.Base;
             else
-                Persons.con=LocationListener.mContext;
+                Persons.con = LocationListener.mContext;
         }
 
         if (Tools.markers != null) {
@@ -131,53 +152,65 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-webView=(WebView)findViewById(R.id.webView);
-        webView .loadUrl("file:///android_asset/loding.gif");
+        webView = (WebView) findViewById(R.id.webView);
+        webView.loadUrl("file:///android_asset/loding.gif");
         webView.setVisibility(View.VISIBLE);
 
         lytProfile = (LinearLayout) findViewById(R.id.lytProfile);
         lytHeaderTop = (LinearLayout) findViewById(R.id.lytTopHeader);
 
-        lytEventsAndProfile = ((LinearLayout) MainActivity.this.findViewById(R.id.lytEventsAndProfile));
+
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-        //int width=dm.widthPixels;
         height = dm.heightPixels;
+final int topMargin0=0,
+        topMargin1=(int) (height / 2),
+        topMargin2=height - lytProfile.getLayoutParams().height-lytHeaderTop.getLayoutParams().height;
 
+        lytEventsAndProfile = ((LinearLayout) MainActivity.this.findViewById(R.id.lytEventsAndProfile));
+        lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
+        ibtnDown = (ImageButton) findViewById(R.id.ibtnDown);
         ibtnUp = (ImageButton) findViewById(R.id.ibtnUp);
-        ibtnUp.setVisibility(View.GONE);
+
+            ibtnUp.setVisibility(View.VISIBLE);
+            ibtnDown.setVisibility(View.VISIBLE);
+            ((TextView) MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.GONE);
+            lytEventsAndProfileparams.setMargins(0,topMargin1 , 0, 0);
+
+        lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
+
         ibtnUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
 
-                if (lytEventsAndProfileparams.topMargin <= (int) (height / 2) - lytProfile.getHeight()) {
+                if (lytEventsAndProfileparams.topMargin ==topMargin1){
                     lytEventsAndProfileparams.setMargins(0, 0, 0, 0);
                     ibtnUp.setVisibility(View.GONE);
-                    ((TextView)MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.VISIBLE);
+                    ((TextView) MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.VISIBLE);
-                } else if (lytEventsAndProfileparams.topMargin != 0 && lytEventsAndProfileparams.topMargin <= height - lytProfile.getHeight() - lytHeaderTop.getHeight() - 15) {
+                } else if (lytEventsAndProfileparams.topMargin != 0 && lytEventsAndProfileparams.topMargin == topMargin2) {
                     ibtnUp.setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.VISIBLE);
-                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight() - 50, 0, 0);
+                    lytEventsAndProfileparams.setMargins(0, topMargin1, 0, 0);
                 }
                 lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
             }
         });
-        ibtnDown = (ImageButton) findViewById(R.id.ibtnDown);
         ibtnDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
+
                 if (lytEventsAndProfileparams.topMargin == 0) {//TOP
                     ibtnUp.setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.VISIBLE);
-                    ((TextView)MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.GONE);
-                    lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight(), 0, 0);
-                } else if (lytEventsAndProfileparams.topMargin <= (int) (height / 2) - lytProfile.getHeight()) {//midle
+                    ((TextView) MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.GONE);
+                    lytEventsAndProfileparams.setMargins(0, topMargin1, 0, 0);
+                } else if (lytEventsAndProfileparams.topMargin ==topMargin1) {//midle
                     ibtnUp.setVisibility(View.VISIBLE);
                     ibtnDown.setVisibility(View.INVISIBLE);
-                    lytEventsAndProfileparams.setMargins(0, height - lytProfile.getHeight() - lytHeaderTop.getHeight() - 15, 0, 0);
+                    lytEventsAndProfileparams.setMargins(0,topMargin2, 0, 0);
                 }
                 lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
             }
@@ -210,7 +243,7 @@ webView=(WebView)findViewById(R.id.webView);
         fragmentTransaction.add(R.id.llMapLoad, mMapFragment);
         fragmentTransaction.commit();
 
-//        ibtnGeofences = (ImageButton) findViewById(R.id.ibtnGeofences);
+
         ((LinearLayout) findViewById(R.id.lytPlaces)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,7 +251,7 @@ webView=(WebView)findViewById(R.id.webView);
                 Base.startActivity(myIntent);
             }
         });
-        //   ibtnOfflineTracking = (ImageButton) findViewById(R.id.ibtnOfflineTracking);
+
         ((LinearLayout) findViewById(R.id.lytTracking)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -226,7 +259,7 @@ webView=(WebView)findViewById(R.id.webView);
                 Base.startActivity(myIntent);
             }
         });
-        //    ibtnChat = (ImageButton) findViewById(R.id.ibtnChat);
+
         ((LinearLayout) findViewById(R.id.lytChat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,7 +267,7 @@ webView=(WebView)findViewById(R.id.webView);
                 Base.startActivity(myIntent);
             }
         });
-        //   ibtnRoutes = (ImageButton) findViewById(R.id.ibtnRoutes);
+
         ((LinearLayout) findViewById(R.id.lytRoutes)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,21 +277,11 @@ webView=(WebView)findViewById(R.id.webView);
         });
         initializeDrawer();
 
-//        IntentFilter filter = new IntentFilter("ir.tstracker.activity.proximity");
-//        registerReceiver(new ProximityIntentReceiver(), filter);
+
         initializeInviteButton();
 
-        lytEventsAndProfileparams = (RelativeLayout.LayoutParams) lytEventsAndProfile.getLayoutParams();
-        if (lytEventsAndProfileparams.topMargin == 0) {//TOP
-            ibtnUp.setVisibility(View.VISIBLE);
-            ibtnDown.setVisibility(View.VISIBLE);
-            ((TextView)MainActivity.this.findViewById(R.id.txtMapHint)).setVisibility(View.GONE);
-            lytEventsAndProfileparams.setMargins(0, (int) (height / 2) - lytProfile.getHeight(), 0, 0);
-        }
-        lytEventsAndProfile.setLayoutParams(lytEventsAndProfileparams);
 
-
-        ImageButton ibtnHelp=(ImageButton)findViewById(R.id.ibtnHelp);
+        ImageButton ibtnHelp = (ImageButton) findViewById(R.id.ibtnHelp);
         ibtnHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -269,9 +292,8 @@ webView=(WebView)findViewById(R.id.webView);
         });
 
 
-        Tools.justadminsee = Tools.getBoleanColumn(this,DatabaseContracts.Settings.TABLE_NAME, DatabaseContracts.Settings.COlumn_justAdminsee);
-        Tools.VisibleToOwnGroupMembers = Tools.getBoleanColumn(this,DatabaseContracts.Settings.TABLE_NAME, DatabaseContracts.Settings.Column_visibility);
-
+        Tools.justadminsee = Tools.getBoleanColumn(this, DatabaseContracts.Settings.TABLE_NAME, DatabaseContracts.Settings.COlumn_justAdminsee);
+        Tools.VisibleToOwnGroupMembers = Tools.getBoleanColumn(this, DatabaseContracts.Settings.TABLE_NAME, DatabaseContracts.Settings.Column_visibility);
     }
 
     private void initializeDrawer() {
@@ -549,10 +571,16 @@ webView=(WebView)findViewById(R.id.webView);
         // the POST parameters:
         params.put("pData", Tools.GetImei(this) + "/");// "351520060796671");
         WebServices WS = new WebServices(getApplicationContext());
-        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 1, params, "CheckRegistration",1);
-        ProfileActivity.GetImageFromServer(this);
-        ProfileActivity.GetProfileFromServer(this);
+        WS.addQueue("ir.tsip.tracker.zarrintracker.MainActivity", 1, params, "CheckRegistration", 1);
+
         getGeofencesFromServer();
+
+        //GetGroups
+        if(Tools.markers==null) {
+            WebServices ws = new WebServices(this);
+            ws.addQueue("ir.tsip.tracker.zarrintracker.GroupsActivity", 0, Tools.GetImei(this), "GroupsList", 1);
+            ws = null;
+        }
         WS = null;
     }
 
@@ -575,7 +603,7 @@ webView=(WebView)findViewById(R.id.webView);
 
         String key = "";
         String logo = "Ts";
-        String site = "tstracker.ir";
+        String site = "fardyabi.ir:8081";
         String tell = "";
         String purchaseMsg="";
         if (Data != "null") {
@@ -698,7 +726,7 @@ webView=(WebView)findViewById(R.id.webView);
         }, 0, 10000);
     }
 
-    int counter = 0;
+    int counter = -1;
     Boolean isfirst = true;
 
     private void ShowMessage() {
@@ -716,7 +744,7 @@ webView=(WebView)findViewById(R.id.webView);
                 try {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            if ((counter + 1) % 30 == 0) {
+                            if ((counter + 1) % 60*2 == 0) {
                                 if (mMapFragment != null)
                                     Tools.setUpMap(mMapFragment.getMap(), getApplicationContext(), isfirst);
                                 if (isfirst)
@@ -836,11 +864,18 @@ webView=(WebView)findViewById(R.id.webView);
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //Rate application
-                    Intent intent = new Intent(Intent.ACTION_EDIT);
-                    intent.setData(Uri.parse("bazaar://details?id=" + MainActivity.this.getPackageName()));
-                    intent.setPackage("com.farsitel.bazaar");
-                    startActivity(intent);
-                    Tools.SetRate(true);
+               try {
+                   Intent intent = new Intent(Intent.ACTION_EDIT);
+                   intent.setData(Uri.parse("bazaar://details?id=" + MainActivity.this.getPackageName()));
+                   intent.setPackage("com.farsitel.bazaar");
+                   startActivity(intent);
+                   Tools.SetRate(true);
+               }
+               catch (Exception er){
+
+                   Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://cafebazaar.ir/app/ir.tsip.tracker.zarrintracker/"));
+                   startActivity(browserIntent);
+               }
                 }
             });
             builder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -880,8 +915,7 @@ webView=(WebView)findViewById(R.id.webView);
     @Override
     public void onStart() {
         super.onStart();
-        ((TextView) findViewById(R.id.tvPersonName)).setText(EditProfileActivity.getName(this.getBaseContext()));
-        ProfileActivity.setProfileImage(ivPersonImage, 96, Base);
+
         ShowMessage();
         Tools.SetLocal();
     }
@@ -998,4 +1032,10 @@ webView=(WebView)findViewById(R.id.webView);
         builder.show();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((TextView) findViewById(R.id.tvPersonName)).setText(EditProfileActivity.getName(this.getBaseContext()));
+        ProfileActivity.setProfileImage(ivPersonImage, 96, Base);
+    }
 }

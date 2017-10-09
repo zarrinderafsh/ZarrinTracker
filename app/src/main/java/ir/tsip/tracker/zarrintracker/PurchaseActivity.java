@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.DeadObjectException;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -65,13 +66,13 @@ HashMap<String,String> products=new HashMap<>();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_purchase);
 
-        if(Tools.ptype.equals("1"))
-        {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.tstracker.ir"));
-            startActivity(browserIntent);
-            this.finish();
-            return;
-        }
+//        if(Tools.ptype.equals("1"))
+//        {
+//            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.fardyabi.ir:8081"));
+//            startActivity(browserIntent);
+//            this.finish();
+//            return;
+//        }
 
         rdb5=(RadioButton)findViewById(R.id.rdb5);
         rdb10=(RadioButton)findViewById(R.id.rdb10);
@@ -168,7 +169,11 @@ HashMap<String,String> products=new HashMap<>();
                        PurchaseActivity.this. startIntentSenderForResult(pendingIntent.getIntentSender(), code, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
 
                     }
-                } catch (Exception er) {
+                }
+                catch (Exception er){
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.fardyabi.ir:8081"));
+                    startActivity(browserIntent);
+                    PurchaseActivity.this.finish();
 int vs=0;
                 }
 

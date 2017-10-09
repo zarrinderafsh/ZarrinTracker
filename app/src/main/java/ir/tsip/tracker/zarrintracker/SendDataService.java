@@ -39,8 +39,7 @@ public class SendDataService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent,int flags, int startId)
-    {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         _SeriveStart = true;
         _Intent = intent;
 
@@ -55,8 +54,7 @@ public class SendDataService extends Service {
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         _SeriveStart = false;
     }
 
@@ -64,13 +62,13 @@ public class SendDataService extends Service {
         DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = dbh.getWritableDatabase();
         String[] columns = {DatabaseContracts.AVLData.COLUMN_NAME_ID, DatabaseContracts.AVLData.COLUMN_NAME_Data};
-        Cursor c=null;
+        Cursor c = null;
         int Counter = 0;
         String Data = "";
         while (_SeriveStart) {
             try {
                 Thread.sleep(1000);
-                if(LocationListener.GetInternetConnect()) {
+                if (LocationListener.GetInternetConnect()) {
                     if (IDSend.length() == 0 && LocationListener.GetInternetConnect()) {
                         Data = "";
                         IDSend = "";
@@ -98,6 +96,7 @@ public class SendDataService extends Service {
                         } catch (Exception er) {
                         }
                         if (Data.length() > 1) {
+                            //000000000000000|37.421998333333335,58.0,0,0,0,2016-12-11 19:46:20,50, #
                             Data = Tools.GetImei(getApplicationContext()) + "|" + Data;
                             SendData(Data);
 
@@ -106,19 +105,18 @@ public class SendDataService extends Service {
                     }
                 }
             } catch (Exception ex) {
-                IDSend="";
+                IDSend = "";
             }
         }
         c.close();
         db.close();
         dbh.close();
-        IDSend="";
+        IDSend = "";
     }
 
-    private static String url = "http://tstracker.ir/services/webbasedefineservice.asmx/SaveAvlMobile";
+    private static String url = "http://fardyabi.ir:8081/services/webbasedefineservice.asmx/SaveAvlMobile";
 
-    private void SendData(String Data)
-    {
+    private void SendData(String Data) {
         Map<String, String> params = new HashMap<>();
         params.put("Data", Data);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url,
@@ -130,25 +128,25 @@ public class SendDataService extends Service {
                     if (data.contains("1")) {
                         DatabaseHelper dh = new DatabaseHelper(getApplicationContext());
                         SQLiteDatabase db = dh.getReadableDatabase();
-                        if(db.delete(DatabaseContracts.AVLData.TABLE_NAME, DatabaseContracts.AVLData.COLUMN_NAME_ID+ " in ("+IDSend+")", null)>0){
+                        if (db.delete(DatabaseContracts.AVLData.TABLE_NAME, DatabaseContracts.AVLData.COLUMN_NAME_ID + " in (" + IDSend + ")", null) > 0) {
                         }
-                        IDSend="";
+                        IDSend = "";
                         db.close();
                         dh.close();
-                        dh=null;
+                        dh = null;
                     }
                 } catch (Exception er) {
-                    IDSend="";
+                    IDSend = "";
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                IDSend="";
+                IDSend = "";
             }
         });
         if (Data.length() > 1) {
-            if(queue == null)
+            if (queue == null)
                 queue = Volley.newRequestQueue(getApplicationContext());
             queue.add(jsObjRequest);
         }

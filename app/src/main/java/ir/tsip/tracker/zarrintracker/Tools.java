@@ -33,8 +33,11 @@ import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.webkit.WebView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -54,6 +57,7 @@ import java.lang.reflect.Type;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -68,16 +72,16 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class Tools {
 
-    public static Boolean HasCredit = true,showrating=false,justadminsee=false, Mute = false,VisibleToOwnGroupMembers=true;
+    public static Boolean HasCredit = true, showrating = false, justadminsee = false, Mute = false, VisibleToOwnGroupMembers = true;
     private static Boolean AnswerLastGetMarkers = true;
     private static ConnectivityManager cm;
     private static NetworkInfo netInfo;
-    public  static String ptype="0";
+    public static String ptype = "0";
 
     public static boolean isOnline(Context context) {
-        if(cm == null)
+        if (cm == null)
             cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         netInfo = null;
         netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
@@ -183,21 +187,20 @@ public class Tools {
         HashMap<String, String> params;
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
         SQLiteDatabase db = dbh.getReadableDatabase();
-        Cursor c=null;
+        Cursor c = null;
         try {
             c = db.query(DatabaseContracts.Persons.TABLE_NAME, new String[]{DatabaseContracts.Persons.COLUMN_NAME_ID}, DatabaseContracts.Persons.COLUMN_is_me + "=1", null, "", "", "", "");
             if (c.moveToFirst()) {
                 MyPersonId = Integer.valueOf(c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Persons.COLUMN_NAME_ID)));
             }
             return MyPersonId;
-        }
-        finally {
+        } finally {
             c.close();
             db.close();
             dbh.close();
-            c=null;
-            db=null;
-            dbh=null;
+            c = null;
+            db = null;
+            dbh = null;
         }
     }
 
@@ -209,32 +212,41 @@ public class Tools {
 
     public static void setUpMap(GoogleMap googleMap, Context context, boolean isfirst) {
 
-        if (isfirst || IsFirst && googleMap != null )
+        if (isfirst || IsFirst && googleMap != null)
             GoogleMapObj = googleMap;
         if (markers == null)
             markers = new HashMap<Integer, Marker>();
 
-        if (Tools.isOnline(context) && googleMap!=null)
+        if (Tools.isOnline(context) && googleMap != null)
             Tools.getDevicesLocation(googleMap.getProjection().getVisibleRegion().latLngBounds.toString(), String.valueOf(googleMap.getCameraPosition().zoom), context, googleMap);
 
-        if (googleMap == null || LocationListener.CurrentLocation == null)
+        if (googleMap == null)// || LocationListener.CurrentLocation == null)
             return;
         //Toast.makeText(MainActivity.Base, "from map", Toast.LENGTH_SHORT).show();
 
         if (isfirst || IsFirst) {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
+            if (LocationListener.CurrentLocation != null)
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LocationListener.CurrentLocation.getLatitude(), LocationListener.CurrentLocation.getLongitude()), 16.0f));
             DrawCircles(context);
             GoogleMapObj.setMyLocationEnabled(true);
             IsFirst = false;
             GoogleMapObj.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    WebServices w=new WebServices(MainActivity.Base);
-                    WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 5,marker.getTitle().split(",")[2], "getInfoAndroid",1);
-                    w=null;
-                    if(minfo==null)
-                        minfo=marker;
-                    return true;
+                    try {
+
+                        WebServices w = new WebServices(MainActivity.Base);
+                        WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 5, marker.getTitle().split(",")[2], "getInfoAndroid", 1);
+                        w = null;
+                        if (minfo == null)
+                            minfo = marker;
+                    }
+                    catch (Exception er){
+                        minfo=null;
+                    }
+                    finally {
+                        return true;
+                    }
                 }
             });
             //set customInfoWIndo
@@ -317,7 +329,7 @@ public class Tools {
                             Double.valueOf(center.split(",")[1]),
                             Float.valueOf(meters),
                             -1,
-                            PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id),PendingIntent.FLAG_UPDATE_CURRENT));
+                            PendingIntent.getBroadcast(LocationListener.mContext, id, new Intent("ir.tstracker.activity.proximity").putExtra("id", id), PendingIntent.FLAG_UPDATE_CURRENT));
                     proximities.add(id);
                 }
             } catch (Exception er) {
@@ -339,18 +351,73 @@ public class Tools {
     public static Map<Integer, Marker> markers;
     private static WebServices WS;
     public static ListView lsvMarkers;
-    public static ImageListAdapter imgAdapter;
+    public static ImageListAdapter imgAdapter,imgAdapterTEMP;
 
     public static void backWebServicesError(int ObjectCode, String Data) {
         if (ObjectCode == 0) {//Markers
             AnswerLastGetMarkers = true;
         }
     }
+    public  static HashMap<String,String> groupMembers=new HashMap<>();
+public static String[] getGroupNames(Context _context) {
+    DatabaseHelper dbh = new DatabaseHelper(_context);
+    SQLiteDatabase db = dbh.getReadableDatabase();
+    Cursor c = db.query(DatabaseContracts.Groups.TABLE_NAME, null, "", null, "", "", DatabaseContracts.Groups.COLUMN_NAME_LastTime + " DESC", "");
+    String[] names = new String[c.getCount()];
+    int count=0;
+    if (c.moveToFirst()) {
+        do {
+names[count]=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Name)).replace(';','\b');
+            groupMembers.put(names[count],c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Groups.COLUMN_NAME_Members)));
+                    count++;
+        }
+        while (c.moveToNext());
+    }
+    return names;
+}
+public static  Spinner spnrChoosenGroup;
+    public static HashSet<String> MembersToShowOnMap=new HashSet<>();
+    public static void CreateGroupChooserSpinner(){
 
+        //spnrChoosenGroup
+        spnrChoosenGroup =(Spinner)MainActivity.Base.findViewById(R.id.spnrChooseGroup);
+        spnrChoosenGroup.setAdapter(new ArrayAdapter<String>(MainActivity.Base,R.layout.spinnerlayout,getGroupNames(MainActivity.Base)));
+
+        spnrChoosenGroup.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                MembersToShowOnMap.clear();
+                for (String s : groupMembers.get(((TextView) view).getText()).split(";")) {
+                    MembersToShowOnMap.add(s.split("-")[0]);
+                }
+                if (markers != null) {
+                    int ID = -1;
+                    if (imgAdapterTEMP == null)
+                        imgAdapterTEMP = new ImageListAdapter(MainActivity.Base);
+                    imgAdapterTEMP.items.clear();
+                    for (Marker m : markers.values()) {
+                        ID = Integer.valueOf(m.getTitle().split(",")[2]);
+                        if (MembersToShowOnMap.contains(String.valueOf(ID))) {
+                            m.setVisible(true);
+                            imgAdapterTEMP.AddMarker(imgAdapter.GetItemByID(ID));
+                        } else {
+                            m.setVisible(false);
+                        }
+                    }
+                lsvMarkers.setAdapter(imgAdapterTEMP);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
     public static void backWebServices(int ObjectCode, String Data) {
 
         if (ObjectCode == 0) {//Markers
-           MainActivity.Base.webView.setVisibility(View.INVISIBLE);
             AnswerLastGetMarkers = true;
             try {
 
@@ -383,8 +450,8 @@ public class Tools {
                         p.ID = Integer.valueOf(ja.getJSONObject(i).getString("PCode"));
                         p.name = ja.getJSONObject(i).getString("Title").split(",")[0];
                         p.isme = false;
-                        p.lastLatLng=lat+","+lng;
-                         p.update();
+                        p.lastLatLng = lat + "," + lng;
+                        p.update();
                     }
                     if (p.image == null)
                         p.GetImageFromServer();
@@ -392,11 +459,11 @@ public class Tools {
                         lsvMarkers = (ListView) MainActivity.Base.findViewById(R.id.lsvMarkers);
 
                     if (m == null) {
-                        Bitmap PersonImage = drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96),ja.getJSONObject(i).getString("Title").split(",")[1]);
+                        Bitmap PersonImage = drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96), ja.getJSONObject(i).getString("Title").split(",")[1]);
                         markers.put(id,
                                 GoogleMapObj.addMarker(new MarkerOptions()
                                         .position(new LatLng(Double.valueOf(lat), Double.valueOf(lng)))
-                                        .title(ja.getJSONObject(i).getString("Title")+","+id)
+                                        .title(ja.getJSONObject(i).getString("Title") + "," + id)
                                         .icon(BitmapDescriptorFactory.fromBitmap(PersonImage))));
                         imgAdapter.AddMarker(new Objects().new MarkerItem(id,
                                 LoadImage(p.image, 96),
@@ -406,52 +473,53 @@ public class Tools {
 
                     } else {
                         m.setPosition(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
-                        m.setTitle(ja.getJSONObject(i).getString("Title")+","+id);
-                        m.setIcon(BitmapDescriptorFactory.fromBitmap(drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96),ja.getJSONObject(i).getString("Title").split(",")[1])));
+                        m.setTitle(ja.getJSONObject(i).getString("Title") + "," + id);
+                        m.setIcon(BitmapDescriptorFactory.fromBitmap(drawCustomMarker(BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.redmarker), LoadImage(p.image, 96), ja.getJSONObject(i).getString("Title").split(",")[1])));
                         imgAdapter.GetItemByID(id)._image = LoadImage(p.image, 96);
                         imgAdapter.GetItemByID(id)._name = p.name;
                     }//Add icon for each marker at bottom of map, and when click on it, go to marker location
 
                 }
-                lsvMarkers.setAdapter(imgAdapter);
-                if(markers.size()>1)
-                    showrating=true;
+                if (markers.size() > 1)
+                    showrating = true;
 //                imgAdapter.notifyDataSetChanged();
+                if(spnrChoosenGroup==null) {
+                    MainActivity.Base.webView.setVisibility(View.INVISIBLE);
+                    CreateGroupChooserSpinner();
+                    spnrChoosenGroup.setSelection(0,true);
+                }
             } catch (Exception er) {
                 er.getMessage();
             }
-        }
-        else if(ObjectCode==5){
-          if(minfo!=null)
-          {
-              minfo.setTitle(Data);
-              minfo.showInfoWindow();
-              minfo=null;
-          }
+        } else if (ObjectCode == 5) {
+            if (minfo != null) {
+                minfo.setTitle(Data);
+                minfo.showInfoWindow();
+                minfo = null;
+            }
         }
     }
 
 
-
-    public static Bitmap drawCustomMarker(Bitmap firstImage,Bitmap secondImage,String text){
-        if(firstImage==null || secondImage == null)
+    public static Bitmap drawCustomMarker(Bitmap firstImage, Bitmap secondImage, String text) {
+        if (firstImage == null || secondImage == null)
             return null;
-        Bitmap b=Bitmap.createBitmap(170, 180, Bitmap.Config.ARGB_8888);
-        Canvas c=new Canvas(b);
+        Bitmap b = Bitmap.createBitmap(170, 180, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
 
         c.drawBitmap(Bitmap.createScaledBitmap(firstImage, 170, 180, true), 0, 0, null);
         int Left = 39;
         int Top = 19;
-        c.drawBitmap(secondImage, new Rect(0, 0, 96, 96), new Rect(Left, Top, Left+96, Top+96), null);
-        Paint p=new Paint();
+        c.drawBitmap(secondImage, new Rect(0, 0, 96, 96), new Rect(Left, Top, Left + 96, Top + 96), null);
+        Paint p = new Paint();
         p.setColor(Color.WHITE);
         p.setTextSize(20f);
-        c.drawText(text,Left + 19, Top + 96+26,p);
-        return  b;
+        c.drawText(text, Left + 19, Top + 96 + 26, p);
+        return b;
     }
 
     public static void getDevicesLocation(String bounds, String zoom, final Context context, final GoogleMap gmap) {
-        if(AnswerLastGetMarkers && Tools.isOnline(context)) {
+        if (AnswerLastGetMarkers && Tools.isOnline(context)) {
             AnswerLastGetMarkers = false;
             bounds = bounds.replace("LatLngBounds{southwest=lat/lng: ", "(");
             bounds = bounds.replace("northeast=lat/lng: ", "");
@@ -463,8 +531,9 @@ public class Tools {
             params.put("zoom", zoomAndImei);
             if (WS == null)
                 WS = new WebServices(context);
-
-            WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 0, params, "GetMarkers",1);
+//((-71.71494382435657,-72.32145845890045), (71.71494382435657,72.32138872146606))
+            //2.0,000000000000000
+            WS.addQueue("ir.tsip.tracker.zarrintracker.Tools", 0, params, "GetMarkers", 1);
         }
     }
 
@@ -526,7 +595,7 @@ public class Tools {
     }
 
     public static Bitmap LoadImage(Bitmap b, int Radious) {
-        if(b == null)
+        if (b == null)
             b = BitmapFactory.decodeResource(MainActivity.Base.getResources(), R.drawable.sample_user);
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDither = false;
@@ -604,14 +673,15 @@ public class Tools {
                 MainActivity.Base.getResources().getDisplayMetrics());
 
     }
+
     public static String getLocale(Context context) {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
 
         String locale = "fa";
-        Cursor c=null;
+        Cursor c = null;
         try {
-           c = db.query(DatabaseContracts.Settings.TABLE_NAME,
+            c = db.query(DatabaseContracts.Settings.TABLE_NAME,
                     null,
                     "",
                     null,
@@ -633,27 +703,27 @@ public class Tools {
         return locale;
     }
 
-    public static void SetBoleanColumn(String table,String column,Boolean value) {
+    public static void SetBoleanColumn(String table, String column, Boolean value) {
 
         DatabaseHelper dbh = new DatabaseHelper(MainActivity.Base);
         SQLiteDatabase db = dbh.getReadableDatabase();
         try {
             ContentValues V = new ContentValues();
-            V.put(column, value?1:0);
+            V.put(column, value ? 1 : 0);
             db.update(table, V, "", null);
         } catch (Exception e) {
-            String k=e.getMessage();
+            String k = e.getMessage();
         } finally {
             db.close();
             dbh.close();
         }
     }
 
-    public static Boolean getBoleanColumn(Context context,String table,String column) {
+    public static Boolean getBoleanColumn(Context context, String table, String column) {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
 
-        Cursor c=null;
+        Cursor c = null;
         try {
             c = db.query(table,
                     null,
@@ -664,7 +734,7 @@ public class Tools {
                     null);
             if (c.moveToFirst()) {
 
-                return  (c.getInt(c.getColumnIndexOrThrow(column))>0)? true: false;
+                return (c.getInt(c.getColumnIndexOrThrow(column)) > 0) ? true : false;
 
 
             }
@@ -683,10 +753,10 @@ public class Tools {
         SQLiteDatabase db = dbh.getReadableDatabase();
         try {
             ContentValues V = new ContentValues();
-            V.put(DatabaseContracts.Settings.COlumn_Rate, rate?1:0);
+            V.put(DatabaseContracts.Settings.COlumn_Rate, rate ? 1 : 0);
             db.update(DatabaseContracts.Settings.TABLE_NAME, V, "", null);
         } catch (Exception e) {
-            String k=e.getMessage();
+            String k = e.getMessage();
         } finally {
             db.close();
             dbh.close();
@@ -697,7 +767,7 @@ public class Tools {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
 
-        Cursor c=null;
+        Cursor c = null;
         try {
             c = db.query(DatabaseContracts.Settings.TABLE_NAME,
                     null,
@@ -708,7 +778,7 @@ public class Tools {
                     null);
             if (c.moveToFirst()) {
 
-                return  (c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COlumn_Rate))>0)? true: false;
+                return (c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COlumn_Rate)) > 0) ? true : false;
 
 
             }
@@ -726,7 +796,7 @@ public class Tools {
         SQLiteDatabase db = dbh.getReadableDatabase();
         try {
             ContentValues V = new ContentValues();
-            V.put(DatabaseContracts.Settings.COLUMN_mute, mut?1:0);
+            V.put(DatabaseContracts.Settings.COLUMN_mute, mut ? 1 : 0);
             db.update(DatabaseContracts.Settings.TABLE_NAME, V, "", null);
         } catch (Exception e) {
         } finally {
@@ -739,7 +809,7 @@ public class Tools {
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
 
-        Cursor c=null;
+        Cursor c = null;
         try {
             c = db.query(DatabaseContracts.Settings.TABLE_NAME,
                     null,
@@ -750,7 +820,7 @@ public class Tools {
                     null);
             if (c.moveToFirst()) {
 
-              return  (c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COLUMN_mute))>0)? true: false;
+                return (c.getInt(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COLUMN_mute)) > 0) ? true : false;
 
 
             }
@@ -793,32 +863,33 @@ public class Tools {
         byte[] decrypted = cipher.doFinal(encrypted);
         return decrypted;
     }
-    public static byte[] keyfromdb(Context context){
+
+    public static byte[] keyfromdb(Context context) {
         //get key from db
-        String key="";
+        String key = "";
         DatabaseHelper dbh = new DatabaseHelper(context);
         SQLiteDatabase db = dbh.getReadableDatabase();
         Cursor c = db.query(DatabaseContracts.Settings.TABLE_NAME, null, "", null, "", "", "");
         if (c.moveToFirst()) {
-            key=c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COLUMN_NAME_key));
+            key = c.getString(c.getColumnIndexOrThrow(DatabaseContracts.Settings.COLUMN_NAME_key));
         }
         c.close();
-         db.close();
+        db.close();
         dbh.close();
-        c=null;
-        db=null;
-        dbh=null;
+        c = null;
+        db = null;
+        dbh = null;
 
         try {
-            byte[] en= Tools.encrypt(new byte[]{1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6}, key.getBytes());
-            return Tools.decrypt(new byte[]{1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6}, en);
-        }
-        catch (Exception er){
+            byte[] en = Tools.encrypt(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6}, key.getBytes());
+            return Tools.decrypt(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6}, en);
+        } catch (Exception er) {
             return new byte[]{};
         }
     }
-    public static byte[] getkey(byte[] k){
-        try{
+
+    public static byte[] getkey(byte[] k) {
+        try {
             byte[] keyStart = k;
             KeyGenerator kgen = KeyGenerator.getInstance("AES");
             SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
@@ -826,8 +897,7 @@ public class Tools {
             kgen.init(128, sr); // 192 and 256 bits may not be available
             SecretKey skey = kgen.generateKey();
             return skey.getEncoded();
-        }
-        catch (Exception er){
+        } catch (Exception er) {
             return new byte[]{};
         }
     }

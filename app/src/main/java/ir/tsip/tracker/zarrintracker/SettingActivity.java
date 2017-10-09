@@ -3,6 +3,7 @@ package ir.tsip.tracker.zarrintracker;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -55,6 +56,7 @@ Button btnClearEvents;
                 db.close();
                 dbh.close();
                 ((LinearLayout) MainActivity.Base.findViewById(R.id.llinSroll)).removeAllViews();
+                Toast.makeText(SettingActivity.this, getString(R.string.eventscleared), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -97,11 +99,11 @@ Button btnClearEvents;
         rdgp=(RadioGroup)findViewById(R.id.rdbgLanguage);
         RadioButton r = new RadioButton(this);
         r.setText("فارسی");
-        r.setId(0);
+        r.setId(Integer.valueOf(getString(R.string.radiofa)));
         rdgp.addView(r);
         RadioButton r1 = new RadioButton(this);
         r1.setText("English");
-        r1.setId(1);
+        r.setId(Integer.valueOf(getString(R.string.radioen)));
         rdgp.addView(r1);
         String loe=Tools.getLocale(this);
         if(loe.equals("fa") ) {
